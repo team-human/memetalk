@@ -4,8 +4,8 @@ Server code for MemeTalk.
 
 ## Prerequisites
 
-- Install [Amazon OpenJDK 11 ](https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html).
-- Install [Gradle 5.6.4](https://gradle.org/install/).
+- Install [Amazon Corretto 11 (OpenJDK 11)](https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html).
+- Install [Gradle 6.5.1](https://gradle.org/install/).
 
 ## Build
 
@@ -29,4 +29,3 @@ $ ./gradlew test
 ```bash
 $ ./gradlew spotlessApply
 ```
-
