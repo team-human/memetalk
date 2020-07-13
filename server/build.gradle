@@ -18,7 +18,6 @@ application {
 }
 
 spotless {
-    
     java {
         importOrder() // standard import order
         removeUnusedImports()
