@@ -24,3 +24,8 @@ $ ./gradlew run
 ```bash
 $ ./gradlew test
 ```
+
+## Apply Linter and reformat the code
+```bash
+$ ./gradlew spotlessApply
+```
