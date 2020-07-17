@@ -1,11 +1,11 @@
 package memetalk;
 
-public class Server {
-    public String getGreeting() {
-        return "Hello world.";
-    }
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@SpringBootApplication
+public class Server {
     public static void main(String[] args) {
-        System.out.println(new Server().getGreeting());
+        SpringApplication.run(Server.class, args);
     }
 }

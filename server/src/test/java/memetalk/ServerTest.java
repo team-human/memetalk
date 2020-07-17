@@ -1,12 +1,10 @@
 package memetalk;
 
 import org.junit.Test;
-import static org.junit.Assert.assertNotNull;
+import org.springframework.boot.test.context.SpringBootTest;
 
+@SpringBootTest
 public class ServerTest {
-    @Test public void testServerHasAGreeting() {
-        Server classUnderTest = new Server();
-        assertNotNull("Server should have a greeting",
-                classUnderTest.getGreeting());
+    @Test public void testNothing() {
     }
 }
