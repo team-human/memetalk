@@ -5,6 +5,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 public class ServerTest {
-    @Test public void testNothing() {
-    }
+    @Test
+    public void testNothing() {}
 }
