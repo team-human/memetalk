@@ -11,3 +11,7 @@ build
 
 # Ignore generated binary files.
 bin/*
+
+# Ignore files used by IntelliJ.
+.idea
+*.iml

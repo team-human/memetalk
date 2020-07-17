@@ -4,6 +4,7 @@ plugins {
     id 'application'
     id 'org.springframework.boot' version '2.3.1.RELEASE'
     id "io.spring.dependency-management" version "1.0.9.RELEASE"
+    id "com.diffplug.spotless" version "5.0.0"
 }
 
 repositories {
@@ -18,4 +19,14 @@ dependencies {
 
 application {
     mainClassName = 'memetalk.Server'
+}
+
+spotless {
+    java {
+        importOrder() // standard import order
+        removeUnusedImports()
+
+        // apply a specific flavor of google-java-format
+        googleJavaFormat('1.8').aosp()
+    }
 }
