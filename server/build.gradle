@@ -1,6 +1,9 @@
+// Search available plugins at https://plugins.gradle.org/.
 plugins {
     id 'java'
     id 'application'
+    id 'org.springframework.boot' version '2.3.1.RELEASE'
+    id "io.spring.dependency-management" version "1.0.9.RELEASE"
     id "com.diffplug.spotless" version "5.0.0"
 }
 
@@ -9,8 +12,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.guava:guava:29.0-jre'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'junit:junit:4.13'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 application {

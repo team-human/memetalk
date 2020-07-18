@@ -4,6 +4,14 @@
 # Ignore Gradle build output directory
 build
 
+# Ignore IDE-generated files.
+.classpath
+.project
+.settings
+
+# Ignore generated binary files.
+bin/*
+
 # Ignore files used by IntelliJ.
 .idea
 *.iml
