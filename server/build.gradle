@@ -7,7 +7,10 @@ plugins {
     id "com.diffplug.spotless" version "5.0.0"
 }
 
-sourceCompatibility = '11'
+compileJava {
+    sourceCompatibility = '11'
+    targetCompatibility = '11'
+}
 
 repositories {
     jcenter()

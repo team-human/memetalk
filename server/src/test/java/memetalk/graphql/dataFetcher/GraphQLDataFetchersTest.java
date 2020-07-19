@@ -42,7 +42,8 @@ public class GraphQLDataFetchersTest {
                 ImmutableMap.builder().put("authorId", authorId).build();
         when(dataFetchingEnvironment.getSource()).thenReturn(postArgument);
         Map<String, String> actual =
-                (Map<String, String>) graphQLDataFetchers.getAuthorDataFetcher();
+                (Map<String, String>)
+                        graphQLDataFetchers.getAuthorDataFetcher().get(dataFetchingEnvironment);
         Map<String, String> expected =
                 GraphQLDataFetchers.authors.stream()
                         .filter(author -> author.get("id").equals(authorId))
