@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GraphQLDataFetchers {
     // fake data. May connect to DB
-    private static List<Map<String, String>> posts =
+    public static List<Map<String, String>> posts =
             Arrays.asList(
                     ImmutableMap.of(
                             "id",
@@ -31,7 +31,7 @@ public class GraphQLDataFetchers {
                             "authorId",
                             "author-2"));
 
-    private static List<Map<String, String>> authors =
+    public static List<Map<String, String>> authors =
             Arrays.asList(
                     ImmutableMap.of(
                             "id", "author-1", "username", "Sam", "email", "sam@memetalk.com"),

@@ -15,9 +15,9 @@ $ ./gradlew build
 ```
 
 ## Run
-
+To run a spring boot application
 ```bash
-$ ./gradlew run
+$ ./gradlew bootRun
 ```
 
 ## Test
@@ -30,3 +30,8 @@ $ ./gradlew test
 ```bash
 $ ./gradlew spotlessApply
 ```
+
+## GraphQL
+To interact with GraphQL spring boot server, you can use Postman to send the requests and view the response.
+Please install [Postman](https://www.postman.com/) and follow [this blog](https://learning.postman.com/docs/sending-requests/supported-api-frameworks/graphql/) to send the requests.
+

@@ -15,6 +15,7 @@ import java.net.URL;
 import javax.annotation.PostConstruct;
 import memetalk.graphql.dataFetcher.GraphQLDataFetchers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,6 +25,11 @@ public class GraphQLProvider {
     @Autowired GraphQLDataFetchers graphQLDataFetchers;
 
     private GraphQL graphQL;
+
+    @Bean
+    public GraphQL graphQL() {
+        return graphQL;
+    }
 
     @PostConstruct
     public void init() throws IOException {
