@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+/* Parsing GraphQL schema and creating runtime wiring to have executable schema */
 @Component
 public class GraphQLProvider {
     private static final String GRAPHQL_SCHEMA_NAME = "schema.graphqls";

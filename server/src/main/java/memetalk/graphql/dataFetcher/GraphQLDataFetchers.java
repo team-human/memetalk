@@ -7,36 +7,12 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Component;
 
+/* Fetching the data for GraphQL query */
 @Component
 public class GraphQLDataFetchers {
-    // fake data. May connect to DB
-    public static List<Map<String, String>> posts =
-            Arrays.asList(
-                    ImmutableMap.of(
-                            "id",
-                            "post-1",
-                            "title",
-                            "fun story",
-                            "pictureLink",
-                            "url-1",
-                            "authorId",
-                            "author-1"),
-                    ImmutableMap.of(
-                            "id",
-                            "post-2",
-                            "title",
-                            "happy life",
-                            "pictureLink",
-                            "url-2",
-                            "authorId",
-                            "author-2"));
+    public static List<Map<String, String>> posts = generateFakePosts();
 
-    public static List<Map<String, String>> authors =
-            Arrays.asList(
-                    ImmutableMap.of(
-                            "id", "author-1", "username", "Sam", "email", "sam@memetalk.com"),
-                    ImmutableMap.of(
-                            "id", "author-2", "username", "Heron", "email", "heron@memetalk.com"));
+    public static List<Map<String, String>> authors = generateFakeAuthors();
 
     public DataFetcher getPostByIdDataFetcher() {
         return dataFetchingEnvironment -> {
@@ -57,5 +33,34 @@ public class GraphQLDataFetchers {
                     .findFirst()
                     .orElse(null);
         };
+    }
+
+    private static List<Map<String, String>> generateFakePosts() {
+        return Arrays.asList(
+                ImmutableMap.of(
+                        "id",
+                        "post-1",
+                        "title",
+                        "fun story",
+                        "pictureLink",
+                        "url-1",
+                        "authorId",
+                        "author-1"),
+                ImmutableMap.of(
+                        "id",
+                        "post-2",
+                        "title",
+                        "happy life",
+                        "pictureLink",
+                        "url-2",
+                        "authorId",
+                        "author-2"));
+    }
+
+    private static List<Map<String, String>> generateFakeAuthors() {
+        return Arrays.asList(
+                ImmutableMap.of("id", "author-1", "username", "Sam", "email", "sam@memetalk.com"),
+                ImmutableMap.of(
+                        "id", "author-2", "username", "Heron", "email", "heron@memetalk.com"));
     }
 }
