@@ -7,14 +7,14 @@ import static org.mockito.Mockito.when;
 import com.google.common.collect.ImmutableMap;
 import graphql.schema.DataFetchingEnvironment;
 import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 public class GraphQLDataFetchersTest {
     private GraphQLDataFetchers graphQLDataFetchers;
     private DataFetchingEnvironment dataFetchingEnvironment;
 
-    @BeforeEach
+    @Before
     public void setUp() {
         dataFetchingEnvironment = mock(DataFetchingEnvironment.class);
         graphQLDataFetchers = new GraphQLDataFetchers();
