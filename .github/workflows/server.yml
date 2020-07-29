@@ -1,9 +1,13 @@
-name: Server CI
+name: Server Test
 
-on: [push, pull request]
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
-  build:
+  server-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
