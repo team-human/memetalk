@@ -1,0 +1,20 @@
+name: Server CI
+
+on: [push, pull request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Server - Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11.0.7'
+          java-package: jdk
+      - name: Server - Run Unit Tests
+        working-directory: ./server
+        run: ./gradlew test
+      - name: Server - Run Lint Check
+        working-directory: ./server
+        run: ./gradlew spotlessCheck
