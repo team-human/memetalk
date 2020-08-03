@@ -1,4 +1,3 @@
-# This is a basic workflow to help you get started with Actions
 name: Client Test
 
 # Controls when the action will run. Triggers the workflow on push or pull request
@@ -22,13 +21,12 @@ jobs:
 
     - name: Setup Node.js environment
       uses: actions/setup-node@v2.1.1
-      
-    - name: Install Yarn
-      run:  npm install -g yarn
-  
-    - name: Install Dependencies
+      with:
+        node-version: '12.x'
+
+    - name: Install dependencies
       working-directory: ./client
-      run: npm install
+      run: yarn --frozen-lockfile
 
     # Runs a set of commands using the runners shell
     - name: Clinet - Run Tests
