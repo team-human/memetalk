@@ -20,3 +20,11 @@ $ expo install
 ```bash
 $ expo start
 ```
+=======
+
+## Test
+
+```bash
+$ yarn test
+```
+
