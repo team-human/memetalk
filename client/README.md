@@ -7,7 +7,7 @@ Client code for MemeTalk.
 - Install [npm](https://www.npmjs.com/get-npm).
 Download here https://nodejs.org/en/, its bundled with Node.js.
 - Install [yarn](https://classic.yarnpkg.com/en/docs/install)
-Follow the instuctions to install.
+Follow the instructions to install.
 - Install [expo-cli](https://docs.expo.io/).
 ## Install
 
