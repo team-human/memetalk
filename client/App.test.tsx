@@ -1,12 +1,17 @@
-import React from 'react';
-import { render } from 'react-native-testing-library';
+import React from 'react'
+import { render } from 'react-native-testing-library'
+import App from './App'
+import { act } from 'react-test-renderer'
 
-import App from './App';
+jest.useFakeTimers()
+jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper')
 
 describe('<App />', () => {
-  it("App", async () => {
-    const component = render(<App />);
-    expect(component.toJSON()).toMatchSnapshot();
-  }); 
-});
+  const component = render(<App />)
 
+  it('App', async () => {
+    await act(async () => {
+      expect(component.toJSON()).toMatchSnapshot()
+    })
+  })
+})
