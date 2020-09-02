@@ -1,0 +1,29 @@
+type User {
+  id: ID!
+  name: String!
+}
+
+type Meme {
+  id: ID!
+  author: User!
+  tags: [String!]
+  url: String!
+  createTime: String!
+  counter: MemeCounter!
+}
+
+type MemeCounter {
+  likeCount: Int!
+  dislikeCount: Int!
+  shareCount: Int!
+  commentCount: Int!
+}
+
+type Topic {
+  tag: String!
+  memes: [Meme!]
+}
+
+type Query {
+  topics: [Topic!]
+}
