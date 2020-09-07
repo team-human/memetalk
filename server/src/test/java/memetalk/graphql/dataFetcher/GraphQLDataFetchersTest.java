@@ -1,7 +1,7 @@
 package memetalk.graphql.dataFetcher;
 
-import static memetalk.data.FakeData.generateFakeMemes;
-import static memetalk.data.FakeData.generateFakeTopic;
+import static memetalk.data.FakeDataGenerator.generateFakeMemes;
+import static memetalk.data.FakeDataGenerator.generateFakeTopic;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

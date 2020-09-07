@@ -1,6 +1,6 @@
 package memetalk.graphql.dataFetcher;
 
-import static memetalk.data.FakeData.*;
+import static memetalk.data.FakeDataGenerator.generateFakeTopic;
 
 import graphql.schema.DataFetcher;
 import java.util.List;

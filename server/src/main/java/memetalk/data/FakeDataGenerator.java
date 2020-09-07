@@ -9,7 +9,7 @@ import memetalk.model.MemeCounter;
 import memetalk.model.Topic;
 import memetalk.model.User;
 
-public class FakeData {
+public class FakeDataGenerator {
     public static List<User> generateFakeUsers() {
         return Arrays.asList(User.builder().id("userId1").name("John").build());
     }
