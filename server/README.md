@@ -41,7 +41,7 @@ $ ./gradlew test
 $ heroku local web
 ```
 
-The server runs at `localhost:5000`.
+The server runs at `http://localhost:5000`.
 
 ### Deploy
 
@@ -50,7 +50,7 @@ The server runs at `localhost:5000`.
 $ cd .. && git subtree push --prefix server heroku master
 ```
 
-The server runs at .
+The server runs at `https://memetalk.herokuapp.com/`.
 
 ## More
 
