@@ -41,7 +41,7 @@ export const HashTagList = ({ hashtagList, showPoundSign }) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView>
       <FlatList
         style={styles.list}
         horizontal
@@ -55,10 +55,6 @@ export const HashTagList = ({ hashtagList, showPoundSign }) => {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-    // backgroundColor: 'red',
-  },
   list: {
     height: 50,
     flexGrow: 0,
