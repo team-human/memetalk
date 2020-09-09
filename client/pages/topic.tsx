@@ -84,7 +84,7 @@ const Item = ({ item, onPress, style }) => (
   </TouchableOpacity>
 )
 
-export default function HomeScreen({ navigation }) {
+export default function TopicScreen({ navigation }) {
   const [selectedId, setSelectedId] = useState(null)
 
   const renderItem = ({ item }) => {

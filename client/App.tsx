@@ -3,7 +3,7 @@ import { Text, View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import TopicScreen from './pages/home'
+import TopicScreen from './pages/topic'
 
 function SettingsScreen({ navigation }) {
   return (
@@ -26,7 +26,7 @@ const TopicStack = createStackNavigator()
 function TopicStackScreen() {
   return (
     <TopicStack.Navigator>
-      <TopicStack.Screen name="Home" component={TopicScreen} />
+      <TopicStack.Screen name="Topic" component={TopicScreen} />
     </TopicStack.Navigator>
   )
 }
