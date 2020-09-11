@@ -4,6 +4,4 @@ import App from './App'
 
 describe('<App />', () => {
   const component = render(<App />)
-
-  it('App', async () => {})
 })
