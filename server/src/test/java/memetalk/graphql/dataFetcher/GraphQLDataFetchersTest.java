@@ -1,12 +1,16 @@
 package memetalk.graphql.dataFetcher;
 
+import static memetalk.data.FakeDataGenerator.generateFakeMemes;
+import static memetalk.data.FakeDataGenerator.generateFakeTopic;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.google.common.collect.ImmutableMap;
 import graphql.schema.DataFetchingEnvironment;
-import java.util.Map;
+import java.util.List;
+import memetalk.model.Meme;
+import memetalk.model.Topic;
+import memetalk.model.User;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,34 +25,23 @@ public class GraphQLDataFetchersTest {
     }
 
     @Test
-    public void testGetPostByIdDataFetcher() throws Exception {
-        final String postId = "post-1";
-        when(dataFetchingEnvironment.getArgument("id")).thenReturn(postId);
-        Map<String, String> actual =
-                (Map<String, String>)
-                        graphQLDataFetchers.getPostByIdDataFetcher().get(dataFetchingEnvironment);
-        Map<String, String> expected =
-                GraphQLDataFetchers.posts.stream()
-                        .filter(post -> post.get("id").equals(postId))
-                        .findFirst()
-                        .orElse(null);
+    public void testGetTopicsDataFetcher() throws Exception {
+        List<Topic> expected = generateFakeTopic();
+        List<Topic> actual =
+                (List<Topic>) graphQLDataFetchers.getTopicsFetcher().get(dataFetchingEnvironment);
+
         assertEquals(expected, actual);
     }
 
     @Test
     public void testGetAuthorDataFetcher() throws Exception {
-        final String authorId = "author-1";
-        ImmutableMap<Object, Object> postArgument =
-                ImmutableMap.builder().put("authorId", authorId).build();
-        when(dataFetchingEnvironment.getSource()).thenReturn(postArgument);
-        Map<String, String> actual =
-                (Map<String, String>)
-                        graphQLDataFetchers.getAuthorDataFetcher().get(dataFetchingEnvironment);
-        Map<String, String> expected =
-                GraphQLDataFetchers.authors.stream()
-                        .filter(author -> author.get("id").equals(authorId))
-                        .findFirst()
-                        .orElse(null);
+        Meme meme = generateFakeMemes().get(0);
+
+        when(dataFetchingEnvironment.getSource()).thenReturn(meme);
+        User actual =
+                (User) graphQLDataFetchers.getAuthorDataFetcher().get(dataFetchingEnvironment);
+
+        User expected = meme.getAuthor();
         assertEquals(expected, actual);
     }
 }

@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 /* Parsing GraphQL schema and creating runtime wiring to have executable schema */
 @Component
 public class GraphQLProvider {
-    private static final String GRAPHQL_SCHEMA_NAME = "example.graphql";
+    private static final String GRAPHQL_SCHEMA_NAME = "schema.graphql";
 
     @Autowired GraphQLDataFetchers graphQLDataFetchers;
 
@@ -51,10 +51,9 @@ public class GraphQLProvider {
         return RuntimeWiring.newRuntimeWiring()
                 .type(
                         newTypeWiring("Query")
-                                .dataFetcher(
-                                        "postById", graphQLDataFetchers.getPostByIdDataFetcher()))
+                                .dataFetcher("topics", graphQLDataFetchers.getTopicsFetcher()))
                 .type(
-                        newTypeWiring("Post")
+                        newTypeWiring("Meme")
                                 .dataFetcher("author", graphQLDataFetchers.getAuthorDataFetcher()))
                 .build();
     }
