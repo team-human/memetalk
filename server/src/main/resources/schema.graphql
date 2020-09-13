@@ -19,11 +19,10 @@ type MemeCounter {
   commentCount: Int!
 }
 
-type Topic {
-  tag: String!
-  memes: [Meme!]
+type Query {
+  popular_tags: [String!]
 }
 
 type Query {
-  topics: [Topic!]
+  memes(tag: String!): [Meme!]
 }
