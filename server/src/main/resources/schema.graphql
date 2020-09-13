@@ -22,7 +22,7 @@ type MemeCounter {
 # DEPRECATED: Should use tag and meme seperatedly.
 type Topic {
   tag: String!
-  memes: [Meme!]	
+  memes: [Meme!]
 }
 
 type Query {
