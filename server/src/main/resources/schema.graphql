@@ -24,17 +24,10 @@ type Topic {
   memes: [Meme!]
 }
 
-# Gets topics (tag + list of memes).
 type Query {
   topics: [Topic!]
-}
-
-# Gets the current user.
-type Query {
+  # Gets the current user.
   me: User
-}
-
-# Gets memes of a user.
-type Query {
+  # Gets memes of a user.
   memes(id: ID!): [Meme!]
 }
