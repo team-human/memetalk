@@ -19,10 +19,15 @@ type MemeCounter {
   commentCount: Int!
 }
 
-type Query {
-  popular_tags: [String!]
+# DEPRECATED: Should use tag and meme seperatedly.
+type Topic {
+  tag: String!
+  memes: [Meme!]	
 }
 
 type Query {
+  # DEPRECATED: Should use `popular_tags` + `memes(tag)` instead.
+  topics: [Topic!]
+  popular_tags: [String!]
   memes(tag: String!): [Meme!]
 }
