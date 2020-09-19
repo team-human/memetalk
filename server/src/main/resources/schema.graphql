@@ -28,6 +28,15 @@ type Topic {
 type Query {
   # DEPRECATED: Should use `popular_tags` + `memes(tag)` instead.
   topics: [Topic!]
+  
+  # Gets the current user.
+  me: User
+  
+  # Gets popular tags.
   popular_tags: [String!]
+  
+  # Gets memes of a tag.
   memes(tag: String!): [Meme!]
+  # Gets memes of a user.
+  memes(user_id: ID!): [Meme!]
 }
