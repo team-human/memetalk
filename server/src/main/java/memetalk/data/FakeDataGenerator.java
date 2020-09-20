@@ -11,7 +11,14 @@ import memetalk.model.User;
 
 public class FakeDataGenerator {
     public static List<User> generateFakeUsers() {
-        return Arrays.asList(User.builder().id("userId1").name("John").build());
+        return Arrays.asList(
+                User.builder().id("userId1").name("John").build(),
+                User.builder().id("userId2").name("Alice").build(),
+                User.builder().id("userId3").name("Bob").build());
+    }
+
+    public static List<String> generateFakeTags() {
+        return Arrays.asList("#comic", "#movie", "#election");
     }
 
     public static List<Meme> generateFakeMemes() {
@@ -27,9 +34,25 @@ public class FakeDataGenerator {
                 Meme.builder()
                         .id("memeId1")
                         .author(generateFakeUsers().get(0))
-                        .tags(ImmutableList.of("#comic"))
+                        .tags(ImmutableList.of(generateFakeTags().get(0)))
                         .url("testUrl")
                         .createTime(Instant.parse("2020-09-05T23:01:15.010435Z").toString())
+                        .counter(memeCounter)
+                        .build(),
+                Meme.builder()
+                        .id("memeId2")
+                        .author(generateFakeUsers().get(1))
+                        .tags(ImmutableList.of(generateFakeTags().get(0)))
+                        .url("testUrl1")
+                        .createTime(Instant.parse("2020-09-18T23:02:01.010435Z").toString())
+                        .counter(memeCounter)
+                        .build(),
+                Meme.builder()
+                        .id("memeId3")
+                        .author(generateFakeUsers().get(2))
+                        .tags(ImmutableList.of(generateFakeTags().get(0)))
+                        .url("testUrl2")
+                        .createTime(Instant.parse("2020-09-20T23:02:15.010435Z").toString())
                         .counter(memeCounter)
                         .build());
     }

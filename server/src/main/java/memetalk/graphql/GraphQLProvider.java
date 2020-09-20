@@ -51,7 +51,27 @@ public class GraphQLProvider {
         return RuntimeWiring.newRuntimeWiring()
                 .type(
                         newTypeWiring("Query")
-                                .dataFetcher("topics", graphQLDataFetchers.getTopicsFetcher()))
+                                .dataFetcher("topics", graphQLDataFetchers.getTopicsDataFetcher()))
+                .type(
+                        newTypeWiring("Query")
+                                .dataFetcher(
+                                        "getCurrentUser",
+                                        graphQLDataFetchers.getCurrentUserDataFetcher()))
+                .type(
+                        newTypeWiring("Query")
+                                .dataFetcher(
+                                        "getPopularTags",
+                                        graphQLDataFetchers.getPopularTagsDataFetcher()))
+                .type(
+                        newTypeWiring("Query")
+                                .dataFetcher(
+                                        "getMemesByTag",
+                                        graphQLDataFetchers.getMemesByTagDataFetcher()))
+                .type(
+                        newTypeWiring("Query")
+                                .dataFetcher(
+                                        "getMemesByAuthorId",
+                                        graphQLDataFetchers.getMemesByAuthorIdDataFetcher()))
                 .type(
                         newTypeWiring("Meme")
                                 .dataFetcher("author", graphQLDataFetchers.getAuthorDataFetcher()))
