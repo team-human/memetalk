@@ -55,22 +55,22 @@ public class GraphQLProvider {
                 .type(
                         newTypeWiring("Query")
                                 .dataFetcher(
-                                        "getCurrentUser",
+                                        "currentUser",
                                         graphQLDataFetchers.getCurrentUserDataFetcher()))
                 .type(
                         newTypeWiring("Query")
                                 .dataFetcher(
-                                        "getPopularTags",
+                                        "popularTags",
                                         graphQLDataFetchers.getPopularTagsDataFetcher()))
                 .type(
                         newTypeWiring("Query")
                                 .dataFetcher(
-                                        "getMemesByTag",
+                                        "memesByTag",
                                         graphQLDataFetchers.getMemesByTagDataFetcher()))
                 .type(
                         newTypeWiring("Query")
                                 .dataFetcher(
-                                        "getMemesByAuthorId",
+                                        "memesByAuthorId",
                                         graphQLDataFetchers.getMemesByAuthorIdDataFetcher()))
                 .type(
                         newTypeWiring("Meme")
