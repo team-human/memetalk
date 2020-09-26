@@ -1,11 +1,14 @@
 package memetalk.graphql.dataFetcher;
 
 import static memetalk.data.FakeDataGenerator.generateFakeMemes;
+import static memetalk.data.FakeDataGenerator.generateFakeTags;
 import static memetalk.data.FakeDataGenerator.generateFakeTopic;
+import static memetalk.data.FakeDataGenerator.generateFakeUsers;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.google.common.collect.ImmutableList;
 import graphql.schema.DataFetchingEnvironment;
 import java.util.List;
 import memetalk.model.Meme;
@@ -26,11 +29,12 @@ public class GraphQLDataFetchersTest {
 
     @Test
     public void testGetTopicsDataFetcher() throws Exception {
-        List<Topic> expected = generateFakeTopic();
-        List<Topic> actual =
-                (List<Topic>) graphQLDataFetchers.getTopicsFetcher().get(dataFetchingEnvironment);
+        List<Topic> expectedTopics = generateFakeTopic();
+        List<Topic> actualTopics =
+                (List<Topic>)
+                        graphQLDataFetchers.getTopicsDataFetcher().get(dataFetchingEnvironment);
 
-        assertEquals(expected, actual);
+        assertEquals(expectedTopics, actualTopics);
     }
 
     @Test
@@ -38,10 +42,97 @@ public class GraphQLDataFetchersTest {
         Meme meme = generateFakeMemes().get(0);
 
         when(dataFetchingEnvironment.getSource()).thenReturn(meme);
-        User actual =
+        User actualAuthor =
                 (User) graphQLDataFetchers.getAuthorDataFetcher().get(dataFetchingEnvironment);
 
-        User expected = meme.getAuthor();
-        assertEquals(expected, actual);
+        User expectedAuthor = meme.getAuthor();
+        assertEquals(expectedAuthor, actualAuthor);
+    }
+
+    @Test
+    public void testGetCurrentUserDataFetcher() throws Exception {
+        User expectedUser = generateFakeUsers().get(0);
+        User actualUser =
+                (User) graphQLDataFetchers.getCurrentUserDataFetcher().get(dataFetchingEnvironment);
+
+        assertEquals(expectedUser, actualUser);
+    }
+
+    @Test
+    public void testGetPopularTagsDataFetcher() throws Exception {
+        List<String> expectedTags = ImmutableList.of(generateFakeTags().get(0));
+        List<String> actualTags =
+                (List<String>)
+                        graphQLDataFetchers
+                                .getPopularTagsDataFetcher()
+                                .get(dataFetchingEnvironment);
+
+        assertEquals(expectedTags, actualTags);
+    }
+
+    @Test
+    public void testGetMemesByTagDataFetcherValidTag() throws Exception {
+        String argumentTag = generateFakeTags().get(0);
+
+        when(dataFetchingEnvironment.getArgument("tag")).thenReturn(argumentTag);
+
+        List<Meme> actualMemes =
+                (List<Meme>)
+                        graphQLDataFetchers.getMemesByTagDataFetcher().get(dataFetchingEnvironment);
+
+        List<Meme> expectedMemes =
+                generateFakeMemes().stream()
+                        .filter(meme -> meme.getTags().contains(argumentTag))
+                        .collect(ImmutableList.toImmutableList());
+
+        assertEquals(expectedMemes, actualMemes);
+    }
+
+    @Test
+    public void testGetMemesByTagDataFetcherInvalidTag() throws Exception {
+        String argumentTag = "invalidTag";
+
+        when(dataFetchingEnvironment.getArgument("tag")).thenReturn(argumentTag);
+
+        List<Meme> actualMemes =
+                (List<Meme>)
+                        graphQLDataFetchers.getMemesByTagDataFetcher().get(dataFetchingEnvironment);
+
+        assertEquals(ImmutableList.of(), actualMemes);
+    }
+
+    @Test
+    public void testGetMemesByAuthorIdDataFetcherValidUserId() throws Exception {
+        String argumentUserId = generateFakeUsers().get(0).getId();
+
+        when(dataFetchingEnvironment.getArgument("userId")).thenReturn(argumentUserId);
+
+        List<Meme> actualMemes =
+                (List<Meme>)
+                        graphQLDataFetchers
+                                .getMemesByAuthorIdDataFetcher()
+                                .get(dataFetchingEnvironment);
+
+        List<Meme> expectedMemes =
+                generateFakeMemes().stream()
+                        .filter(meme -> meme.getAuthor().getId().equals(argumentUserId))
+                        .collect(ImmutableList.toImmutableList());
+
+        assertEquals(expectedMemes, actualMemes);
+    }
+
+    @Test
+    public void testGetMemesByAuthorIdDataFetcherInvalidUserId() throws Exception {
+        String argumentUserId = "fakeRandomWrongUserId";
+
+        when(dataFetchingEnvironment.getArgument("userId")).thenReturn(argumentUserId);
+
+        List<Meme> actualMemes =
+                (List<Meme>)
+                        graphQLDataFetchers
+                                .getMemesByAuthorIdDataFetcher()
+                                .get(dataFetchingEnvironment);
+
+        assertEquals(ImmutableList.of(), actualMemes);
     }
 }

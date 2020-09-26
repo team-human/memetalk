@@ -30,15 +30,15 @@ type Query {
   topics: [Topic!]
   
   # Gets the current user.
-  me: User
+  currentUser: User
   
   # Gets popular tags.
-  popular_tags: [String!]
+  popularTags: [String!]
   
   # Gets memes of a tag.
-  memes(tag: String!): [Meme!]
+  memesByTag(tag: String!): [Meme!]
   # Gets memes of a user.
-  memes(user_id: ID!): [Meme!]
+  memesByAuthorId(userId: ID!): [Meme!]
 }
 
 scalar Upload
