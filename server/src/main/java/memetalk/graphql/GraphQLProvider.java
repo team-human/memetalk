@@ -75,6 +75,10 @@ public class GraphQLProvider {
                 .type(
                         newTypeWiring("Meme")
                                 .dataFetcher("author", graphQLDataFetchers.getAuthorDataFetcher()))
+                .type(
+                        newTypeWiring("Mutation")
+                                .dataFetcher(
+                                        "createMeme", graphQLDataFetchers.createMemeDataFetcher()))
                 .build();
     }
 }

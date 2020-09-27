@@ -41,7 +41,6 @@ type Query {
   memesByAuthorId(userId: ID!): [Meme!]
 }
 
-scalar Upload
 type Mutation {
-  createMeme(file: Upload!, tags: [String!]): Meme
+  createMeme(file: String!, tags: [String!]): Meme
 }
