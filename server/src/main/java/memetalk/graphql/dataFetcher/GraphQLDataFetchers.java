@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 import graphql.schema.DataFetcher;
 import java.util.List;
 import memetalk.model.Meme;
+import memetalk.model.MemeCounter;
 import memetalk.model.Topic;
 import memetalk.model.User;
 import org.springframework.stereotype.Component;
@@ -65,6 +66,31 @@ public class GraphQLDataFetchers {
                         .filter(meme -> meme.getAuthor().getId().equals(userId))
                         .collect(ImmutableList.toImmutableList());
             }
+        };
+    }
+
+    public DataFetcher createMemeDataFetcher() {
+        return dataFetchingEnvironment -> {
+            final String rawFileContent = dataFetchingEnvironment.getArgument("file");
+            final List<String> tags = dataFetchingEnvironment.getArgument("tags");
+
+            Meme meme =
+                    Meme.builder()
+                            .id("createMemeId")
+                            .counter(
+                                    MemeCounter.builder()
+                                            .commentCount(123)
+                                            .dislikeCount(0)
+                                            .shareCount(321)
+                                            .likeCount(1)
+                                            .build())
+                            .tags(tags)
+                            .url("randomURL")
+                            .author(users.get(0))
+                            .createTime("2020-09-27T03:19:31.107115Z")
+                            .build();
+
+            return meme;
         };
     }
 }

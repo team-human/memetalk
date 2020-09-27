@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import graphql.schema.DataFetchingEnvironment;
 import java.util.List;
 import memetalk.model.Meme;
+import memetalk.model.MemeCounter;
 import memetalk.model.Topic;
 import memetalk.model.User;
 import org.junit.Before;
@@ -134,5 +135,35 @@ public class GraphQLDataFetchersTest {
                                 .get(dataFetchingEnvironment);
 
         assertEquals(ImmutableList.of(), actualMemes);
+    }
+
+    @Test
+    public void testCreateMemeDataFetcher() throws Exception {
+        List<String> argumentTags = ImmutableList.of("tag1", "tag2");
+        String file = "fake file";
+
+        when(dataFetchingEnvironment.getArgument("file")).thenReturn(file);
+        when(dataFetchingEnvironment.getArgument("tags")).thenReturn(argumentTags);
+
+        Meme actualMeme =
+                (Meme) graphQLDataFetchers.createMemeDataFetcher().get(dataFetchingEnvironment);
+
+        Meme expectedMeme =
+                Meme.builder()
+                        .id("createMemeId")
+                        .counter(
+                                MemeCounter.builder()
+                                        .commentCount(123)
+                                        .dislikeCount(0)
+                                        .shareCount(321)
+                                        .likeCount(1)
+                                        .build())
+                        .tags(argumentTags)
+                        .url("randomURL")
+                        .author(generateFakeUsers().get(0))
+                        .createTime("2020-09-27T03:19:31.107115Z")
+                        .build();
+
+        assertEquals(expectedMeme, actualMeme);
     }
 }
