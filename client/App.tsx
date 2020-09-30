@@ -4,14 +4,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import TopicScreen from './pages/topic'
-
-function SettingsScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1 }}>
-      <Text>Settings screen</Text>
-    </View>
-  )
-}
+import ProfileScreen from './pages/profile'
 
 function NotificationsScreen({ navigation }) {
   return (
@@ -31,13 +24,13 @@ function TopicStackScreen() {
   )
 }
 
-const SettingsStack = createStackNavigator()
+const ProfileStack = createStackNavigator()
 
-function SettingsStackScreen() {
+function ProfileStackScreen() {
   return (
-    <SettingsStack.Navigator>
-      <SettingsStack.Screen name="Settings" component={SettingsScreen} />
-    </SettingsStack.Navigator>
+    <ProfileStack.Navigator>
+      <ProfileStack.Screen name="Profile" component={ProfileScreen} />
+    </ProfileStack.Navigator>
   )
 }
 
@@ -61,7 +54,7 @@ export default function App() {
     <NavigationContainer>
       <Tab.Navigator>
         <Tab.Screen name="Topic" component={TopicStackScreen} />
-        <Tab.Screen name="Settings" component={SettingsStackScreen} />
+        <Tab.Screen name="Profile" component={ProfileStackScreen} />
         <Tab.Screen name="Notification" component={NotificationsStackScreen} />
       </Tab.Navigator>
     </NavigationContainer>
