@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   FlatList,
   SafeAreaView,
@@ -13,6 +13,8 @@ import {
 import { HashTagList } from '../View/HashTag/HashTagList'
 import { FeedbackButton } from '../View/Button/FeedbackButton'
 import { FeedbackTypeEnums } from '../Enums/FeedbackTypeEnums'
+import { GET_TOPICS } from '../Query/TopicsQuery'
+import { useQuery } from '@apollo/client'
 
 const DATA = [
   {
@@ -87,6 +89,26 @@ const Item = ({ item, onPress, style }) => (
 export default function TopicScreen({ navigation }) {
   const [selectedId, setSelectedId] = useState(null)
 
+  const { loading, data } = useQuery(GET_TOPICS)
+  const hashtagList = loading
+    ? []
+    : data.topics.map((topic: any) => {
+        return {
+          id: topic.tag,
+          text: topic.tag,
+        }
+      })
+
+  useEffect(() => {
+    requestHeadlines()
+  })
+
+  const requestHeadlines = () => {
+    console.log(loading)
+    console.log(data)
+    console.log(hashtagList)
+  }
+
   const renderItem = ({ item }) => {
     const backgroundColor = '#ffffff'
 
@@ -101,16 +123,7 @@ export default function TopicScreen({ navigation }) {
 
   return (
     <>
-      <HashTagList
-        showPoundSign
-        hashtagList={[
-          { id: '1', text: '今日全部' },
-          { id: '2', text: '民主' },
-          { id: '3', text: '省長' },
-          { id: '4', text: '科技' },
-          { id: '5', text: '網紅' },
-        ]}
-      />
+      <HashTagList hashtagList={hashtagList} showPoundSign={false} />
       <SafeAreaView style={styles.container}>
         <FlatList
           data={DATA}

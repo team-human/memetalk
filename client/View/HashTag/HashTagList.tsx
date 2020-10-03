@@ -15,9 +15,9 @@ interface IHashTagListProps {
   showPoundSign?: boolean
 }
 
-const Item = ({ item, onPress, style }) => (
+const Item = ({ item, onPress, style, showPoundSign }) => (
   <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
-    <HashTag style={styles.title} {...item} showPoundSign />
+    <HashTag style={styles.title} {...item} showPoundSign={showPoundSign} />
   </TouchableOpacity>
 )
 
@@ -29,6 +29,7 @@ export const HashTagList = ({ hashtagList, showPoundSign }) => {
 
     return (
       <Item
+        showPoundSign={showPoundSign}
         item={item}
         onPress={() => setSelectedId(item.id)}
         style={{
@@ -40,14 +41,16 @@ export const HashTagList = ({ hashtagList, showPoundSign }) => {
     )
   }
 
-  return (
+  return hashtagList?.length === 0 ? (
+    <></>
+  ) : (
     <SafeAreaView>
       <FlatList
         style={styles.list}
         horizontal
         data={hashtagList}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item?.id}
         extraData={selectedId}
       />
     </SafeAreaView>
