@@ -2,12 +2,27 @@
 
 Server code for MemeTalk.
 
-## Prerequisites
+## Development
+
+This section describes how you run a server locally for development purpose.
+
+### Prerequisites
 
 - Install [Amazon Corretto 11 (OpenJDK 11)](https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html).
 - Install [Gradle 6.5.1](https://gradle.org/install/).
+- Install [PostgreSQL 12.4](https://www.postgresql.org/docs/12/index.html). On MacOS, you can install with `brew install postgresql`.
 
-## Development
+### Init Database
+
+Inits your database before first time you run the server or you want to reset
+the data stored in your local database.
+
+```bash
+# Starts postgresql service.
+$ pg_ctl -D /usr/local/var/postgres start
+# Loads database for test. (Re-runing this clears previous states.)
+$ psql postgres < dev/init_db.sql
+```
 
 ### Build
 
@@ -29,6 +44,9 @@ $ ./gradlew test
 ```
 
 ## Deployment
+
+This section describes how you deploy the server onto the remote service
+(Heroku).
 
 ### Setup
 
