@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import memetalk.ConfigReader;
+import memetalk.model.Meme;
 
 /**
  * DatabaseAdapter keeps a connection with the database and offers methods to read/write the
@@ -20,20 +22,19 @@ public class DatabaseAdapter {
                         configReader.getConfig("db-password"));
     }
 
-    /**
-     * Prints all memes in database as an example to demostrate that we've integrated with the
-     * database successfully.
-     */
-    public void printMemes() throws Exception {
+    /** Returns all memes. We only populate the url field of a meme for now. */
+    public ArrayList<Meme> getMemes() throws Exception {
+        ArrayList<Meme> memes = new ArrayList<Meme>();
+
         Statement statement = connection.createStatement();
         ResultSet result = statement.executeQuery("SELECT * FROM meme;");
         while (result.next()) {
-            String url = result.getString("url");
-            System.out.println("URL = " + url);
-            System.out.println();
+            memes.add(Meme.builder().url(result.getString("url")).build());
         }
         result.close();
         statement.close();
+
+        return memes;
     }
 
     public void Shutdown() throws Exception {
