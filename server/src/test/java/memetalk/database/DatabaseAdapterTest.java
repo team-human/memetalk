@@ -2,6 +2,7 @@ package memetalk.database;
 
 // import memetalk.ConfigReader;
 // import memetalk.ConfigReader.DeploymentEnvironment;
+
 import org.junit.Test;
 
 public class DatabaseAdapterTest {
