@@ -2,7 +2,6 @@ package memetalk;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
-import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
@@ -18,15 +17,11 @@ public class ConfigReader {
         PROD
     }
 
-    public ConfigReader(DeploymentEnvironment environment) {
+    public ConfigReader(DeploymentEnvironment environment) throws Exception {
         final URL url = Resources.getResource(getConfigFilePath(environment));
         final ByteSource byteSource = Resources.asByteSource(url);
         properties = new Properties();
-        try {
-            properties.load(byteSource.openBufferedStream());
-        } catch (IOException io) {
-            io.printStackTrace();
-        }
+        properties.load(byteSource.openBufferedStream());
     }
 
     /**
