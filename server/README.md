@@ -22,6 +22,8 @@ the data stored in your local database.
 $ pg_ctl -D /usr/local/var/postgres start
 # Loads database for test. (Re-runing this clears previous states.)
 $ psql postgres < dev/init_db.sql
+# (If you finished developing) Stops postgresql service.
+$ pg_ctl -D /usr/local/var/postgres stop
 ```
 
 ### Build
