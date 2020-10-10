@@ -3,6 +3,8 @@ package memetalk;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -18,7 +20,7 @@ public class ConfigReader {
     }
 
     public ConfigReader(DeploymentEnvironment environment) throws Exception {
-        final URL url = Resources.getResource(getConfigFilePath(environment));
+        final URL url = Resources.getResource(config_filepath.get(environment));
         final ByteSource byteSource = Resources.asByteSource(url);
         properties = new Properties();
         properties.load(byteSource.openBufferedStream());
@@ -32,19 +34,14 @@ public class ConfigReader {
         return properties.getProperty(key);
     }
 
-    private String getConfigFilePath(DeploymentEnvironment environment) {
-        if (environment == DeploymentEnvironment.TEST) {
-            return TEST_CONFIG_FILEPATH;
-        }
-        if (environment == DeploymentEnvironment.PROD) {
-            return PROD_CONFIG_FILEPATH;
-        }
-        return DEV_CONFIG_FILEPATH;
-    }
-
-    private static final String DEV_CONFIG_FILEPATH = "configs/dev.properties";
-    private static final String TEST_CONFIG_FILEPATH = "configs/test.properties";
-    private static final String PROD_CONFIG_FILEPATH = "configs/prod.properties";
+    private static final Map<DeploymentEnvironment, String> config_filepath =
+            new HashMap<DeploymentEnvironment, String>() {
+                {
+                    put(DeploymentEnvironment.DEV, "configs/dev.properties");
+                    put(DeploymentEnvironment.TEST, "configs/test.properties");
+                    put(DeploymentEnvironment.PROD, "configs/prod.properties");
+                }
+            };
 
     private Properties properties;
 }
