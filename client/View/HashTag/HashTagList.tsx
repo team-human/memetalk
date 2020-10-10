@@ -13,6 +13,7 @@ import { IHashTag } from '../../Model/IHashTag'
 interface IHashTagListProps {
   hashtagList: IHashTag[]
   showPoundSign?: boolean
+  onSelectionCallBack?: (item: IHashTag) => void
 }
 
 const Item = ({ item, onPress, style, showPoundSign }) => (
@@ -21,17 +22,24 @@ const Item = ({ item, onPress, style, showPoundSign }) => (
   </TouchableOpacity>
 )
 
-export const HashTagList = ({ hashtagList, showPoundSign }) => {
+export const HashTagList = ({
+  hashtagList,
+  showPoundSign,
+  onSelectionCallBack = (item: IHashTag): void => {},
+}) => {
   const [selectedId, setSelectedId] = useState(null)
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item }: { item: IHashTag }) => {
     const borderBottomColor = item.id === selectedId ? '#E83468' : '#FFFFFF'
 
     return (
       <Item
         showPoundSign={showPoundSign}
         item={item}
-        onPress={() => setSelectedId(item.id)}
+        onPress={() => {
+          setSelectedId(item.id)
+          onSelectionCallBack(item)
+        }}
         style={{
           borderBottomWidth: 'thick',
           borderBottomColor,
@@ -45,7 +53,7 @@ export const HashTagList = ({ hashtagList, showPoundSign }) => {
     <></>
   ) : (
     <SafeAreaView>
-      <FlatList
+      <FlatList<IHashTag>
         style={styles.list}
         horizontal
         data={hashtagList}

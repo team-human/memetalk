@@ -1,0 +1,12 @@
+overwrite: true
+schema: 'https://memetalk.herokuapp.com/graphql'
+documents: 'Query/**/!(*.d).{ts,tsx}'
+generates:
+  Generated/graphqlType.tsx:
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+  ./graphql.schema.json:
+    plugins:
+      - 'introspection'

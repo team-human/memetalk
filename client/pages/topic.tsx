@@ -8,15 +8,17 @@ import {
   TouchableOpacity,
   View,
   Image,
-  Button,
+  ActivityIndicator,
 } from 'react-native'
 import { HashTagList } from '../View/HashTag/HashTagList'
 import { FeedbackButton } from '../View/Button/FeedbackButton'
 import { FeedbackTypeEnums } from '../Enums/FeedbackTypeEnums'
-import { GET_TOPICS } from '../Query/TopicsQuery'
+import { GET_MEMES_BY_TAG, GET_POPULAR_TAGS } from '../Query/TopicsQuery'
 import { useQuery } from '@apollo/client'
+import { IHashTag } from '../Model/IHashTag'
 
-const DATA = [
+// TODO: will just inject data from api
+const testData = [
   {
     id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
     userName: '使用者十一號',
@@ -88,26 +90,40 @@ const Item = ({ item, onPress, style }) => (
 
 export default function TopicScreen({ navigation }) {
   const [selectedId, setSelectedId] = useState(null)
+  const [selectedTag, setSelectedTag] = useState('')
 
-  const { loading, data } = useQuery(GET_TOPICS)
-  const hashtagList = loading
+  const { loading: popularTagsIsLoading, data: popularTagsData } = useQuery(
+    GET_POPULAR_TAGS
+  )
+
+  const onSelectTag = (hashTag: IHashTag) => {
+    setSelectedTag(hashTag.text)
+  }
+
+  const { loading: memeTagsIsLoading, data: memeTagsData } = useQuery(
+    GET_MEMES_BY_TAG,
+    {
+      skip: !popularTagsData?.popularTags,
+      variables: {
+        tag: selectedTag,
+      },
+    }
+  )
+
+  const hashtagList = popularTagsIsLoading
     ? []
-    : data.topics.map((topic: any) => {
+    : popularTagsData.popularTags.map((tag: any) => {
         return {
-          id: topic.tag,
-          text: topic.tag,
+          id: tag,
+          text: tag,
         }
       })
 
   useEffect(() => {
-    requestHeadlines()
+    if (!selectedTag && hashtagList?.length > 0) {
+      setSelectedTag(hashtagList[0].text)
+    }
   })
-
-  const requestHeadlines = () => {
-    console.log(loading)
-    console.log(data)
-    console.log(hashtagList)
-  }
 
   const renderItem = ({ item }) => {
     const backgroundColor = '#ffffff'
@@ -121,12 +137,20 @@ export default function TopicScreen({ navigation }) {
     )
   }
 
-  return (
+  return popularTagsIsLoading ? (
+    <View style={[loadingStyles.container, loadingStyles.horizontal]}>
+      <ActivityIndicator size="large" />
+    </View>
+  ) : (
     <>
-      <HashTagList hashtagList={hashtagList} showPoundSign={false} />
+      <HashTagList
+        hashtagList={hashtagList}
+        showPoundSign={false}
+        onSelectionCallBack={onSelectTag}
+      />
       <SafeAreaView style={styles.container}>
         <FlatList
-          data={DATA}
+          data={testData}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           extraData={selectedId}
@@ -188,5 +212,17 @@ const styles = StyleSheet.create({
     display: 'flex',
     flex: 1,
     flexDirection: 'row',
+  },
+})
+
+const loadingStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  horizontal: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
   },
 })
