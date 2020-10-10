@@ -19,6 +19,17 @@ public class ConfigReader {
         PROD
     }
 
+    private static final Map<DeploymentEnvironment, String> config_filepath =
+            new HashMap<DeploymentEnvironment, String>() {
+                {
+                    put(DeploymentEnvironment.DEV, "configs/dev.properties");
+                    put(DeploymentEnvironment.TEST, "configs/test.properties");
+                    put(DeploymentEnvironment.PROD, "configs/prod.properties");
+                }
+            };
+
+    private Properties properties;
+
     public ConfigReader(DeploymentEnvironment environment) throws Exception {
         final URL url = Resources.getResource(config_filepath.get(environment));
         final ByteSource byteSource = Resources.asByteSource(url);
@@ -34,14 +45,4 @@ public class ConfigReader {
         return properties.getProperty(key);
     }
 
-    private static final Map<DeploymentEnvironment, String> config_filepath =
-            new HashMap<DeploymentEnvironment, String>() {
-                {
-                    put(DeploymentEnvironment.DEV, "configs/dev.properties");
-                    put(DeploymentEnvironment.TEST, "configs/test.properties");
-                    put(DeploymentEnvironment.PROD, "configs/prod.properties");
-                }
-            };
-
-    private Properties properties;
 }

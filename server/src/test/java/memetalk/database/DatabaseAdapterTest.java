@@ -20,6 +20,10 @@ import org.junit.Test;
  * all tests.
  */
 public class DatabaseAdapterTest {
+
+    private static Connection connection = null;
+    private static ConfigReader configReader = null;
+
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         configReader = new ConfigReader(DeploymentEnvironment.TEST);
@@ -65,6 +69,4 @@ public class DatabaseAdapterTest {
         Assert.assertEquals(memes.get(0).getUrl(), "http://www.happy.com");
     }
 
-    private static Connection connection = null;
-    private static ConfigReader configReader = null;
 }

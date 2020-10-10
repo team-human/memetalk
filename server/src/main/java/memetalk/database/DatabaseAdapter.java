@@ -15,6 +15,9 @@ import memetalk.model.Meme;
  * connection with the database.
  */
 public class DatabaseAdapter {
+
+    private Connection connection = null;
+
     public DatabaseAdapter(ConfigReader configReader) throws Exception {
         connection =
                 DriverManager.getConnection(
@@ -41,6 +44,4 @@ public class DatabaseAdapter {
     public void Shutdown() throws Exception {
         connection.close();
     }
-
-    private Connection connection = null;
 }
