@@ -68,5 +68,4 @@ public class DatabaseAdapterTest {
         Assert.assertEquals(memes.size(), 1);
         Assert.assertEquals(memes.get(0).getUrl(), "http://www.happy.com");
     }
-
 }
