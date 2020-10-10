@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 import memetalk.ConfigReader;
 import memetalk.model.Meme;
 
@@ -23,7 +24,7 @@ public class DatabaseAdapter {
     }
 
     /** Returns all memes. We only populate the url field of a meme for now. */
-    public ArrayList<Meme> getMemes() throws Exception {
+    public List<Meme> getMemes() throws Exception {
         ArrayList<Meme> memes = new ArrayList<Meme>();
 
         Statement statement = connection.createStatement();
