@@ -13,4 +13,5 @@ public class Meme {
     private List<String> tags;
     private String createTime;
     private MemeCounter counter;
+    private byte[] image;
 }
