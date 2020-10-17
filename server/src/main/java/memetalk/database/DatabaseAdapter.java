@@ -51,8 +51,8 @@ public class DatabaseAdapter {
     public void addMeme(Meme meme) throws SQLException {
         PreparedStatement statement =
                 connection.prepareStatement("INSERT INTO meme(url, image) VALUES (?, ?);");
-        statement.setString(1, meme.getUrl());
-        statement.setBytes(2, meme.getImage());
+        statement.setString(/*url*/ 1, meme.getUrl());
+        statement.setBytes(/*image*/ 2, meme.getImage());
         statement.executeUpdate();
         statement.close();
     }
