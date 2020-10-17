@@ -5,6 +5,8 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import TopicScreen from './pages/topic'
 import ProfileScreen from './pages/profile'
+import { apolloClient } from './Providers/ApolloClient'
+import { ApolloProvider } from '@apollo/client'
 
 function NotificationsScreen({ navigation }) {
   return (
@@ -51,12 +53,17 @@ const Tab = createBottomTabNavigator()
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Tab.Navigator>
-        <Tab.Screen name="Topic" component={TopicStackScreen} />
-        <Tab.Screen name="Profile" component={ProfileStackScreen} />
-        <Tab.Screen name="Notification" component={NotificationsStackScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <ApolloProvider client={apolloClient}>
+      <NavigationContainer>
+        <Tab.Navigator>
+          <Tab.Screen name="Topic" component={TopicStackScreen} />
+          <Tab.Screen name="Profile" component={ProfileStackScreen} />
+          <Tab.Screen
+            name="Notification"
+            component={NotificationsStackScreen}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </ApolloProvider>
   )
 }
