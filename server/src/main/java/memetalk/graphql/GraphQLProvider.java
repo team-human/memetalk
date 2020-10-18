@@ -8,7 +8,6 @@ import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
-import graphql.schema.idl.TypeRuntimeWiring;
 import java.io.IOException;
 import java.net.URL;
 import javax.annotation.PostConstruct;
@@ -47,29 +46,23 @@ public class GraphQLProvider {
     }
 
     private RuntimeWiring buildWiring() {
-        return RuntimeWiring.newRuntimeWiring()
-                .type(
-                        TypeRuntimeWiring.newTypeWiring("Query")
-                                .dataFetcher("topics", graphQLDataFetchers.getTopicsDataFetcher())
-                                .dataFetcher(
-                                        "currentUser",
-                                        graphQLDataFetchers.getCurrentUserDataFetcher())
-                                .dataFetcher(
-                                        "popularTags",
-                                        graphQLDataFetchers.getPopularTagsDataFetcher())
-                                .dataFetcher(
-                                        "memesByTag",
-                                        graphQLDataFetchers.getMemesByTagDataFetcher())
-                                .dataFetcher(
-                                        "memesByAuthorId",
-                                        graphQLDataFetchers.getMemesByAuthorIdDataFetcher()))
-                .type(
-                        TypeRuntimeWiring.newTypeWiring("Meme")
-                                .dataFetcher("author", graphQLDataFetchers.getAuthorDataFetcher()))
-                .type(
-                        TypeRuntimeWiring.newTypeWiring("Mutation")
-                                .dataFetcher(
-                                        "createMeme", graphQLDataFetchers.createMemeDataFetcher()))
-                .build();
+        DataFetcherRegisterFactory factory = DataFetcherRegisterFactory.getRuntimeWiring();
+
+        factory.registerTypeWiring("Query", "topics", graphQLDataFetchers.getTopicsDataFetcher());
+        factory.registerTypeWiring(
+                "Query", "currentUser", graphQLDataFetchers.getCurrentUserDataFetcher());
+        factory.registerTypeWiring(
+                "Query", "popularTags", graphQLDataFetchers.getPopularTagsDataFetcher());
+        factory.registerTypeWiring(
+                "Query", "memesByTag", graphQLDataFetchers.getMemesByTagDataFetcher());
+        factory.registerTypeWiring(
+                "Query", "memesByAuthorId", graphQLDataFetchers.getMemesByAuthorIdDataFetcher());
+
+        factory.registerTypeWiring("Meme", "author", graphQLDataFetchers.getAuthorDataFetcher());
+
+        factory.registerTypeWiring(
+                "Mutation", "createMeme", graphQLDataFetchers.createMemeDataFetcher());
+
+        return factory.buildTypeWiring();
     }
 }
