@@ -32,6 +32,7 @@
     "@react-navigation/bottom-tabs": "^5.8.0",
     "@react-navigation/native": "^5.7.3",
     "@react-navigation/stack": "^5.9.0",
+    "cross-fetch": "^3.0.6",
     "expo": "^38.0.8",
     "expo-status-bar": "^1.0.2",
     "graphql": "^15.3.0",
@@ -48,6 +49,10 @@
   "devDependencies": {
     "@babel/core": "^7.8.6",
     "@graphql-codegen/cli": "1.17.10",
+    "@graphql-codegen/introspection": "1.18.0",
+    "@graphql-codegen/typescript": "1.17.10",
+    "@graphql-codegen/typescript-operations": "1.17.8",
+    "@graphql-codegen/typescript-react-apollo": "2.0.7",
     "@testing-library/jest-native": "^3.1.0",
     "@types/jest": "^26.0.7",
     "@types/react": "^16.9.46",
@@ -64,11 +69,7 @@
     "prettier": "2.0.5",
     "react-native-testing-library": "^2.1.1",
     "react-test-renderer": "^16.13.1",
-    "typescript": "~3.9.5",
-    "@graphql-codegen/typescript": "1.17.10",
-    "@graphql-codegen/typescript-operations": "1.17.8",
-    "@graphql-codegen/typescript-react-apollo": "2.0.7",
-    "@graphql-codegen/introspection": "1.18.0"
+    "typescript": "~3.9.5"
   },
   "private": true
 }
