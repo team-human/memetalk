@@ -7,7 +7,9 @@ CREATE DATABASE memetalk;
 
 CREATE TABLE meme (
   id SERIAL PRIMARY KEY NOT NULL,
-  url TEXT
+  url TEXT,
+  -- We want to replace `url` with `image`.
+  image BYTEA
 );
 
 INSERT INTO meme (url) VALUES ('https://example.png');
