@@ -19,6 +19,14 @@ public class DataFetcherRegisterFactory {
         return new DataFetcherRegisterFactory();
     }
 
+    /**
+     * Register a dataFetcher to a certain field of a type.
+     *
+     * @param typeName    the name of the type to wire
+     * @param fieldName   the field that data fetcher should apply to
+     * @param dataFetcher the new data Fetcher
+     *
+     */
     public void registerTypeWiring(
             @NonNull String typeName, @NonNull String fieldName, @NonNull DataFetcher dataFetcher) {
         repository
