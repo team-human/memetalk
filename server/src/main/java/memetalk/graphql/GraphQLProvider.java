@@ -1,7 +1,5 @@
 package memetalk.graphql;
 
-import static graphql.schema.idl.TypeRuntimeWiring.newTypeWiring;
-
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import graphql.GraphQL;
@@ -48,37 +46,23 @@ public class GraphQLProvider {
     }
 
     private RuntimeWiring buildWiring() {
-        return RuntimeWiring.newRuntimeWiring()
-                .type(
-                        newTypeWiring("Query")
-                                .dataFetcher("topics", graphQLDataFetchers.getTopicsDataFetcher()))
-                .type(
-                        newTypeWiring("Query")
-                                .dataFetcher(
-                                        "currentUser",
-                                        graphQLDataFetchers.getCurrentUserDataFetcher()))
-                .type(
-                        newTypeWiring("Query")
-                                .dataFetcher(
-                                        "popularTags",
-                                        graphQLDataFetchers.getPopularTagsDataFetcher()))
-                .type(
-                        newTypeWiring("Query")
-                                .dataFetcher(
-                                        "memesByTag",
-                                        graphQLDataFetchers.getMemesByTagDataFetcher()))
-                .type(
-                        newTypeWiring("Query")
-                                .dataFetcher(
-                                        "memesByAuthorId",
-                                        graphQLDataFetchers.getMemesByAuthorIdDataFetcher()))
-                .type(
-                        newTypeWiring("Meme")
-                                .dataFetcher("author", graphQLDataFetchers.getAuthorDataFetcher()))
-                .type(
-                        newTypeWiring("Mutation")
-                                .dataFetcher(
-                                        "createMeme", graphQLDataFetchers.createMemeDataFetcher()))
-                .build();
+        DataFetcherRegisterFactory factory = DataFetcherRegisterFactory.getRuntimeWiring();
+
+        factory.registerTypeWiring("Query", "topics", graphQLDataFetchers.getTopicsDataFetcher());
+        factory.registerTypeWiring(
+                "Query", "currentUser", graphQLDataFetchers.getCurrentUserDataFetcher());
+        factory.registerTypeWiring(
+                "Query", "popularTags", graphQLDataFetchers.getPopularTagsDataFetcher());
+        factory.registerTypeWiring(
+                "Query", "memesByTag", graphQLDataFetchers.getMemesByTagDataFetcher());
+        factory.registerTypeWiring(
+                "Query", "memesByAuthorId", graphQLDataFetchers.getMemesByAuthorIdDataFetcher());
+
+        factory.registerTypeWiring("Meme", "author", graphQLDataFetchers.getAuthorDataFetcher());
+
+        factory.registerTypeWiring(
+                "Mutation", "createMeme", graphQLDataFetchers.createMemeDataFetcher());
+
+        return factory.buildTypeWiring();
     }
 }
