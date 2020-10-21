@@ -1,6 +1,7 @@
 package memetalk.graphql;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import graphql.schema.DataFetchingEnvironment;
@@ -10,7 +11,7 @@ import org.junit.Test;
 public class DataFetcherRegisterFactoryTest {
 
     @Test
-    public void testDataFetcherRegisterFactory() throws Exception {
+    public void testRegisterTypeWiring() throws Exception {
         final String expectedResult = "Test";
         final String typeName = "Query";
         final String fieldName = "topics";
@@ -26,5 +27,13 @@ public class DataFetcherRegisterFactoryTest {
                         .get(typeName)
                         .get(fieldName)
                         .get(mock(DataFetchingEnvironment.class)));
+    }
+
+    @Test
+    public void testRegisterScalar() throws Exception {
+        DataFetcherRegisterFactory factory = DataFetcherRegisterFactory.getRuntimeWiring();
+        factory.registerScalar(FileScalarCoercing.FILE);
+        final RuntimeWiring runtimeWiring = factory.buildTypeWiring();
+        assertTrue(runtimeWiring.getScalars().containsKey("File"));
     }
 }

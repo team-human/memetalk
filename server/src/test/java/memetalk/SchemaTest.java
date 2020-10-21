@@ -7,6 +7,7 @@ import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import java.net.URL;
+import memetalk.graphql.FileScalarCoercing;
 import org.junit.Test;
 
 public class SchemaTest {
@@ -19,6 +20,7 @@ public class SchemaTest {
         TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(sdl);
         SchemaGenerator schemaGenerator = new SchemaGenerator();
         schemaGenerator.makeExecutableSchema(
-                typeRegistry, RuntimeWiring.newRuntimeWiring().build());
+                typeRegistry,
+                RuntimeWiring.newRuntimeWiring().scalar(FileScalarCoercing.FILE).build());
     }
 }

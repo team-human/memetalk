@@ -57,11 +57,11 @@ public class GraphQLProvider {
                 "Query", "memesByTag", graphQLDataFetchers.getMemesByTagDataFetcher());
         factory.registerTypeWiring(
                 "Query", "memesByAuthorId", graphQLDataFetchers.getMemesByAuthorIdDataFetcher());
-
         factory.registerTypeWiring("Meme", "author", graphQLDataFetchers.getAuthorDataFetcher());
-
         factory.registerTypeWiring(
                 "Mutation", "createMeme", graphQLDataFetchers.createMemeDataFetcher());
+
+        factory.registerScalar(FileScalarCoercing.FILE);
 
         return factory.buildTypeWiring();
     }
