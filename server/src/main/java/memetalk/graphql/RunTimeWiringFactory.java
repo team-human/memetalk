@@ -10,20 +10,20 @@ import java.util.List;
 import java.util.Map;
 import lombok.NonNull;
 
-public class DataFetcherRegisterFactory {
+public class RunTimeWiringFactory {
 
     private final Map<String, Map<String, DataFetcher>> repository;
     private final List<GraphQLScalarType> scalars;
 
-    private DataFetcherRegisterFactory() {
+    private RunTimeWiringFactory() {
         repository = new HashMap<>();
         scalars = new ArrayList<>();
     }
 
     // TODO: Rename to `getInstance` or something similar as we get the whole
     // factory here and generates runtimeWiring later.
-    static DataFetcherRegisterFactory getRuntimeWiring() {
-        return new DataFetcherRegisterFactory();
+    static RunTimeWiringFactory getRuntimeWiring() {
+        return new RunTimeWiringFactory();
     }
 
     /**
