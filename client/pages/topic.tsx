@@ -87,8 +87,6 @@ export default function TopicScreen({ navigation }) {
 
 
   const renderItem = ({ item }: Meme) => {
-    const backgroundColor = '#ffffff'
-    console.log(item);
     return (
       <Item
         item={item}
