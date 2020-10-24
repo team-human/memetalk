@@ -1,22 +1,29 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { View, StyleSheet } from 'react-native'
 import { FeedbackTypeEnums } from '../../Enums/FeedbackTypeEnums'
 import { FontAwesome5 } from '@expo/vector-icons'
 
 interface IFeedbackButtonProps {
+  initialCount?: number;
   feedbackType: FeedbackTypeEnums
 }
 
 export const FeedbackButton = ({
-  feedbackType: feedbackTypeEnums,
+  initialCount,
+  feedbackType
 }: IFeedbackButtonProps) => {
   const [count, setCount] = useState(0)
+
+
+  useEffect(() => {
+    setCount(initialCount)
+  }, [initialCount])
 
   return (
     <View style={styles.feedbackButton}>
       <FontAwesome5.Button
         name={
-          feedbackTypeEnums === FeedbackTypeEnums.Like
+          feedbackType === FeedbackTypeEnums.Like
             ? 'thumbs-up'
             : 'thumbs-down'
         }

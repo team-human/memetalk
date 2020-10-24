@@ -16,77 +16,37 @@ import { FeedbackTypeEnums } from '../Enums/FeedbackTypeEnums'
 import { GET_MEMES_BY_TAG, GET_POPULAR_TAGS } from '../Query/TopicsQuery'
 import { useQuery } from '@apollo/client'
 import { IHashTag } from '../Model/IHashTag'
+import { Meme } from '../Generated/graphqlType'
+import { User } from '../View/User/User'
+import { MemeInfo } from '../View/Info/MemeInfo'
+import { MemeImage } from '../View/Picture/MemeImage'
 
-// TODO: will just inject data from api
-const testData = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    userName: '使用者十一號',
-    userAvatarUrl: 'https://reactnative.dev/img/tiny_logo.png',
-    postTime: '2020.07.01 22:00',
-    discussTimes: 2,
-    sharedTimes: 1,
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    userName: '使用者十一號',
-    userAvatarUrl: 'https://reactnative.dev/img/tiny_logo.png',
-    postTime: '2020.07.01 22:00',
-    discussTimes: 2,
-    sharedTimes: 1,
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    userName: '使用者十一號',
-    userAvatarUrl: 'https://reactnative.dev/img/tiny_logo.png',
-    postTime: '2020.07.01 22:00',
-    discussTimes: 2,
-    sharedTimes: 1,
-  },
-]
 
-const Item = ({ item, onPress, style }) => (
-  <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
-    <View style={styles.itemHeader}>
-      <View style={styles.itemHeaderAvatar}>
-        <Image
-          source={{
-            uri: item.userAvatarUrl,
-          }}
-          style={{
-            width: 50,
-            height: 50,
-            borderRadius: 50,
-            marginRight: 8,
-          }}
-        />
-        <Text>{item.userName}</Text>
+const Item = ({ item, onPress, style }: {
+  item: Meme,
+  onPress: (value?: any) => void,
+  style: { [index: string]: string }
+}) => (
+    <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
+      <View style={styles.memeHeaderInfo}>
+        <User id={item?.author?.id} name={item?.author?.name} />
+        <MemeInfo creationTime={item?.createTime ?? ""} />
       </View>
       <View>
-        <Text style={{ color: '#9D9D9D' }}>{item.postTime}</Text>
-        <Text style={{ color: '#9D9D9D' }}>
-          {item.discussTimes}個討論 {item.sharedTimes}個分享
-        </Text>
+        <MemeImage imageUrl={item?.url} />
       </View>
-    </View>
-    <Image
-      source={require('../assets/temp.png')}
-      style={{
-        height: 325,
-        resizeMode: 'cover',
-      }}
-    />
-    <View style={styles.tagContainer}>
-      <Text style={styles.tag}>#李登輝</Text>
-      <Text style={styles.tag}>#韓國瑜</Text>
-      <Text style={styles.tag}>#時事</Text>
-    </View>
-    <View style={styles.feedbackButton}>
-      <FeedbackButton feedbackType={FeedbackTypeEnums.Like} />
-      <FeedbackButton feedbackType={FeedbackTypeEnums.Dislike} />
-    </View>
-  </TouchableOpacity>
-)
+      <View>
+        <HashTagList
+          hashtagList={item?.tags?.map(tag => { return { id: tag, text: tag } }) ?? []}
+          showPoundSign={false}
+        />
+      </View>
+      <View style={styles.feedbackButton}>
+        <FeedbackButton initialCount={item?.counter?.likeCount ?? 0} feedbackType={FeedbackTypeEnums.Like} />
+        <FeedbackButton initialCount={item?.counter?.dislikeCount ?? 0} feedbackType={FeedbackTypeEnums.Dislike} />
+      </View>
+    </TouchableOpacity>
+  )
 
 export default function TopicScreen({ navigation }) {
   const [selectedId, setSelectedId] = useState(null)
@@ -113,11 +73,11 @@ export default function TopicScreen({ navigation }) {
   const hashtagList = popularTagsIsLoading
     ? []
     : popularTagsData.popularTags.map((tag: any) => {
-        return {
-          id: tag,
-          text: tag,
-        }
-      })
+      return {
+        id: tag,
+        text: tag,
+      }
+    })
 
   useEffect(() => {
     if (!selectedTag && hashtagList?.length > 0) {
@@ -125,9 +85,10 @@ export default function TopicScreen({ navigation }) {
     }
   })
 
-  const renderItem = ({ item }) => {
-    const backgroundColor = '#ffffff'
 
+  const renderItem = ({ item }: Meme) => {
+    const backgroundColor = '#ffffff'
+    console.log(item);
     return (
       <Item
         item={item}
@@ -142,22 +103,22 @@ export default function TopicScreen({ navigation }) {
       <ActivityIndicator size="large" />
     </View>
   ) : (
-    <>
-      <HashTagList
-        hashtagList={hashtagList}
-        showPoundSign={false}
-        onSelectionCallBack={onSelectTag}
-      />
-      <SafeAreaView style={styles.container}>
-        <FlatList
-          data={testData}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          extraData={selectedId}
+      <>
+        <HashTagList
+          hashtagList={hashtagList}
+          showPoundSign={false}
+          onSelectionCallBack={onSelectTag}
         />
-      </SafeAreaView>
-    </>
-  )
+        <SafeAreaView style={styles.container}>
+          <FlatList
+            data={memeTagsData?.memesByTag ?? []}
+            renderItem={renderItem}
+            keyExtractor={(item: Meme) => item.id}
+            extraData={selectedId}
+          />
+        </SafeAreaView>
+      </>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -171,42 +132,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 0,
     display: 'flex',
   },
-  itemHeader: {
+  memeHeaderInfo: {
     display: 'flex',
+    flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  itemHeaderAvatar: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  actionContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  actionButton: {
-    width: 161,
-    height: 45,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 30,
-    shadowColor: '#00000026',
-  },
-  tagContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  tag: {
-    borderRadius: 30,
-    width: 89,
-    backgroundColor: '#C4C4C4',
-    textAlign: 'center',
-    paddingVertical: 8,
-    marginRight: 14,
   },
   feedbackButton: {
     display: 'flex',
