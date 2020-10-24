@@ -15,10 +15,10 @@ public class RunTimeWiringFactoryTest {
         final String expectedResult = "Test";
         final String typeName = "Query";
         final String fieldName = "topics";
-        RunTimeWiringFactory factory = RunTimeWiringFactory.getRuntimeWiring();
+        RunTimeWiringFactory factory = RunTimeWiringFactory.getInstance();
         factory.registerTypeWiring(typeName, fieldName, dataFetchingEnvironment -> expectedResult);
 
-        final RuntimeWiring runtimeWiring = factory.buildTypeWiring();
+        final RuntimeWiring runtimeWiring = factory.build();
 
         assertEquals(
                 expectedResult,
@@ -31,9 +31,9 @@ public class RunTimeWiringFactoryTest {
 
     @Test
     public void testRegisterScalar() throws Exception {
-        RunTimeWiringFactory factory = RunTimeWiringFactory.getRuntimeWiring();
+        RunTimeWiringFactory factory = RunTimeWiringFactory.getInstance();
         factory.registerScalar(FileScalarCoercing.FILE);
-        final RuntimeWiring runtimeWiring = factory.buildTypeWiring();
+        final RuntimeWiring runtimeWiring = factory.build();
         assertTrue(runtimeWiring.getScalars().containsKey("File"));
     }
 }

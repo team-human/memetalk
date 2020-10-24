@@ -45,7 +45,7 @@ public class GraphQLProvider {
     }
 
     private RuntimeWiring buildWiring() {
-        RunTimeWiringFactory factory = RunTimeWiringFactory.getRuntimeWiring();
+        RunTimeWiringFactory factory = RunTimeWiringFactory.getInstance();
 
         factory.registerTypeWiring(
                 "Query", "currentUser", dataFetchers.getCurrentUserDataFetcher());
@@ -59,6 +59,6 @@ public class GraphQLProvider {
 
         factory.registerScalar(FileScalarCoercing.FILE);
 
-        return factory.buildTypeWiring();
+        return factory.build();
     }
 }

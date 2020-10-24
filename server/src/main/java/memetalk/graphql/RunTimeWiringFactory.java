@@ -20,9 +20,7 @@ public class RunTimeWiringFactory {
         scalars = new ArrayList<>();
     }
 
-    // TODO: Rename to `getInstance` or something similar as we get the whole
-    // factory here and generates runtimeWiring later.
-    static RunTimeWiringFactory getRuntimeWiring() {
+    static RunTimeWiringFactory getInstance() {
         return new RunTimeWiringFactory();
     }
 
@@ -49,8 +47,7 @@ public class RunTimeWiringFactory {
         scalars.add(scalar);
     }
 
-    // TODO: Rename to `buildRuntimeWiring` as we also build scalars.
-    public RuntimeWiring buildTypeWiring() {
+    public RuntimeWiring build() {
         RuntimeWiring.Builder builder = RuntimeWiring.newRuntimeWiring();
 
         repository.forEach(
