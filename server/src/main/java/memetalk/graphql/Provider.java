@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 /* Parsing GraphQL schema and creating runtime wiring to have executable schema */
 @Component
-public class GraphQLProvider {
+public class Provider {
     private static final String GRAPHQL_SCHEMA_NAME = "schema.graphql";
 
     @Autowired DataFetchers dataFetchers;
