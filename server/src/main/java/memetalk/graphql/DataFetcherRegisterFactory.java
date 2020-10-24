@@ -57,9 +57,7 @@ public class DataFetcherRegisterFactory {
                 (type, dataFetchers) -> {
                     builder.type(TypeRuntimeWiring.newTypeWiring(type).dataFetchers(dataFetchers));
                 });
-        for (GraphQLScalarType scalar : scalars) {
-            builder.scalar(scalar);
-        }
+        scalars.forEach(builder::scalar);
 
         return builder.build();
     }
