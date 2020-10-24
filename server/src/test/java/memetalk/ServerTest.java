@@ -7,8 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 @Slf4j
 public class ServerTest {
-    @Test
-    public void testNothing() {
-        log.info("Test slf4j");
-    }
+  @Test
+  public void testNothing() {
+    log.info("Test slf4j");
+  }
 }

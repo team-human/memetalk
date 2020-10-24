@@ -2,6 +2,21 @@
 
 Server code for MemeTalk.
 
+## Architecture
+
+```
+         ----------------     --------------     ----------------
+User --> |    Server    | --> | Controller | --> |   Database   |
+     <-- | (SpringBoot) | <-- | (GraphQL)  | <-- | (PostgresQL) |
+         ----------------     --------------     ----------------
+```
+
+`Server` takes a client request and forward it to `Controller`. `Controller`
+internally accesses `Database`.
+
+Today, we implement `Server` with SpringBoot, `Controller` with GraphQL, and
+`Database` with PostgresQL.
+
 ## Development
 
 This section describes how you run a server locally for development purpose.
@@ -35,6 +50,7 @@ $ ./gradlew build
 ### Run
 
 To run a spring boot application
+
 ```bash
 $ ./gradlew bootRun
 ```
@@ -75,10 +91,12 @@ The server runs at `https://memetalk.herokuapp.com/`.
 ## More
 
 ### Apply Linter and reformat the code
+
 ```bash
 $ ./gradlew spotlessApply
 ```
 
 ### GraphQL
+
 To interact with GraphQL spring boot server, you can use Postman to send the requests and view the response.
 Please install [Postman](https://www.postman.com/) and follow [this blog](https://learning.postman.com/docs/sending-requests/supported-api-frameworks/graphql/) to send the requests.
