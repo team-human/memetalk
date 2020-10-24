@@ -8,6 +8,10 @@ import memetalk.model.Meme;
 import memetalk.model.MemeCounter;
 import memetalk.model.User;
 
+/**
+ * FakeDataGenerator generates fake data to service. We use FakeDataGenerator to provide data for
+ * the client test against while we are building the real data servered by a database.
+ */
 public class FakeDataGenerator {
     public static List<User> generateFakeUsers() {
         return Arrays.asList(
