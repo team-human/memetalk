@@ -7,6 +7,6 @@ import lombok.NonNull;
 @Data
 @Builder
 public class File {
-    @NonNull private String type;
-    @NonNull private byte[] content;
+  @NonNull private String type;
+  @NonNull private byte[] content;
 }

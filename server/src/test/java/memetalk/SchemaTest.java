@@ -11,16 +11,15 @@ import memetalk.graphql.FileScalarCoercing;
 import org.junit.Test;
 
 public class SchemaTest {
-    private static final String GRAPHQL_SCHEMA_NAME = "schema.graphql";
+  private static final String GRAPHQL_SCHEMA_NAME = "schema.graphql";
 
-    @Test
-    public void validateSchema() throws Exception {
-        URL url = Resources.getResource(GRAPHQL_SCHEMA_NAME);
-        String sdl = Resources.toString(url, Charsets.UTF_8);
-        TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(sdl);
-        SchemaGenerator schemaGenerator = new SchemaGenerator();
-        schemaGenerator.makeExecutableSchema(
-                typeRegistry,
-                RuntimeWiring.newRuntimeWiring().scalar(FileScalarCoercing.FILE).build());
-    }
+  @Test
+  public void validateSchema() throws Exception {
+    URL url = Resources.getResource(GRAPHQL_SCHEMA_NAME);
+    String sdl = Resources.toString(url, Charsets.UTF_8);
+    TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(sdl);
+    SchemaGenerator schemaGenerator = new SchemaGenerator();
+    schemaGenerator.makeExecutableSchema(
+        typeRegistry, RuntimeWiring.newRuntimeWiring().scalar(FileScalarCoercing.FILE).build());
+  }
 }

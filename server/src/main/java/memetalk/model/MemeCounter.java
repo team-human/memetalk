@@ -7,8 +7,8 @@ import lombok.NonNull;
 @Data
 @Builder
 public class MemeCounter {
-    @NonNull private Integer likeCount;
-    @NonNull private Integer dislikeCount;
-    @NonNull private Integer shareCount;
-    @NonNull private Integer commentCount;
+  @NonNull private Integer likeCount;
+  @NonNull private Integer dislikeCount;
+  @NonNull private Integer shareCount;
+  @NonNull private Integer commentCount;
 }

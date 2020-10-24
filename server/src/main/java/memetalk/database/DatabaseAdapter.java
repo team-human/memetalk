@@ -18,46 +18,43 @@ import memetalk.model.Meme;
  */
 public class DatabaseAdapter {
 
-    private Connection connection = null;
+  private Connection connection = null;
 
-    public DatabaseAdapter(ConfigReader configReader) throws SQLException {
-        connection =
-                DriverManager.getConnection(
-                        configReader.getConfig("db-url"),
-                        configReader.getConfig("db-username"),
-                        configReader.getConfig("db-password"));
+  public DatabaseAdapter(ConfigReader configReader) throws SQLException {
+    connection =
+        DriverManager.getConnection(
+            configReader.getConfig("db-url"),
+            configReader.getConfig("db-username"),
+            configReader.getConfig("db-password"));
+  }
+
+  /** Returns all memes. We only populate the url field of a meme for now. */
+  public List<Meme> getMemes() throws SQLException {
+    ArrayList<Meme> memes = new ArrayList<Meme>();
+
+    Statement statement = connection.createStatement();
+    ResultSet result = statement.executeQuery("SELECT url, image FROM meme;");
+    while (result.next()) {
+      memes.add(
+          Meme.builder().url(result.getString("url")).image(result.getBytes("image")).build());
     }
+    result.close();
+    statement.close();
 
-    /** Returns all memes. We only populate the url field of a meme for now. */
-    public List<Meme> getMemes() throws SQLException {
-        ArrayList<Meme> memes = new ArrayList<Meme>();
+    return memes;
+  }
 
-        Statement statement = connection.createStatement();
-        ResultSet result = statement.executeQuery("SELECT url, image FROM meme;");
-        while (result.next()) {
-            memes.add(
-                    Meme.builder()
-                            .url(result.getString("url"))
-                            .image(result.getBytes("image"))
-                            .build());
-        }
-        result.close();
-        statement.close();
+  /** Add a new meme with an attached image. */
+  public void addMeme(Meme meme) throws SQLException {
+    PreparedStatement statement =
+        connection.prepareStatement("INSERT INTO meme(url, image) VALUES (?, ?);");
+    statement.setString(/*url*/ 1, meme.getUrl());
+    statement.setBytes(/*image*/ 2, meme.getImage());
+    statement.executeUpdate();
+    statement.close();
+  }
 
-        return memes;
-    }
-
-    /** Add a new meme with an attached image. */
-    public void addMeme(Meme meme) throws SQLException {
-        PreparedStatement statement =
-                connection.prepareStatement("INSERT INTO meme(url, image) VALUES (?, ?);");
-        statement.setString(/*url*/ 1, meme.getUrl());
-        statement.setBytes(/*image*/ 2, meme.getImage());
-        statement.executeUpdate();
-        statement.close();
-    }
-
-    public void shutdown() throws Exception {
-        connection.close();
-    }
+  public void shutdown() throws Exception {
+    connection.close();
+  }
 }
