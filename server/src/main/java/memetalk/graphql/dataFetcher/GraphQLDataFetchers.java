@@ -2,7 +2,6 @@ package memetalk.graphql.dataFetcher;
 
 import static memetalk.data.FakeDataGenerator.generateFakeMemes;
 import static memetalk.data.FakeDataGenerator.generateFakeTags;
-import static memetalk.data.FakeDataGenerator.generateFakeTopic;
 import static memetalk.data.FakeDataGenerator.generateFakeUsers;
 
 import com.google.common.collect.ImmutableList;
@@ -11,21 +10,15 @@ import java.util.List;
 import memetalk.model.File;
 import memetalk.model.Meme;
 import memetalk.model.MemeCounter;
-import memetalk.model.Topic;
 import memetalk.model.User;
 import org.springframework.stereotype.Component;
 
 /* Fetching the data for GraphQL query */
 @Component
 public class GraphQLDataFetchers {
-    public static List<Topic> topics = generateFakeTopic();
     public static List<User> users = generateFakeUsers();
     public static List<String> tags = generateFakeTags();
     public static List<Meme> memes = generateFakeMemes();
-
-    public DataFetcher getTopicsDataFetcher() {
-        return dataFetchingEnvironment -> topics;
-    }
 
     public DataFetcher getAuthorDataFetcher() {
         return dataFetchingEnvironment -> {

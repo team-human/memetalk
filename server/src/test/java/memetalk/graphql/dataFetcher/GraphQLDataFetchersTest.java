@@ -2,7 +2,6 @@ package memetalk.graphql.dataFetcher;
 
 import static memetalk.data.FakeDataGenerator.generateFakeMemes;
 import static memetalk.data.FakeDataGenerator.generateFakeTags;
-import static memetalk.data.FakeDataGenerator.generateFakeTopic;
 import static memetalk.data.FakeDataGenerator.generateFakeUsers;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -14,7 +13,6 @@ import java.util.List;
 import memetalk.model.File;
 import memetalk.model.Meme;
 import memetalk.model.MemeCounter;
-import memetalk.model.Topic;
 import memetalk.model.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,16 +25,6 @@ public class GraphQLDataFetchersTest {
     public void setUp() {
         dataFetchingEnvironment = mock(DataFetchingEnvironment.class);
         graphQLDataFetchers = new GraphQLDataFetchers();
-    }
-
-    @Test
-    public void testGetTopicsDataFetcher() throws Exception {
-        List<Topic> expectedTopics = generateFakeTopic();
-        List<Topic> actualTopics =
-                (List<Topic>)
-                        graphQLDataFetchers.getTopicsDataFetcher().get(dataFetchingEnvironment);
-
-        assertEquals(expectedTopics, actualTopics);
     }
 
     @Test

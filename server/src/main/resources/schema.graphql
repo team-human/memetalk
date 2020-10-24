@@ -19,16 +19,7 @@ type MemeCounter {
   commentCount: Int!
 }
 
-# DEPRECATED: Should use tag and meme seperatedly.
-type Topic {
-  tag: String!
-  memes: [Meme!]
-}
-
 type Query {
-  # DEPRECATED: Should use `popular_tags` + `memes(tag)` instead.
-  topics: [Topic!]
-  
   # Gets the current user.
   currentUser: User
   

@@ -48,7 +48,6 @@ public class GraphQLProvider {
     private RuntimeWiring buildWiring() {
         DataFetcherRegisterFactory factory = DataFetcherRegisterFactory.getRuntimeWiring();
 
-        factory.registerTypeWiring("Query", "topics", graphQLDataFetchers.getTopicsDataFetcher());
         factory.registerTypeWiring(
                 "Query", "currentUser", graphQLDataFetchers.getCurrentUserDataFetcher());
         factory.registerTypeWiring(

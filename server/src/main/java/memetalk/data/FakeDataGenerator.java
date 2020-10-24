@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import memetalk.model.Meme;
 import memetalk.model.MemeCounter;
-import memetalk.model.Topic;
 import memetalk.model.User;
 
 public class FakeDataGenerator {
@@ -54,14 +53,6 @@ public class FakeDataGenerator {
                         .url("testUrl2")
                         .createTime(Instant.parse("2020-09-20T23:02:15.010435Z").toString())
                         .counter(memeCounter)
-                        .build());
-    }
-
-    public static List<Topic> generateFakeTopic() {
-        return Arrays.asList(
-                Topic.builder()
-                        .memes(generateFakeMemes())
-                        .tag(generateFakeMemes().get(0).getTags().get(0))
                         .build());
     }
 }
