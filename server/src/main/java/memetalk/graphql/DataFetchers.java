@@ -1,4 +1,4 @@
-package memetalk.graphql.dataFetcher;
+package memetalk.graphql;
 
 import static memetalk.data.FakeDataGenerator.generateFakeMemes;
 import static memetalk.data.FakeDataGenerator.generateFakeTags;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 /* Fetching the data for GraphQL query */
 @Component
-public class GraphQLDataFetchers {
+public class DataFetchers {
     public static List<User> users = generateFakeUsers();
     public static List<String> tags = generateFakeTags();
     public static List<Meme> memes = generateFakeMemes();

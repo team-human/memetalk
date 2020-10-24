@@ -1,4 +1,4 @@
-package memetalk.graphql.dataFetcher;
+package memetalk.graphql;
 
 import static memetalk.data.FakeDataGenerator.generateFakeMemes;
 import static memetalk.data.FakeDataGenerator.generateFakeTags;
@@ -17,14 +17,14 @@ import memetalk.model.User;
 import org.junit.Before;
 import org.junit.Test;
 
-public class GraphQLDataFetchersTest {
-    private GraphQLDataFetchers graphQLDataFetchers;
+public class DataFetchersTest {
+    private DataFetchers dataFetchers;
     private DataFetchingEnvironment dataFetchingEnvironment;
 
     @Before
     public void setUp() {
         dataFetchingEnvironment = mock(DataFetchingEnvironment.class);
-        graphQLDataFetchers = new GraphQLDataFetchers();
+        dataFetchers = new DataFetchers();
     }
 
     @Test
@@ -32,8 +32,7 @@ public class GraphQLDataFetchersTest {
         Meme meme = generateFakeMemes().get(0);
 
         when(dataFetchingEnvironment.getSource()).thenReturn(meme);
-        User actualAuthor =
-                (User) graphQLDataFetchers.getAuthorDataFetcher().get(dataFetchingEnvironment);
+        User actualAuthor = (User) dataFetchers.getAuthorDataFetcher().get(dataFetchingEnvironment);
 
         User expectedAuthor = meme.getAuthor();
         assertEquals(expectedAuthor, actualAuthor);
@@ -43,7 +42,7 @@ public class GraphQLDataFetchersTest {
     public void testGetCurrentUserDataFetcher() throws Exception {
         User expectedUser = generateFakeUsers().get(0);
         User actualUser =
-                (User) graphQLDataFetchers.getCurrentUserDataFetcher().get(dataFetchingEnvironment);
+                (User) dataFetchers.getCurrentUserDataFetcher().get(dataFetchingEnvironment);
 
         assertEquals(expectedUser, actualUser);
     }
@@ -53,9 +52,7 @@ public class GraphQLDataFetchersTest {
         List<String> expectedTags = ImmutableList.of(generateFakeTags().get(0));
         List<String> actualTags =
                 (List<String>)
-                        graphQLDataFetchers
-                                .getPopularTagsDataFetcher()
-                                .get(dataFetchingEnvironment);
+                        dataFetchers.getPopularTagsDataFetcher().get(dataFetchingEnvironment);
 
         assertEquals(expectedTags, actualTags);
     }
@@ -67,8 +64,7 @@ public class GraphQLDataFetchersTest {
         when(dataFetchingEnvironment.getArgument("tag")).thenReturn(argumentTag);
 
         List<Meme> actualMemes =
-                (List<Meme>)
-                        graphQLDataFetchers.getMemesByTagDataFetcher().get(dataFetchingEnvironment);
+                (List<Meme>) dataFetchers.getMemesByTagDataFetcher().get(dataFetchingEnvironment);
 
         List<Meme> expectedMemes =
                 generateFakeMemes().stream()
@@ -85,8 +81,7 @@ public class GraphQLDataFetchersTest {
         when(dataFetchingEnvironment.getArgument("tag")).thenReturn(argumentTag);
 
         List<Meme> actualMemes =
-                (List<Meme>)
-                        graphQLDataFetchers.getMemesByTagDataFetcher().get(dataFetchingEnvironment);
+                (List<Meme>) dataFetchers.getMemesByTagDataFetcher().get(dataFetchingEnvironment);
 
         assertEquals(ImmutableList.of(), actualMemes);
     }
@@ -99,9 +94,7 @@ public class GraphQLDataFetchersTest {
 
         List<Meme> actualMemes =
                 (List<Meme>)
-                        graphQLDataFetchers
-                                .getMemesByAuthorIdDataFetcher()
-                                .get(dataFetchingEnvironment);
+                        dataFetchers.getMemesByAuthorIdDataFetcher().get(dataFetchingEnvironment);
 
         List<Meme> expectedMemes =
                 generateFakeMemes().stream()
@@ -119,9 +112,7 @@ public class GraphQLDataFetchersTest {
 
         List<Meme> actualMemes =
                 (List<Meme>)
-                        graphQLDataFetchers
-                                .getMemesByAuthorIdDataFetcher()
-                                .get(dataFetchingEnvironment);
+                        dataFetchers.getMemesByAuthorIdDataFetcher().get(dataFetchingEnvironment);
 
         assertEquals(ImmutableList.of(), actualMemes);
     }
@@ -134,8 +125,7 @@ public class GraphQLDataFetchersTest {
         when(dataFetchingEnvironment.getArgument("file")).thenReturn(fakeFile);
         when(dataFetchingEnvironment.getArgument("tags")).thenReturn(argumentTags);
 
-        Meme actualMeme =
-                (Meme) graphQLDataFetchers.createMemeDataFetcher().get(dataFetchingEnvironment);
+        Meme actualMeme = (Meme) dataFetchers.createMemeDataFetcher().get(dataFetchingEnvironment);
 
         Meme expectedMeme =
                 Meme.builder()

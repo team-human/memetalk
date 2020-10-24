@@ -11,7 +11,6 @@ import graphql.schema.idl.TypeDefinitionRegistry;
 import java.io.IOException;
 import java.net.URL;
 import javax.annotation.PostConstruct;
-import memetalk.graphql.dataFetcher.GraphQLDataFetchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -21,7 +20,7 @@ import org.springframework.stereotype.Component;
 public class GraphQLProvider {
     private static final String GRAPHQL_SCHEMA_NAME = "schema.graphql";
 
-    @Autowired GraphQLDataFetchers graphQLDataFetchers;
+    @Autowired DataFetchers dataFetchers;
 
     private GraphQL graphQL;
 
@@ -49,16 +48,14 @@ public class GraphQLProvider {
         DataFetcherRegisterFactory factory = DataFetcherRegisterFactory.getRuntimeWiring();
 
         factory.registerTypeWiring(
-                "Query", "currentUser", graphQLDataFetchers.getCurrentUserDataFetcher());
+                "Query", "currentUser", dataFetchers.getCurrentUserDataFetcher());
         factory.registerTypeWiring(
-                "Query", "popularTags", graphQLDataFetchers.getPopularTagsDataFetcher());
+                "Query", "popularTags", dataFetchers.getPopularTagsDataFetcher());
+        factory.registerTypeWiring("Query", "memesByTag", dataFetchers.getMemesByTagDataFetcher());
         factory.registerTypeWiring(
-                "Query", "memesByTag", graphQLDataFetchers.getMemesByTagDataFetcher());
-        factory.registerTypeWiring(
-                "Query", "memesByAuthorId", graphQLDataFetchers.getMemesByAuthorIdDataFetcher());
-        factory.registerTypeWiring("Meme", "author", graphQLDataFetchers.getAuthorDataFetcher());
-        factory.registerTypeWiring(
-                "Mutation", "createMeme", graphQLDataFetchers.createMemeDataFetcher());
+                "Query", "memesByAuthorId", dataFetchers.getMemesByAuthorIdDataFetcher());
+        factory.registerTypeWiring("Meme", "author", dataFetchers.getAuthorDataFetcher());
+        factory.registerTypeWiring("Mutation", "createMeme", dataFetchers.createMemeDataFetcher());
 
         factory.registerScalar(FileScalarCoercing.FILE);
 
