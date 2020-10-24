@@ -22,12 +22,11 @@ import { MemeInfo } from '../View/Info/MemeInfo'
 import { MemeImage } from '../View/Picture/MemeImage'
 
 
-const Item = ({ item, onPress, style }: {
+const Item = ({ item, onPress }: {
   item: Meme,
   onPress: (value?: any) => void,
-  style: { [index: string]: string }
 }) => (
-    <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
+    <TouchableOpacity onPress={onPress} style={[styles.item, styles.background]}>
       <View style={styles.memeHeaderInfo}>
         <User id={item?.author?.id} name={item?.author?.name} />
         <MemeInfo creationTime={item?.createTime ?? ""} />
@@ -91,7 +90,6 @@ export default function TopicScreen({ navigation }) {
       <Item
         item={item}
         onPress={() => setSelectedId(item.id)}
-        style={{ backgroundColor }}
       />
     )
   }
@@ -120,6 +118,9 @@ export default function TopicScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  background: {
+    backgroundColor: '#ffffff'
+  },
   container: {
     flex: 1,
     marginTop: StatusBar.currentHeight || 0,

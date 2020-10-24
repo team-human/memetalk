@@ -5,6 +5,10 @@ interface IMemeInfoProps {
   discussionCount?: number
   shareCount?: number
 }
+
+const pluralize = require('pluralize')
+
+
 export const MemeInfo = ({
   creationTime,
   discussionCount,
@@ -43,8 +47,8 @@ export const MemeInfo = ({
         <Text>{dateString}</Text>
       </View>
       <View style={styles.number}>
-        <Text>{discussionNum}: Discussion</Text>
-        <Text>{shareNum}: Share</Text>
+        <Text>{`Discussion: ${discussionNum} > 1 : ${pluralize("Discussion")} : "Discussion"`}</Text>
+        <Text>{`Share: ${shareNum} > 1 : ${pluralize("Share")} : "Share"`}</Text>
       </View>
     </View>
   )
