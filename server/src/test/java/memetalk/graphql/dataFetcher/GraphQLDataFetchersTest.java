@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import com.google.common.collect.ImmutableList;
 import graphql.schema.DataFetchingEnvironment;
 import java.util.List;
+import memetalk.model.File;
 import memetalk.model.Meme;
 import memetalk.model.MemeCounter;
 import memetalk.model.Topic;
@@ -140,9 +141,9 @@ public class GraphQLDataFetchersTest {
     @Test
     public void testCreateMemeDataFetcher() throws Exception {
         List<String> argumentTags = ImmutableList.of("tag1", "tag2");
-        String file = "fake file";
+        File fakeFile = File.builder().content("dummyData".getBytes()).type("fakeType").build();
 
-        when(dataFetchingEnvironment.getArgument("file")).thenReturn(file);
+        when(dataFetchingEnvironment.getArgument("file")).thenReturn(fakeFile);
         when(dataFetchingEnvironment.getArgument("tags")).thenReturn(argumentTags);
 
         Meme actualMeme =
@@ -162,6 +163,7 @@ public class GraphQLDataFetchersTest {
                         .url("randomURL")
                         .author(generateFakeUsers().get(0))
                         .createTime("2020-09-27T03:19:31.107115Z")
+                        .image(fakeFile.getContent())
                         .build();
 
         assertEquals(expectedMeme, actualMeme);

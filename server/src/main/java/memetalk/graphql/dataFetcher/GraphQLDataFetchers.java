@@ -8,6 +8,7 @@ import static memetalk.data.FakeDataGenerator.generateFakeUsers;
 import com.google.common.collect.ImmutableList;
 import graphql.schema.DataFetcher;
 import java.util.List;
+import memetalk.model.File;
 import memetalk.model.Meme;
 import memetalk.model.MemeCounter;
 import memetalk.model.Topic;
@@ -71,7 +72,7 @@ public class GraphQLDataFetchers {
 
     public DataFetcher createMemeDataFetcher() {
         return dataFetchingEnvironment -> {
-            final String rawFileContent = dataFetchingEnvironment.getArgument("file");
+            final File file = dataFetchingEnvironment.getArgument("file");
             final List<String> tags = dataFetchingEnvironment.getArgument("tags");
 
             Meme meme =
@@ -88,6 +89,7 @@ public class GraphQLDataFetchers {
                             .url("randomURL")
                             .author(users.get(0))
                             .createTime("2020-09-27T03:19:31.107115Z")
+                            .image(file.getContent())
                             .build();
 
             return meme;
