@@ -12,4 +12,6 @@ CREATE TABLE meme (
   image BYTEA
 );
 
-INSERT INTO meme (url) VALUES ('https://example.png');
+INSERT INTO meme (url, image) VALUES ('https://example1.png', pg_read_binary_file('meme1.png'));
+INSERT INTO meme (url, image) VALUES ('https://example2.png', pg_read_binary_file('meme2.png'));
+INSERT INTO meme (url, image) VALUES ('https://example3.png', pg_read_binary_file('meme3.png'));
