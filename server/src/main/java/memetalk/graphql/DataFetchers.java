@@ -20,6 +20,7 @@ public class DataFetchers {
   public static List<String> tags = generateFakeTags();
   public static List<Meme> memes = generateFakeMemes();
 
+  // TODO: Replace fake data.
   public DataFetcher getAuthorDataFetcher() {
     return dataFetchingEnvironment -> {
       final Meme meme = dataFetchingEnvironment.getSource();
@@ -27,14 +28,17 @@ public class DataFetchers {
     };
   }
 
+  // TODO: Replace fake data.
   public DataFetcher getCurrentUserDataFetcher() {
     return dataFetchingEnvironment -> users.get(0);
   }
 
+  // TODO: Replace fake data.
   public DataFetcher getPopularTagsDataFetcher() {
     return dataFetchingEnvironment -> ImmutableList.of(tags.get(0));
   }
 
+  // TODO: Replace fake data.
   public DataFetcher getMemesByTagDataFetcher() {
     return dataFetchingEnvironment -> {
       final String tag = dataFetchingEnvironment.getArgument("tag");
@@ -48,6 +52,7 @@ public class DataFetchers {
     };
   }
 
+  // TODO: Replace fake data.
   public DataFetcher getMemesByAuthorIdDataFetcher() {
     return dataFetchingEnvironment -> {
       final String userId = dataFetchingEnvironment.getArgument("userId");
@@ -62,6 +67,7 @@ public class DataFetchers {
     };
   }
 
+  // TODO: Replace fake data.
   public DataFetcher createMemeDataFetcher() {
     return dataFetchingEnvironment -> {
       final File file = dataFetchingEnvironment.getArgument("file");
