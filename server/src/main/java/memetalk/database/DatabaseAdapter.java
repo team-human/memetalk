@@ -45,9 +45,26 @@ public class DatabaseAdapter {
     return memes;
   }
 
+  /** Returns all tags ordered by popularity. */
+  public List<String> getTags() throws SQLException {
+    List<String> tags = new ArrayList<>();
+
+    Statement statement = connection.createStatement();
+    ResultSet result =
+        statement.executeQuery(
+            "SELECT tag, COUNT(*) amount FROM meme_to_tag GROUP BY tag ORDER BY amount DESC;");
+    while (result.next()) {
+      tags.add(result.getString("tag"));
+    }
+    result.close();
+    statement.close();
+
+    return tags;
+  }
+
   /** Returns all memes that has the given tag. */
   public List<Meme> getMemesByTag(String tag) throws SQLException {
-    return getMemesByIds(getMemeIds(tag));
+    return getMemesByIds(getMemeIdsByTag(tag));
   }
 
   /** Adds a new meme with an attached image. */
@@ -63,7 +80,7 @@ public class DatabaseAdapter {
     connection.close();
   }
 
-  private List<String> getMemeIds(String tag) throws SQLException {
+  private List<String> getMemeIdsByTag(String tag) throws SQLException {
     List<String> meme_ids = new ArrayList<>();
 
     PreparedStatement statement =

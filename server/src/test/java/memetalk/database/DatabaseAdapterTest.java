@@ -117,4 +117,13 @@ public class DatabaseAdapterTest {
     List<Meme> memes = databaseAdapter.getMemesByTag("humor");
     Assert.assertEquals(2, memes.size());
   }
+
+  @Test
+  public void testGetTagsSucceed() throws SQLException {
+    DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
+    List<String> tags = databaseAdapter.getTags();
+    Assert.assertEquals(2, tags.size());
+    Assert.assertEquals("humor", tags.get(0));
+    Assert.assertEquals("funny", tags.get(1));
+  }
 }
