@@ -13,7 +13,10 @@ import memetalk.model.MemeCounter;
 import memetalk.model.User;
 import org.springframework.stereotype.Component;
 
-/* Fetching the data for GraphQL query */
+/**
+ * DataFetchers is a collection of DataFetcher of each GraphQL entry point.
+ * DataFetcher parses the request content and accesses database adapeter to return
+ * the response. */
 @Component
 public class DataFetchers {
 
