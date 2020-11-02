@@ -52,7 +52,6 @@ public class Provider {
     factory.registerTypeWiring("Query", "memesByTag", dataFetchers.getMemesByTagDataFetcher());
     factory.registerTypeWiring(
         "Query", "memesByAuthorId", dataFetchers.getMemesByAuthorIdDataFetcher());
-    factory.registerTypeWiring("Meme", "author", dataFetchers.getAuthorDataFetcher());
     factory.registerTypeWiring("Mutation", "createMeme", dataFetchers.createMemeDataFetcher());
 
     factory.registerScalar(FileScalarCoercing.FILE);

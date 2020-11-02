@@ -16,17 +16,10 @@ import org.springframework.stereotype.Component;
 /* Fetching the data for GraphQL query */
 @Component
 public class DataFetchers {
+
   public static List<User> users = generateFakeUsers();
   public static List<String> tags = generateFakeTags();
   public static List<Meme> memes = generateFakeMemes();
-
-  // TODO: Replace fake data.
-  public DataFetcher getAuthorDataFetcher() {
-    return dataFetchingEnvironment -> {
-      final Meme meme = dataFetchingEnvironment.getSource();
-      return meme.getAuthor();
-    };
-  }
 
   // TODO: Replace fake data.
   public DataFetcher getCurrentUserDataFetcher() {

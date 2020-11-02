@@ -28,17 +28,6 @@ public class DataFetchersTest {
   }
 
   @Test
-  public void testGetAuthorDataFetcher() throws Exception {
-    Meme meme = generateFakeMemes().get(0);
-
-    when(dataFetchingEnvironment.getSource()).thenReturn(meme);
-    User actualAuthor = (User) dataFetchers.getAuthorDataFetcher().get(dataFetchingEnvironment);
-
-    User expectedAuthor = meme.getAuthor();
-    assertEquals(expectedAuthor, actualAuthor);
-  }
-
-  @Test
   public void testGetCurrentUserDataFetcher() throws Exception {
     User expectedUser = generateFakeUsers().get(0);
     User actualUser = (User) dataFetchers.getCurrentUserDataFetcher().get(dataFetchingEnvironment);
