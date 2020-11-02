@@ -35,10 +35,9 @@ public class DatabaseAdapter {
     List<Meme> memes = new ArrayList<>();
 
     Statement statement = connection.createStatement();
-    ResultSet result = statement.executeQuery("SELECT url, image FROM meme;");
+    ResultSet result = statement.executeQuery("SELECT image FROM meme;");
     while (result.next()) {
-      memes.add(
-          Meme.builder().url(result.getString("url")).image(result.getBytes("image")).build());
+      memes.add(Meme.builder().image(result.getBytes("image")).build());
     }
     result.close();
     statement.close();
@@ -46,16 +45,16 @@ public class DatabaseAdapter {
     return memes;
   }
 
+  /** Returns all memes that has the given tag. */
   public List<Meme> getMemesByTag(String tag) throws SQLException {
     return getMemesByIds(getMemeIds(tag));
   }
 
-  /** Add a new meme with an attached image. */
+  /** Adds a new meme with an attached image. */
   public void addMeme(Meme meme) throws SQLException {
     PreparedStatement statement =
-        connection.prepareStatement("INSERT INTO meme(url, image) VALUES (?, ?);");
-    statement.setString(/*url*/ 1, meme.getUrl());
-    statement.setBytes(/*image*/ 2, meme.getImage());
+        connection.prepareStatement("INSERT INTO meme(image) VALUES (?);");
+    statement.setBytes(/*image*/ 1, meme.getImage());
     statement.executeUpdate();
     statement.close();
   }

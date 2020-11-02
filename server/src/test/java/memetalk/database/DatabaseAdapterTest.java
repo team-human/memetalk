@@ -65,9 +65,9 @@ public class DatabaseAdapterTest {
 
   private void generateFakeMemeTable(Statement statement) throws Exception {
     statement.execute("DROP TABLE meme IF EXISTS;");
-    statement.execute("CREATE TABLE meme (id SERIAL PRIMARY KEY, url TEXT, image BYTEA);");
-    statement.execute("INSERT INTO meme (url, image) VALUES ('http://www.happy.com', x'ABCD');");
-    statement.execute("INSERT INTO meme (url, image) VALUES ('http://www.sad.com', x'EF12');");
+    statement.execute("CREATE TABLE meme (id SERIAL PRIMARY KEY, image BYTEA);");
+    statement.execute("INSERT INTO meme (image) VALUES (x'ABCD');");
+    statement.execute("INSERT INTO meme (image) VALUES (x'EF12');");
   }
 
   private void generateFakeMemeToTagTable(Statement statement) throws Exception {
@@ -83,10 +83,7 @@ public class DatabaseAdapterTest {
     DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     List<Meme> memes = databaseAdapter.getMemes();
     Assert.assertEquals(2, memes.size());
-    Assert.assertEquals("http://www.happy.com", memes.get(0).getUrl());
     Assert.assertEquals("ABCD", DatatypeConverter.printHexBinary(memes.get(0).getImage()));
-
-    Assert.assertEquals("http://www.sad.com", memes.get(1).getUrl());
     Assert.assertEquals("EF12", DatatypeConverter.printHexBinary(memes.get(1).getImage()));
   }
 
@@ -94,14 +91,12 @@ public class DatabaseAdapterTest {
   public void testAddMemeSucceed() throws SQLException {
     DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     byte[] imageBytes = "fake_image".getBytes();
-    String url = "http://www.wow.com";
-    Meme newMeme = Meme.builder().url(url).image(imageBytes).build();
+    Meme newMeme = Meme.builder().image(imageBytes).build();
 
     databaseAdapter.addMeme(newMeme);
 
     List<Meme> allMemes = databaseAdapter.getMemes();
     Assert.assertEquals(3, allMemes.size());
-    Assert.assertEquals(url, allMemes.get(2).getUrl());
     Assert.assertTrue(Arrays.equals(imageBytes, allMemes.get(2).getImage()));
   }
 
