@@ -25,3 +25,5 @@ INSERT INTO meme_to_tag (meme_id, tag) VALUES (2, 'humor');
 INSERT INTO meme_to_tag (meme_id, tag) VALUES (2, 'software');
 INSERT INTO meme_to_tag (meme_id, tag) VALUES (3, 'humor');
 INSERT INTO meme_to_tag (meme_id, tag) VALUES (3, 'life');
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO memetalk_dev;

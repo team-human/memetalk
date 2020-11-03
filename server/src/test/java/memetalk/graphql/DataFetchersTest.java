@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import com.google.common.collect.ImmutableList;
 import graphql.schema.DataFetchingEnvironment;
 import java.util.List;
+import memetalk.database.DatabaseAdapter;
 import memetalk.model.File;
 import memetalk.model.Meme;
 import memetalk.model.MemeCounter;
@@ -20,11 +21,13 @@ import org.junit.Test;
 public class DataFetchersTest {
   private DataFetchers dataFetchers;
   private DataFetchingEnvironment dataFetchingEnvironment;
+  private DatabaseAdapter databaseAdapter;
 
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
     dataFetchingEnvironment = mock(DataFetchingEnvironment.class);
-    dataFetchers = new DataFetchers();
+    databaseAdapter = mock(DatabaseAdapter.class);
+    dataFetchers = new DataFetchers(databaseAdapter);
   }
 
   @Test
@@ -38,9 +41,10 @@ public class DataFetchersTest {
   @Test
   public void testGetPopularTagsDataFetcher() throws Exception {
     List<String> expectedTags = ImmutableList.of(generateFakeTags().get(0));
+    when(databaseAdapter.getTags()).thenReturn(expectedTags);
+
     List<String> actualTags =
         (List<String>) dataFetchers.getPopularTagsDataFetcher().get(dataFetchingEnvironment);
-
     assertEquals(expectedTags, actualTags);
   }
 

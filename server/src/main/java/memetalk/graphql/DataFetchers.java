@@ -7,31 +7,35 @@ import static memetalk.data.FakeDataGenerator.generateFakeUsers;
 import com.google.common.collect.ImmutableList;
 import graphql.schema.DataFetcher;
 import java.util.List;
+import memetalk.database.DatabaseAdapter;
 import memetalk.model.File;
 import memetalk.model.Meme;
 import memetalk.model.MemeCounter;
 import memetalk.model.User;
-import org.springframework.stereotype.Component;
 
 /**
- * DataFetchers is a collection of DataFetcher of each GraphQL entry point.
- * DataFetcher parses the request content and accesses database adapeter to return
- * the response. */
-@Component
+ * DataFetchers is a collection of DataFetcher of each GraphQL entry point. DataFetcher parses the
+ * request content and accesses database adapter to return the response.
+ */
 public class DataFetchers {
+
+  public static DatabaseAdapter databaseAdapter;
 
   public static List<User> users = generateFakeUsers();
   public static List<String> tags = generateFakeTags();
   public static List<Meme> memes = generateFakeMemes();
+
+  public DataFetchers(DatabaseAdapter databaseAdapter) throws Exception {
+    this.databaseAdapter = databaseAdapter;
+  }
 
   // TODO: Replace fake data.
   public DataFetcher getCurrentUserDataFetcher() {
     return dataFetchingEnvironment -> users.get(0);
   }
 
-  // TODO: Replace fake data.
   public DataFetcher getPopularTagsDataFetcher() {
-    return dataFetchingEnvironment -> ImmutableList.of(tags.get(0));
+    return dataFetchingEnvironment -> databaseAdapter.getTags();
   }
 
   // TODO: Replace fake data.

@@ -16,7 +16,7 @@ import memetalk.model.Meme;
 /**
  * DatabaseAdapter keeps a connection with the database and offers methods to read/write the
  * database. Always call `Shutdown()` after you're done using this adapter to safely close the
- * connection with the database.
+ * connection with the database. TODO: Add lock on each public method to promise data consistency.
  */
 public class DatabaseAdapter {
 
