@@ -29,7 +29,7 @@ public class DatabaseAdapterTest {
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
-    configReader = new ConfigReader(DeploymentEnvironment.TEST);
+    configReader = ConfigReader.getInstance();
     connectToFakeDatabase();
   }
 

@@ -19,7 +19,7 @@ import memetalk.model.User;
  */
 public class DataFetchers {
 
-  public static DatabaseAdapter databaseAdapter;
+  public DatabaseAdapter databaseAdapter;
 
   public static List<User> users = generateFakeUsers();
   public static List<String> tags = generateFakeTags();
@@ -34,7 +34,7 @@ public class DataFetchers {
     return dataFetchingEnvironment -> users.get(0);
   }
 
-  public DataFetcher getPopularTagsDataFetcher() {
+  public DataFetcher<List<String>> getPopularTagsDataFetcher() {
     return dataFetchingEnvironment -> databaseAdapter.getTags();
   }
 
