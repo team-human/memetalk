@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.DatatypeConverter;
 import memetalk.ConfigReader;
-import memetalk.ConfigReader.DeploymentEnvironment;
 import memetalk.model.Meme;
 import org.junit.AfterClass;
 import org.junit.Assert;

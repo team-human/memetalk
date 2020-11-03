@@ -43,8 +43,7 @@ public class DataFetchersTest {
     List<String> expectedTags = ImmutableList.of(generateFakeTags().get(0));
     when(databaseAdapter.getTags()).thenReturn(expectedTags);
 
-    List<String> actualTags =
-        (List<String>) dataFetchers.getPopularTagsDataFetcher().get(dataFetchingEnvironment);
+    List<String> actualTags = dataFetchers.getPopularTagsDataFetcher().get(dataFetchingEnvironment);
     assertEquals(expectedTags, actualTags);
   }
 
