@@ -7,6 +7,8 @@ import static memetalk.data.FakeDataGenerator.generateFakeUsers;
 import com.google.common.collect.ImmutableList;
 import graphql.schema.DataFetcher;
 import java.util.List;
+import memetalk.ConfigReader;
+import memetalk.controller.StaticFileManager;
 import memetalk.database.DatabaseAdapter;
 import memetalk.model.File;
 import memetalk.model.Meme;
@@ -20,13 +22,16 @@ import memetalk.model.User;
 public class DataFetchers {
 
   public DatabaseAdapter databaseAdapter;
+  public StaticFileManager staticFileManager;
 
   public static List<User> users = generateFakeUsers();
   public static List<String> tags = generateFakeTags();
   public static List<Meme> memes = generateFakeMemes();
 
-  public DataFetchers(DatabaseAdapter databaseAdapter) throws Exception {
+  public DataFetchers(DatabaseAdapter databaseAdapter, StaticFileManager staticFileManager)
+      throws Exception {
     this.databaseAdapter = databaseAdapter;
+    this.staticFileManager = staticFileManager;
   }
 
   // TODO: Replace fake data.
@@ -38,17 +43,12 @@ public class DataFetchers {
     return dataFetchingEnvironment -> databaseAdapter.getTags();
   }
 
-  // TODO: Replace fake data.
-  public DataFetcher getMemesByTagDataFetcher() {
+  public DataFetcher<List<Meme>> getMemesByTagDataFetcher() {
     return dataFetchingEnvironment -> {
       final String tag = dataFetchingEnvironment.getArgument("tag");
-      if (!tags.contains(tag)) {
-        return ImmutableList.of();
-      } else {
-        return memes.stream()
-            .filter(meme -> meme.getTags().contains(tag))
-            .collect(ImmutableList.toImmutableList());
-      }
+      List<Meme> memes = databaseAdapter.getMemesByTag(tag);
+      fillUrl(memes);
+      return memes;
     };
   }
 
@@ -92,5 +92,15 @@ public class DataFetchers {
 
       return meme;
     };
+  }
+
+  private void fillUrl(List<Meme> memes) throws Exception {
+    ConfigReader configReader = ConfigReader.getInstance();
+    for (Meme meme : memes) {
+      // TODO: Store file extension in Meme and don't assume all of them are png files.
+      String url =
+          this.staticFileManager.write(configReader, meme.getId() + ".png", meme.getImage());
+      meme.setUrl(url);
+    }
   }
 }

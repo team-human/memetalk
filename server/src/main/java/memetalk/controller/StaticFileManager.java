@@ -28,5 +28,4 @@ public class StaticFileManager {
       dir.mkdir();
     }
   }
-
 }

@@ -4,12 +4,16 @@ import static memetalk.data.FakeDataGenerator.generateFakeMemes;
 import static memetalk.data.FakeDataGenerator.generateFakeTags;
 import static memetalk.data.FakeDataGenerator.generateFakeUsers;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableList;
 import graphql.schema.DataFetchingEnvironment;
+import java.util.ArrayList;
 import java.util.List;
+import memetalk.controller.StaticFileManager;
 import memetalk.database.DatabaseAdapter;
 import memetalk.model.File;
 import memetalk.model.Meme;
@@ -20,6 +24,7 @@ import org.junit.Test;
 
 public class DataFetchersTest {
   private DataFetchers dataFetchers;
+  private StaticFileManager staticFileManager;
   private DataFetchingEnvironment dataFetchingEnvironment;
   private DatabaseAdapter databaseAdapter;
 
@@ -27,7 +32,8 @@ public class DataFetchersTest {
   public void setUp() throws Exception {
     dataFetchingEnvironment = mock(DataFetchingEnvironment.class);
     databaseAdapter = mock(DatabaseAdapter.class);
-    dataFetchers = new DataFetchers(databaseAdapter);
+    staticFileManager = mock(StaticFileManager.class);
+    dataFetchers = new DataFetchers(databaseAdapter, staticFileManager);
   }
 
   @Test
@@ -48,32 +54,30 @@ public class DataFetchersTest {
   }
 
   @Test
-  public void testGetMemesByTagDataFetcherValidTag() throws Exception {
-    String argumentTag = generateFakeTags().get(0);
+  public void testGetMemesByTagDataFetcherSucceed() throws Exception {
+    List<Meme> memesFromDatabase = new ArrayList<>();
+    memesFromDatabase.add(Meme.builder().id("id1").build());
+    memesFromDatabase.add(Meme.builder().id("id2").build());
 
-    when(dataFetchingEnvironment.getArgument("tag")).thenReturn(argumentTag);
+    when(dataFetchingEnvironment.getArgument("tag")).thenReturn("fake_tag");
+    when(databaseAdapter.getMemesByTag("fake_tag")).thenReturn(memesFromDatabase);
+    when(staticFileManager.write(any(), eq("id1.png"), any())).thenReturn("url1");
+    when(staticFileManager.write(any(), eq("id2.png"), any())).thenReturn("url2");
 
-    List<Meme> actualMemes =
-        (List<Meme>) dataFetchers.getMemesByTagDataFetcher().get(dataFetchingEnvironment);
-
-    List<Meme> expectedMemes =
-        generateFakeMemes().stream()
-            .filter(meme -> meme.getTags().contains(argumentTag))
-            .collect(ImmutableList.toImmutableList());
+    List<Meme> actualMemes = dataFetchers.getMemesByTagDataFetcher().get(dataFetchingEnvironment);
+    List<Meme> expectedMemes = new ArrayList<>();
+    expectedMemes.add(Meme.builder().id("id1").url("url1").build());
+    expectedMemes.add(Meme.builder().id("id2").url("url2").build());
 
     assertEquals(expectedMemes, actualMemes);
   }
 
   @Test
-  public void testGetMemesByTagDataFetcherInvalidTag() throws Exception {
-    String argumentTag = "invalidTag";
-
-    when(dataFetchingEnvironment.getArgument("tag")).thenReturn(argumentTag);
-
-    List<Meme> actualMemes =
-        (List<Meme>) dataFetchers.getMemesByTagDataFetcher().get(dataFetchingEnvironment);
-
-    assertEquals(ImmutableList.of(), actualMemes);
+  public void testGetMemesByTagDataFetcherNothingMatched() throws Exception {
+    when(dataFetchingEnvironment.getArgument("tag")).thenReturn("fake_tag");
+    when(databaseAdapter.getMemesByTag("fake_tag")).thenReturn(new ArrayList());
+    List<Meme> actualMemes = dataFetchers.getMemesByTagDataFetcher().get(dataFetchingEnvironment);
+    assertEquals(new ArrayList(), actualMemes);
   }
 
   @Test

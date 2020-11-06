@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.URL;
 import javax.annotation.PostConstruct;
 import memetalk.ConfigReader;
+import memetalk.controller.StaticFileManager;
 import memetalk.database.DatabaseAdapter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -26,7 +27,8 @@ public class Provider {
   private GraphQL graphQL;
 
   public Provider() throws Exception {
-    dataFetchers = new DataFetchers(new DatabaseAdapter(ConfigReader.getInstance()));
+    dataFetchers =
+        new DataFetchers(new DatabaseAdapter(ConfigReader.getInstance()), new StaticFileManager());
   }
 
   @Bean
