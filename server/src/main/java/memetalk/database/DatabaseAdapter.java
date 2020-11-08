@@ -102,7 +102,7 @@ public class DatabaseAdapter {
     Statement statement = connection.createStatement();
     ResultSet result =
         statement.executeQuery(
-            "SELECT id, image FROM meme WHERE id IN (" + joinWithComma(meme_ids) + ");");
+            "SELECT id, image FROM meme WHERE id IN (" + String.join(",", meme_ids) + ");");
     while (result.next()) {
       memes.add(
           Meme.builder()
@@ -130,7 +130,7 @@ public class DatabaseAdapter {
     ResultSet result =
         statement.executeQuery(
             "SELECT meme_id, tag FROM meme_to_tag WHERE meme_id IN ("
-                + joinWithComma(meme_ids)
+                + String.join(",", meme_ids)
                 + ");");
     while (result.next()) {
       String meme_id = Integer.toString(result.getInt("meme_id"));
@@ -149,17 +149,5 @@ public class DatabaseAdapter {
       }
     }
     return memes;
-  }
-
-  private String joinWithComma(List<String> tokens) {
-    if (tokens.size() == 0) {
-      return "";
-    }
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < tokens.size() - 1; i++) {
-      sb.append(tokens.get(i) + ",");
-    }
-    sb.append(tokens.get(tokens.size() - 1));
-    return sb.toString();
   }
 }
