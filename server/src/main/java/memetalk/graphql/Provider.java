@@ -11,7 +11,9 @@ import graphql.schema.idl.TypeDefinitionRegistry;
 import java.io.IOException;
 import java.net.URL;
 import javax.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
+import memetalk.ConfigReader;
+import memetalk.controller.StaticFileManager;
+import memetalk.database.DatabaseAdapter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -20,9 +22,14 @@ import org.springframework.stereotype.Component;
 public class Provider {
   private static final String GRAPHQL_SCHEMA_NAME = "schema.graphql";
 
-  @Autowired DataFetchers dataFetchers;
+  private static DataFetchers dataFetchers;
 
   private GraphQL graphQL;
+
+  public Provider() throws Exception {
+    dataFetchers =
+        new DataFetchers(new DatabaseAdapter(ConfigReader.getInstance()), new StaticFileManager());
+  }
 
   @Bean
   public GraphQL graphQL() {
@@ -52,7 +59,6 @@ public class Provider {
     factory.registerTypeWiring("Query", "memesByTag", dataFetchers.getMemesByTagDataFetcher());
     factory.registerTypeWiring(
         "Query", "memesByAuthorId", dataFetchers.getMemesByAuthorIdDataFetcher());
-    factory.registerTypeWiring("Meme", "author", dataFetchers.getAuthorDataFetcher());
     factory.registerTypeWiring("Mutation", "createMeme", dataFetchers.createMemeDataFetcher());
 
     factory.registerScalar(FileScalarCoercing.FILE);

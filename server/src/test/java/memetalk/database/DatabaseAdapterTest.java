@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.DatatypeConverter;
 import memetalk.ConfigReader;
-import memetalk.ConfigReader.DeploymentEnvironment;
 import memetalk.model.Meme;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -29,7 +28,7 @@ public class DatabaseAdapterTest {
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
-    configReader = new ConfigReader(DeploymentEnvironment.TEST);
+    configReader = ConfigReader.getInstance();
     connectToFakeDatabase();
   }
 
@@ -57,35 +56,73 @@ public class DatabaseAdapterTest {
 
   private void generateFakeData() throws Exception {
     Statement statement = connection.createStatement();
-    statement.execute("DROP TABLE meme IF EXISTS;");
-    statement.execute("CREATE TABLE meme (url TEXT, image BYTEA);");
-    statement.execute("INSERT into meme (url, image) VALUES ('http://www.happy.com', x'ABCD');");
+    generateFakeMemeTable(statement);
+    generateFakeMemeToTagTable(statement);
     statement.close();
     connection.commit();
   }
 
+  private void generateFakeMemeTable(Statement statement) throws Exception {
+    statement.execute("DROP TABLE meme IF EXISTS;");
+    statement.execute("CREATE TABLE meme (id SERIAL PRIMARY KEY, image BYTEA);");
+    statement.execute("INSERT INTO meme (image) VALUES (x'ABCD');");
+    statement.execute("INSERT INTO meme (image) VALUES (x'EF12');");
+  }
+
+  private void generateFakeMemeToTagTable(Statement statement) throws Exception {
+    statement.execute("DROP TABLE meme_to_tag IF EXISTS;");
+    statement.execute("CREATE TABLE meme_to_tag (meme_id INTEGER, tag VARCHAR(20));");
+    statement.execute("INSERT INTO meme_to_tag (meme_id, tag) VALUES (1, 'funny');");
+    statement.execute("INSERT INTO meme_to_tag (meme_id, tag) VALUES (1, 'humor');");
+    statement.execute("INSERT INTO meme_to_tag (meme_id, tag) VALUES (2, 'humor');");
+  }
+
   @Test
-  public void testSelectSucceed() throws SQLException {
+  public void testGetMemesSucceed() throws SQLException {
     DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     List<Meme> memes = databaseAdapter.getMemes();
-    Assert.assertEquals(memes.size(), 1);
-    Assert.assertEquals(memes.get(0).getUrl(), "http://www.happy.com");
-    Assert.assertEquals(memes.get(0).getImage().length, 2);
-    Assert.assertEquals(DatatypeConverter.printHexBinary(memes.get(0).getImage()), "ABCD");
+    Assert.assertEquals(2, memes.size());
+    Assert.assertEquals("ABCD", DatatypeConverter.printHexBinary(memes.get(0).getImage()));
+    Assert.assertEquals("EF12", DatatypeConverter.printHexBinary(memes.get(1).getImage()));
   }
 
   @Test
   public void testAddMemeSucceed() throws SQLException {
     DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     byte[] imageBytes = "fake_image".getBytes();
-    String url = "http://www.sad.com";
-    Meme newMeme = Meme.builder().url(url).image(imageBytes).build();
+    Meme newMeme = Meme.builder().image(imageBytes).build();
 
     databaseAdapter.addMeme(newMeme);
 
     List<Meme> allMemes = databaseAdapter.getMemes();
-    Assert.assertEquals(allMemes.size(), 2);
-    Assert.assertEquals(allMemes.get(1).getUrl(), url);
-    Assert.assertTrue(Arrays.equals(allMemes.get(1).getImage(), imageBytes));
+    Assert.assertEquals(3, allMemes.size());
+    Assert.assertTrue(Arrays.equals(imageBytes, allMemes.get(2).getImage()));
+  }
+
+  @Test
+  public void testGetMemesByTagSingleResultSucceed() throws SQLException {
+    DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
+    List<Meme> memes = databaseAdapter.getMemesByTag("funny");
+    Assert.assertEquals(1, memes.size());
+    Assert.assertEquals("1", memes.get(0).getId());
+    Assert.assertEquals(2, memes.get(0).getTags().size());
+    Assert.assertEquals("funny", memes.get(0).getTags().get(0));
+    Assert.assertEquals("humor", memes.get(0).getTags().get(1));
+  }
+
+  @Test
+  public void testGetMemesByTagMultipleResultSucceed() throws SQLException {
+    DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
+    List<Meme> memes = databaseAdapter.getMemesByTag("humor");
+    Assert.assertEquals(2, memes.size());
+  }
+
+  @Test
+  public void testGetTagsSucceed() throws SQLException {
+    DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
+    List<String> tags = databaseAdapter.getTags();
+    Assert.assertEquals(2, tags.size());
+    Assert.assertEquals("humor", tags.get(0));
+    Assert.assertEquals("funny", tags.get(1));
   }
 }
