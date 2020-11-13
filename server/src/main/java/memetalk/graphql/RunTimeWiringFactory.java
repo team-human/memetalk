@@ -20,7 +20,7 @@ public class RunTimeWiringFactory {
     scalars = new ArrayList<>();
   }
 
-  static public RunTimeWiringFactory getInstance() {
+  public static RunTimeWiringFactory getInstance() {
     return new RunTimeWiringFactory();
   }
 
@@ -31,10 +31,10 @@ public class RunTimeWiringFactory {
    * @param fieldName the field that data fetcher should apply to
    * @param dataFetcher the new data Fetcher
    */
-  public void registerTypeWiring(@NonNull String typeName,
-                                 @NonNull String fieldName,
-                                 @NonNull DataFetcher dataFetcher) {
-    repository.computeIfAbsent(typeName, type -> new HashMap<>())
+  public void registerTypeWiring(
+      @NonNull String typeName, @NonNull String fieldName, @NonNull DataFetcher dataFetcher) {
+    repository
+        .computeIfAbsent(typeName, type -> new HashMap<>())
         .computeIfAbsent(fieldName, field -> dataFetcher);
   }
 
@@ -43,15 +43,17 @@ public class RunTimeWiringFactory {
    *
    * @param scalar the scalar to be registered
    */
-  public void registerScalar(GraphQLScalarType scalar) { scalars.add(scalar); }
+  public void registerScalar(GraphQLScalarType scalar) {
+    scalars.add(scalar);
+  }
 
   public RuntimeWiring build() {
     RuntimeWiring.Builder builder = RuntimeWiring.newRuntimeWiring();
 
-    repository.forEach((type, dataFetchers) -> {
-      builder.type(
-          TypeRuntimeWiring.newTypeWiring(type).dataFetchers(dataFetchers));
-    });
+    repository.forEach(
+        (type, dataFetchers) -> {
+          builder.type(TypeRuntimeWiring.newTypeWiring(type).dataFetchers(dataFetchers));
+        });
     scalars.forEach(builder::scalar);
 
     return builder.build();

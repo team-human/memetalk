@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
- * GraphQLController passes user's request to GraphQLExecutor to execute, then
- * generates the response.
+ * GraphQLController passes user's request to GraphQLExecutor to execute, then generates the
+ * response.
  */
 @Controller
 class GraphQLController {
@@ -26,34 +26,37 @@ class GraphQLController {
     this.objectMapper = new ObjectMapper();
   }
 
+  // This constructor is for test only.
+  protected GraphQLController(GraphQLExecutor graphQLExecutor) {
+    this.graphQLExecutor = graphQLExecutor;
+    this.objectMapper = new ObjectMapper();
+  }
+
   @PostMapping(value = "/graphql")
-  public Object
-  handleGraphQLRequest(@Nullable @RequestBody(required = false) String body) {
+  public Object handleGraphQLRequest(@Nullable @RequestBody(required = false) String body) {
     if (body == null) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body("Request body is empty.");
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request body is empty.");
     }
 
     try {
       Map<String, Object> payload = objectMapper.readValue(body, Map.class);
-      Map<String, Object> result = this.graphQLExecutor.executeRequest(
-          (String)payload.get("query"),
-          (Map<String, Object>)payload.get("variables"),
-          (String)payload.get("operationName"));
+      Map<String, Object> result =
+          this.graphQLExecutor.executeRequest(
+              (String) payload.get("query"),
+              (Map<String, Object>) payload.get("variables"),
+              (String) payload.get("operationName"));
       return buildResponse(result);
-    } catch (JsonProcessingException exception) {
+    } catch (JsonProcessingException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body("Unable to parse the request and/or executed response.");
     }
   }
 
-  private ResponseEntity<String>
-  buildResponse(Map<String, Object> executionResult)
+  private ResponseEntity<String> buildResponse(Map<String, Object> executionResult)
       throws JsonProcessingException {
     HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.setContentType(MediaType.APPLICATION_JSON);
     return new ResponseEntity<String>(
-        objectMapper.writeValueAsString(executionResult), responseHeaders,
-        HttpStatus.OK);
+        objectMapper.writeValueAsString(executionResult), responseHeaders, HttpStatus.OK);
   }
 }
