@@ -34,7 +34,7 @@ configurations.all {
 }
 
 dependencies {
-    // sprint boot
+    // spring boot
     implementation 'org.springframework.boot:spring-boot-starter-web'
     // guave: common java libraries.
     implementation 'com.google.guava:guava:29.0-jre'
