@@ -1,4 +1,4 @@
-package memetalk.graphql;
+package memetalk.controller.graphql;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

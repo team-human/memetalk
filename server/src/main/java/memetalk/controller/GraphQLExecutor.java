@@ -13,10 +13,10 @@ import graphql.schema.idl.TypeDefinitionRegistry;
 import java.net.URL;
 import java.util.Map;
 import memetalk.ConfigReader;
+import memetalk.controller.graphql.DataFetchers;
+import memetalk.controller.graphql.FileScalarCoercing;
+import memetalk.controller.graphql.RunTimeWiringFactory;
 import memetalk.database.DatabaseAdapter;
-import memetalk.graphql.DataFetchers;
-import memetalk.graphql.FileScalarCoercing;
-import memetalk.graphql.RunTimeWiringFactory;
 import org.springframework.stereotype.Component;
 
 /** GraphQLExecutor owns a GraphQL use it to execute the incoming queries. */

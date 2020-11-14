@@ -7,7 +7,7 @@ import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import java.net.URL;
-import memetalk.graphql.FileScalarCoercing;
+import memetalk.controller.graphql.FileScalarCoercing;
 import org.junit.Test;
 
 public class SchemaTest {

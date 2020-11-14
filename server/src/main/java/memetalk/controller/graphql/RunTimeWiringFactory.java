@@ -1,4 +1,4 @@
-package memetalk.graphql;
+package memetalk.controller.graphql;
 
 import graphql.schema.DataFetcher;
 import graphql.schema.GraphQLScalarType;
