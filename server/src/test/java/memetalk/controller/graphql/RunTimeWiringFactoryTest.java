@@ -32,7 +32,7 @@ public class RunTimeWiringFactoryTest {
   @Test
   public void testRegisterScalar() throws Exception {
     RunTimeWiringFactory factory = RunTimeWiringFactory.getInstance();
-    factory.registerScalar(FileScalarCoercing.FILE);
+    factory.registerScalar(FileScalar.FILE);
     final RuntimeWiring runtimeWiring = factory.build();
     assertTrue(runtimeWiring.getScalars().containsKey("File"));
   }

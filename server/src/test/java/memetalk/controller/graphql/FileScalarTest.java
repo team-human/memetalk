@@ -13,16 +13,16 @@ import javax.servlet.http.Part;
 import memetalk.model.File;
 import org.junit.Test;
 
-public class FileScalarCoercingTest {
+public class FileScalarTest {
   @Test
   public void testParseValue() throws IOException {
-    FileScalarCoercing fileScalarCoercing = new FileScalarCoercing();
+    FileScalar fileScalar = new FileScalar();
     Part part = mock(Part.class);
     InputStream inputStream = new ByteArrayInputStream("fake data".getBytes());
     when(part.getInputStream()).thenReturn(inputStream);
     when(part.getContentType()).thenReturn("fakeType");
 
-    File file = fileScalarCoercing.parseValue(part);
+    File file = fileScalar.parseValue(part);
     assertTrue(Arrays.equals("fake data".getBytes(), file.getContent()));
     assertEquals("fakeType", file.getType());
   }

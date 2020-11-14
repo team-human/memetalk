@@ -68,7 +68,7 @@ public class Executor {
     factory.registerTypeWiring("Mutation", "createMeme",
                                dataFetchers.createMemeDataFetcher());
 
-    factory.registerScalar(FileScalarCoercing.FILE);
+    factory.registerScalar(FileScalar.FILE);
 
     return factory.build();
   }
