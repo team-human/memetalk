@@ -27,22 +27,21 @@ public class Executor {
 
   public Executor() throws Exception {
     dataFetchers =
-        new DataFetchers(new DatabaseAdapter(ConfigReader.getInstance()),
-                         new StaticFileManager());
+        new DataFetchers(new DatabaseAdapter(ConfigReader.getInstance()), new StaticFileManager());
     URL url = Resources.getResource(GRAPHQL_SCHEMA_NAME);
     String sdl = Resources.toString(url, Charsets.UTF_8);
     GraphQLSchema graphQLSchema = buildSchema(sdl);
     this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
   }
 
-  public Map<String, Object> executeRequest(String query,
-                                            Map<String, Object> variables,
-                                            String operationName) {
-    ExecutionInput input = ExecutionInput.newExecutionInput()
-                               .query(query)
-                               .variables(variables)
-                               .operationName(operationName)
-                               .build();
+  public Map<String, Object> executeRequest(
+      String query, Map<String, Object> variables, String operationName) {
+    ExecutionInput input =
+        ExecutionInput.newExecutionInput()
+            .query(query)
+            .variables(variables)
+            .operationName(operationName)
+            .build();
     ExecutionResult executionResult = this.graphQL.execute(input);
     return executionResult.toSpecification();
   }
@@ -57,16 +56,12 @@ public class Executor {
   private RuntimeWiring buildWiring() {
     RunTimeWiringFactory factory = RunTimeWiringFactory.getInstance();
 
-    factory.registerTypeWiring("Query", "currentUser",
-                               dataFetchers.getCurrentUserDataFetcher());
-    factory.registerTypeWiring("Query", "popularTags",
-                               dataFetchers.getPopularTagsDataFetcher());
-    factory.registerTypeWiring("Query", "memesByTag",
-                               dataFetchers.getMemesByTagDataFetcher());
-    factory.registerTypeWiring("Query", "memesByAuthorId",
-                               dataFetchers.getMemesByAuthorIdDataFetcher());
-    factory.registerTypeWiring("Mutation", "createMeme",
-                               dataFetchers.createMemeDataFetcher());
+    factory.registerTypeWiring("Query", "currentUser", dataFetchers.getCurrentUserDataFetcher());
+    factory.registerTypeWiring("Query", "popularTags", dataFetchers.getPopularTagsDataFetcher());
+    factory.registerTypeWiring("Query", "memesByTag", dataFetchers.getMemesByTagDataFetcher());
+    factory.registerTypeWiring(
+        "Query", "memesByAuthorId", dataFetchers.getMemesByAuthorIdDataFetcher());
+    factory.registerTypeWiring("Mutation", "createMeme", dataFetchers.createMemeDataFetcher());
 
     factory.registerScalar(FileScalar.FILE);
 
