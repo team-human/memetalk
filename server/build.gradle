@@ -34,16 +34,14 @@ configurations.all {
 }
 
 dependencies {
+    // spring boot
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
+    // guave: common java libraries.
     implementation 'com.google.guava:guava:29.0-jre'
-
     // postgresql
     compile group: 'org.postgresql', name: 'postgresql', version: '42.1.4'
-
     // graphql
     implementation 'com.graphql-java:graphql-java:11.0'
-    implementation 'com.graphql-java:graphql-java-spring-boot-starter-webmvc:1.0'
 
     // test
     testImplementation 'junit:junit:4.13'

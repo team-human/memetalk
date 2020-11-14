@@ -1,47 +1,51 @@
-package memetalk.graphql;
+package memetalk.controller;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
+import graphql.ExecutionInput;
+import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
-import java.io.IOException;
 import java.net.URL;
-import javax.annotation.PostConstruct;
+import java.util.Map;
 import memetalk.ConfigReader;
-import memetalk.controller.StaticFileManager;
 import memetalk.database.DatabaseAdapter;
-import org.springframework.context.annotation.Bean;
+import memetalk.graphql.DataFetchers;
+import memetalk.graphql.FileScalarCoercing;
+import memetalk.graphql.RunTimeWiringFactory;
 import org.springframework.stereotype.Component;
 
-/* Parsing GraphQL schema and creating runtime wiring to have executable schema */
+/** GraphQLExecutor owns a GraphQL use it to execute the incoming queries. */
 @Component
-public class Provider {
+public class GraphQLExecutor {
   private static final String GRAPHQL_SCHEMA_NAME = "schema.graphql";
-
   private static DataFetchers dataFetchers;
 
   private GraphQL graphQL;
 
-  public Provider() throws Exception {
+  public GraphQLExecutor() throws Exception {
     dataFetchers =
         new DataFetchers(new DatabaseAdapter(ConfigReader.getInstance()), new StaticFileManager());
-  }
-
-  @Bean
-  public GraphQL graphQL() {
-    return graphQL;
-  }
-
-  @PostConstruct
-  public void init() throws IOException {
     URL url = Resources.getResource(GRAPHQL_SCHEMA_NAME);
     String sdl = Resources.toString(url, Charsets.UTF_8);
     GraphQLSchema graphQLSchema = buildSchema(sdl);
     this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
+  }
+
+  public Map<String, Object> executeRequest(
+      String query, Map<String, Object> variables, String operationName) {
+    ExecutionInput input =
+        ExecutionInput.newExecutionInput()
+            .query(query)
+            .variables(variables)
+            .operationName(operationName)
+            .build();
+    ExecutionResult executionResult = this.graphQL.execute(input);
+    return executionResult.toSpecification();
   }
 
   private GraphQLSchema buildSchema(String sdl) {

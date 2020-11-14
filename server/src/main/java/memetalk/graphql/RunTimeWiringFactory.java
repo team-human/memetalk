@@ -20,7 +20,7 @@ public class RunTimeWiringFactory {
     scalars = new ArrayList<>();
   }
 
-  static RunTimeWiringFactory getInstance() {
+  public static RunTimeWiringFactory getInstance() {
     return new RunTimeWiringFactory();
   }
 
