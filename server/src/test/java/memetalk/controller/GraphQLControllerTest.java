@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
+import memetalk.controller.graphql.Executor;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
@@ -16,26 +17,28 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 public class GraphQLControllerTest {
-  private GraphQLExecutor graphQLExecutor;
+  private Executor executor;
 
   @Before
   public void setUp() {
-    this.graphQLExecutor = mock(GraphQLExecutor.class);
+    this.executor = mock(Executor.class);
   }
 
   @Test
   public void testHandleGraphQLRequestWithEmptyBody() {
-    GraphQLController graphQLController = new GraphQLController(graphQLExecutor);
-    Object response = graphQLController.handleGraphQLRequest(/*body=*/ null);
+    GraphQLController graphQLController = new GraphQLController(executor);
+    Object response = graphQLController.handleGraphQLRequest(/*body=*/null);
     ResponseEntity<String> expectedResponse =
-        ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request body is empty.");
+        ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body("Request body is empty.");
     assertEquals(response, expectedResponse);
   }
 
   @Test
   public void testHandleGraphQLRequestWithInvalidQuery() {
-    GraphQLController graphQLController = new GraphQLController(graphQLExecutor);
-    Object response = graphQLController.handleGraphQLRequest(/*body=*/ "bad content");
+    GraphQLController graphQLController = new GraphQLController(executor);
+    Object response =
+        graphQLController.handleGraphQLRequest(/*body=*/"bad content");
     ResponseEntity<String> expectedResponse =
         ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body("Unable to parse the request and/or executed response.");
@@ -44,19 +47,21 @@ public class GraphQLControllerTest {
 
   @Test
   public void testHandleGraphQLRequestWithValidQuery() {
-    GraphQLController graphQLController = new GraphQLController(graphQLExecutor);
+    GraphQLController graphQLController = new GraphQLController(executor);
     String query = "query { popularTags }";
     String body = "{\"query\":\"" + query + "\"}";
 
     Map<String, Object> executionResult = new HashMap<>();
     executionResult.put("bar", "foo");
-    when(graphQLExecutor.executeRequest(eq(query), isNull(), isNull())).thenReturn(executionResult);
+    when(executor.executeRequest(eq(query), isNull(), isNull()))
+        .thenReturn(executionResult);
 
     Object response = graphQLController.handleGraphQLRequest(body);
 
     HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.setContentType(MediaType.APPLICATION_JSON);
-    assertEquals(
-        response, new ResponseEntity<String>("{\"bar\":\"foo\"}", responseHeaders, HttpStatus.OK));
+    assertEquals(response,
+                 new ResponseEntity<String>("{\"bar\":\"foo\"}",
+                                            responseHeaders, HttpStatus.OK));
   }
 }

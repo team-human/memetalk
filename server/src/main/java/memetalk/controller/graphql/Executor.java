@@ -1,4 +1,4 @@
-package memetalk.controller;
+package memetalk.controller.graphql;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -13,37 +13,36 @@ import graphql.schema.idl.TypeDefinitionRegistry;
 import java.net.URL;
 import java.util.Map;
 import memetalk.ConfigReader;
-import memetalk.controller.graphql.DataFetchers;
-import memetalk.controller.graphql.FileScalarCoercing;
-import memetalk.controller.graphql.RunTimeWiringFactory;
+import memetalk.controller.StaticFileManager;
 import memetalk.database.DatabaseAdapter;
 import org.springframework.stereotype.Component;
 
-/** GraphQLExecutor owns a GraphQL use it to execute the incoming queries. */
+/** Executor owns a GraphQL use it to execute the incoming queries. */
 @Component
-public class GraphQLExecutor {
+public class Executor {
   private static final String GRAPHQL_SCHEMA_NAME = "schema.graphql";
   private static DataFetchers dataFetchers;
 
   private GraphQL graphQL;
 
-  public GraphQLExecutor() throws Exception {
+  public Executor() throws Exception {
     dataFetchers =
-        new DataFetchers(new DatabaseAdapter(ConfigReader.getInstance()), new StaticFileManager());
+        new DataFetchers(new DatabaseAdapter(ConfigReader.getInstance()),
+                         new StaticFileManager());
     URL url = Resources.getResource(GRAPHQL_SCHEMA_NAME);
     String sdl = Resources.toString(url, Charsets.UTF_8);
     GraphQLSchema graphQLSchema = buildSchema(sdl);
     this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
   }
 
-  public Map<String, Object> executeRequest(
-      String query, Map<String, Object> variables, String operationName) {
-    ExecutionInput input =
-        ExecutionInput.newExecutionInput()
-            .query(query)
-            .variables(variables)
-            .operationName(operationName)
-            .build();
+  public Map<String, Object> executeRequest(String query,
+                                            Map<String, Object> variables,
+                                            String operationName) {
+    ExecutionInput input = ExecutionInput.newExecutionInput()
+                               .query(query)
+                               .variables(variables)
+                               .operationName(operationName)
+                               .build();
     ExecutionResult executionResult = this.graphQL.execute(input);
     return executionResult.toSpecification();
   }
@@ -58,12 +57,16 @@ public class GraphQLExecutor {
   private RuntimeWiring buildWiring() {
     RunTimeWiringFactory factory = RunTimeWiringFactory.getInstance();
 
-    factory.registerTypeWiring("Query", "currentUser", dataFetchers.getCurrentUserDataFetcher());
-    factory.registerTypeWiring("Query", "popularTags", dataFetchers.getPopularTagsDataFetcher());
-    factory.registerTypeWiring("Query", "memesByTag", dataFetchers.getMemesByTagDataFetcher());
-    factory.registerTypeWiring(
-        "Query", "memesByAuthorId", dataFetchers.getMemesByAuthorIdDataFetcher());
-    factory.registerTypeWiring("Mutation", "createMeme", dataFetchers.createMemeDataFetcher());
+    factory.registerTypeWiring("Query", "currentUser",
+                               dataFetchers.getCurrentUserDataFetcher());
+    factory.registerTypeWiring("Query", "popularTags",
+                               dataFetchers.getPopularTagsDataFetcher());
+    factory.registerTypeWiring("Query", "memesByTag",
+                               dataFetchers.getMemesByTagDataFetcher());
+    factory.registerTypeWiring("Query", "memesByAuthorId",
+                               dataFetchers.getMemesByAuthorIdDataFetcher());
+    factory.registerTypeWiring("Mutation", "createMeme",
+                               dataFetchers.createMemeDataFetcher());
 
     factory.registerScalar(FileScalarCoercing.FILE);
 

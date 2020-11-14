@@ -3,6 +3,7 @@ package memetalk.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
+import memetalk.controller.graphql.Executor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,22 +14,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
- * GraphQLController passes user's request to GraphQLExecutor to execute, then generates the
+ * GraphQLController passes user's request to Executor to execute, then generates the
  * response.
  */
 @Controller
 class GraphQLController {
-  private GraphQLExecutor graphQLExecutor;
+  private Executor executor;
   private ObjectMapper objectMapper;
 
   public GraphQLController() throws Exception {
-    this.graphQLExecutor = new GraphQLExecutor();
+    this.executor = new Executor();
     this.objectMapper = new ObjectMapper();
   }
 
   // This constructor is for test only.
-  protected GraphQLController(GraphQLExecutor graphQLExecutor) {
-    this.graphQLExecutor = graphQLExecutor;
+  protected GraphQLController(Executor executor) {
+    this.executor = executor;
     this.objectMapper = new ObjectMapper();
   }
 
@@ -41,7 +42,7 @@ class GraphQLController {
     try {
       Map<String, Object> payload = objectMapper.readValue(body, Map.class);
       Map<String, Object> result =
-          this.graphQLExecutor.executeRequest(
+          this.executor.executeRequest(
               (String) payload.get("query"),
               (Map<String, Object>) payload.get("variables"),
               (String) payload.get("operationName"));
