@@ -1,4 +1,4 @@
-package memetalk.graphql;
+package memetalk.controller.graphql;
 
 import static memetalk.data.FakeDataGenerator.generateFakeMemes;
 import static memetalk.data.FakeDataGenerator.generateFakeTags;

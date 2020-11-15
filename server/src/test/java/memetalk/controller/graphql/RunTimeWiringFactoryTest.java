@@ -1,4 +1,4 @@
-package memetalk.graphql;
+package memetalk.controller.graphql;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -32,7 +32,7 @@ public class RunTimeWiringFactoryTest {
   @Test
   public void testRegisterScalar() throws Exception {
     RunTimeWiringFactory factory = RunTimeWiringFactory.getInstance();
-    factory.registerScalar(FileScalarCoercing.FILE);
+    factory.registerScalar(FileScalar.FILE);
     final RuntimeWiring runtimeWiring = factory.build();
     assertTrue(runtimeWiring.getScalars().containsKey("File"));
   }

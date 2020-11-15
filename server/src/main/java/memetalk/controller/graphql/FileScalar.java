@@ -1,4 +1,4 @@
-package memetalk.graphql;
+package memetalk.controller.graphql;
 
 import graphql.schema.Coercing;
 import graphql.schema.CoercingParseLiteralException;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import javax.servlet.http.Part;
 import memetalk.model.File;
 
-public class FileScalarCoercing implements Coercing<File, Void> {
+public class FileScalar implements Coercing<File, Void> {
   @Override
   public File parseValue(Object input) {
     try {
@@ -37,6 +37,6 @@ public class FileScalarCoercing implements Coercing<File, Void> {
       GraphQLScalarType.newScalar()
           .name("File")
           .description("Generic binary filetype.")
-          .coercing(new FileScalarCoercing())
+          .coercing(new FileScalar())
           .build();
 }

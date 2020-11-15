@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
+import memetalk.controller.graphql.GraphQLExecutor;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
