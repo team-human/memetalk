@@ -15,9 +15,9 @@ import memetalk.model.User;
 public class FakeDataGenerator {
   public static List<User> generateFakeUsers() {
     return Arrays.asList(
-        User.builder().id("userId1").name("John").build(),
-        User.builder().id("userId2").name("Alice").build(),
-        User.builder().id("userId3").name("Bob").build());
+        User.builder().id("userId1").name("John").email("John@gmail.com").password("123").build(),
+        User.builder().id("userId2").name("Alice").email("Alice@gmail.com").password("123").build(),
+        User.builder().id("userId3").name("Bob").email("Bob@gmail.com").password("123").build());
   }
 
   public static List<String> generateFakeTags() {
