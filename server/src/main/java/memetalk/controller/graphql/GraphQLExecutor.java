@@ -17,15 +17,15 @@ import memetalk.controller.StaticFileManager;
 import memetalk.database.DatabaseAdapter;
 import org.springframework.stereotype.Component;
 
-/** Executor owns a GraphQL use it to execute the incoming queries. */
+/** GraphQLExecutor owns a GraphQL use it to execute the incoming queries. */
 @Component
-public class Executor {
+public class GraphQLExecutor {
   private static final String GRAPHQL_SCHEMA_NAME = "schema.graphql";
   private static DataFetchers dataFetchers;
 
   private GraphQL graphQL;
 
-  public Executor() throws Exception {
+  public GraphQLExecutor() throws Exception {
     dataFetchers =
         new DataFetchers(new DatabaseAdapter(ConfigReader.getInstance()), new StaticFileManager());
     URL url = Resources.getResource(GRAPHQL_SCHEMA_NAME);
