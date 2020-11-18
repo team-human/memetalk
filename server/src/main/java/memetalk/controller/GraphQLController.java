@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * GraphQLController passes user's request to GraphQLExecutor to execute, then
- * generates the response.
+ * GraphQLController passes user's request to GraphQLExecutor to execute, then generates the
+ * response.
  */
 @Controller
 class GraphQLController {
@@ -47,7 +47,7 @@ class GraphQLController {
         return handleGraphQLRequestWithFile(operations, file);
       }
       if (body != null) {
-        return handleGraphQLRequestWithoutFile(/*operations=*/body);
+        return handleGraphQLRequestWithoutFile(/*operations=*/ body);
       }
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body("Unable to find valid request content.");
@@ -58,42 +58,39 @@ class GraphQLController {
     }
   }
 
-  private ResponseEntity<String> handleGraphQLRequestWithFile(String operations,
-                                                              Part file)
+  private ResponseEntity<String> handleGraphQLRequestWithFile(String operations, Part file)
       throws JsonProcessingException {
     Map<String, Object> payload = objectMapper.readValue(operations, Map.class);
     Map<String, Object> variables =
         (payload.get("variables") != null)
-            ? (Map<String, Object>)payload.get("variables")
+            ? (Map<String, Object>) payload.get("variables")
             : new HashMap<String, Object>();
 
     // We loads file variable manually as the tools don't parse it by default.
     variables.put("file", file);
 
-    Map<String, Object> result = this.graphQLExecutor.executeRequest(
-        (String)payload.get("query"), variables,
-        (String)payload.get("operationName"));
+    Map<String, Object> result =
+        this.graphQLExecutor.executeRequest(
+            (String) payload.get("query"), variables, (String) payload.get("operationName"));
     return buildResponse(result);
   }
 
-  private ResponseEntity<String>
-  handleGraphQLRequestWithoutFile(String operations)
+  private ResponseEntity<String> handleGraphQLRequestWithoutFile(String operations)
       throws JsonProcessingException {
     Map<String, Object> payload = objectMapper.readValue(operations, Map.class);
-    Map<String, Object> result = this.graphQLExecutor.executeRequest(
-        (String)payload.get("query"),
-        (Map<String, Object>)payload.get("variables"),
-        (String)payload.get("operationName"));
+    Map<String, Object> result =
+        this.graphQLExecutor.executeRequest(
+            (String) payload.get("query"),
+            (Map<String, Object>) payload.get("variables"),
+            (String) payload.get("operationName"));
     return buildResponse(result);
   }
 
-  private ResponseEntity<String>
-  buildResponse(Map<String, Object> executionResult)
+  private ResponseEntity<String> buildResponse(Map<String, Object> executionResult)
       throws JsonProcessingException {
     HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.setContentType(MediaType.APPLICATION_JSON);
     return new ResponseEntity<String>(
-        objectMapper.writeValueAsString(executionResult), responseHeaders,
-        HttpStatus.OK);
+        objectMapper.writeValueAsString(executionResult), responseHeaders, HttpStatus.OK);
   }
 }

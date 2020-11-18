@@ -12,13 +12,11 @@ import memetalk.controller.StaticFileManager;
 import memetalk.database.DatabaseAdapter;
 import memetalk.model.File;
 import memetalk.model.Meme;
-import memetalk.model.MemeCounter;
 import memetalk.model.User;
 
 /**
- * DataFetchers is a collection of DataFetcher of each GraphQL entry point.
- * DataFetcher parses the request content and accesses database adapter to
- * return the response.
+ * DataFetchers is a collection of DataFetcher of each GraphQL entry point. DataFetcher parses the
+ * request content and accesses database adapter to return the response.
  */
 public class DataFetchers {
 
@@ -29,8 +27,8 @@ public class DataFetchers {
   public static List<String> tags = generateFakeTags();
   public static List<Meme> memes = generateFakeMemes();
 
-  public DataFetchers(DatabaseAdapter databaseAdapter,
-                      StaticFileManager staticFileManager) throws Exception {
+  public DataFetchers(DatabaseAdapter databaseAdapter, StaticFileManager staticFileManager)
+      throws Exception {
     this.databaseAdapter = databaseAdapter;
     this.staticFileManager = staticFileManager;
   }
@@ -57,8 +55,7 @@ public class DataFetchers {
   public DataFetcher getMemesByAuthorIdDataFetcher() {
     return dataFetchingEnvironment -> {
       final String userId = dataFetchingEnvironment.getArgument("userId");
-      final boolean validUserId =
-          users.stream().anyMatch(user -> user.getId().equals(userId));
+      final boolean validUserId = users.stream().anyMatch(user -> user.getId().equals(userId));
       if (!validUserId) {
         return ImmutableList.of();
       } else {
@@ -86,8 +83,8 @@ public class DataFetchers {
     for (Meme meme : memes) {
       // TODO: Store file extension in Meme and don't assume all of them are png
       // files.
-      String url = this.staticFileManager.write(
-          configReader, meme.getId() + ".png", meme.getImage());
+      String url =
+          this.staticFileManager.write(configReader, meme.getId() + ".png", meme.getImage());
       meme.setUrl(url);
     }
   }

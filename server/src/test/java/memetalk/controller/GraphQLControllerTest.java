@@ -29,22 +29,21 @@ public class GraphQLControllerTest {
 
   @Test
   public void testHandleGraphQLRequestWithEmptyBody() {
-    GraphQLController graphQLController =
-        new GraphQLController(graphQLExecutor);
-    Object response = graphQLController.handleGraphQLRequest(
-        /*body=*/null, /*operations=*/null, /*file=*/null);
+    GraphQLController graphQLController = new GraphQLController(graphQLExecutor);
+    Object response =
+        graphQLController.handleGraphQLRequest(
+            /*body=*/ null, /*operations=*/ null, /*file=*/ null);
     ResponseEntity<String> expectedResponse =
-        ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body("Unable to find valid request content.");
+        ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to find valid request content.");
     assertEquals(response, expectedResponse);
   }
 
   @Test
   public void testHandleGraphQLRequestWithInvalidQuery() {
-    GraphQLController graphQLController =
-        new GraphQLController(graphQLExecutor);
-    Object response = graphQLController.handleGraphQLRequest(
-        /*body=*/"bad content", /*operations=*/null, /*file=*/null);
+    GraphQLController graphQLController = new GraphQLController(graphQLExecutor);
+    Object response =
+        graphQLController.handleGraphQLRequest(
+            /*body=*/ "bad content", /*operations=*/ null, /*file=*/ null);
     ResponseEntity<String> expectedResponse =
         ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body("Unable to parse the request and/or executed response.");
@@ -53,24 +52,21 @@ public class GraphQLControllerTest {
 
   @Test
   public void testHandleGraphQLRequestWithValidQuery() {
-    GraphQLController graphQLController =
-        new GraphQLController(graphQLExecutor);
+    GraphQLController graphQLController = new GraphQLController(graphQLExecutor);
     String query = "query { popularTags }";
     String body = "{\"query\":\"" + query + "\"}";
 
     Map<String, Object> executionResult = new HashMap<>();
     executionResult.put("bar", "foo");
-    when(graphQLExecutor.executeRequest(eq(query), isNull(), isNull()))
-        .thenReturn(executionResult);
+    when(graphQLExecutor.executeRequest(eq(query), isNull(), isNull())).thenReturn(executionResult);
 
-    Object response = graphQLController.handleGraphQLRequest(
-        body, /*operations=*/null, /*file=*/null);
+    Object response =
+        graphQLController.handleGraphQLRequest(body, /*operations=*/ null, /*file=*/ null);
 
     HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.setContentType(MediaType.APPLICATION_JSON);
-    assertEquals(response,
-                 new ResponseEntity<String>("{\"bar\":\"foo\"}",
-                                            responseHeaders, HttpStatus.OK));
+    assertEquals(
+        response, new ResponseEntity<String>("{\"bar\":\"foo\"}", responseHeaders, HttpStatus.OK));
   }
 
   @Test
@@ -79,14 +75,14 @@ public class GraphQLControllerTest {
     // request param separately. That is, the variables we pass into
     // GraphQLExecutor is composed by the variables in the `operations` string
     // and the `file` object from the request param.
-    GraphQLController graphQLController =
-        new GraphQLController(graphQLExecutor);
+    GraphQLController graphQLController = new GraphQLController(graphQLExecutor);
 
     String query =
         "mutation ($file: File!, $tags: [String!]) { createMeme(file: $file, tags: $tags) { tags } }";
     String operations =
-        "{ \"query\": \"" + query +
-        "\", \"variables\": { \"file\": null, \"tags\": [\"software\", \"humor\"] } }";
+        "{ \"query\": \""
+            + query
+            + "\", \"variables\": { \"file\": null, \"tags\": [\"software\", \"humor\"] } }";
 
     InputStream inputStream = mock(InputStream.class);
     when(inputStream.readAllBytes()).thenReturn(new byte[0]);
@@ -101,17 +97,16 @@ public class GraphQLControllerTest {
 
     Map<String, Object> executionResult = new HashMap<>();
     executionResult.put("bar", "foo");
-    when(graphQLExecutor.executeRequest(eq(query), eq(expectedVariables),
-                                        isNull()))
+    when(graphQLExecutor.executeRequest(eq(query), eq(expectedVariables), isNull()))
         .thenReturn(executionResult);
 
-    Object response = graphQLController.handleGraphQLRequest(
-        /*body=*/null, /*operations=*/operations, /*file=*/file);
+    Object response =
+        graphQLController.handleGraphQLRequest(
+            /*body=*/ null, /*operations=*/ operations, /*file=*/ file);
 
     HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.setContentType(MediaType.APPLICATION_JSON);
-    assertEquals(response,
-                 new ResponseEntity<String>("{\"bar\":\"foo\"}",
-                                            responseHeaders, HttpStatus.OK));
+    assertEquals(
+        response, new ResponseEntity<String>("{\"bar\":\"foo\"}", responseHeaders, HttpStatus.OK));
   }
 }
