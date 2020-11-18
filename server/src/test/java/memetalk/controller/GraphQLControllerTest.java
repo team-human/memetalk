@@ -30,9 +30,7 @@ public class GraphQLControllerTest {
   @Test
   public void testHandleGraphQLRequestWithEmptyBody() {
     GraphQLController graphQLController = new GraphQLController(graphQLExecutor);
-    Object response =
-        graphQLController.handleGraphQLRequest(
-            /*body=*/ null, /*operations=*/ null, /*file=*/ null);
+    Object response = graphQLController.handleGraphQLRequest(null, null, null);
     ResponseEntity<String> expectedResponse =
         ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to find valid request content.");
     assertEquals(response, expectedResponse);
@@ -41,9 +39,7 @@ public class GraphQLControllerTest {
   @Test
   public void testHandleGraphQLRequestWithInvalidQuery() {
     GraphQLController graphQLController = new GraphQLController(graphQLExecutor);
-    Object response =
-        graphQLController.handleGraphQLRequest(
-            /*body=*/ "bad content", /*operations=*/ null, /*file=*/ null);
+    Object response = graphQLController.handleGraphQLRequest("bad content", null, null);
     ResponseEntity<String> expectedResponse =
         ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body("Unable to parse the request and/or executed response.");
@@ -60,8 +56,7 @@ public class GraphQLControllerTest {
     executionResult.put("bar", "foo");
     when(graphQLExecutor.executeRequest(eq(query), isNull(), isNull())).thenReturn(executionResult);
 
-    Object response =
-        graphQLController.handleGraphQLRequest(body, /*operations=*/ null, /*file=*/ null);
+    Object response = graphQLController.handleGraphQLRequest(body, null, null);
 
     HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -100,9 +95,7 @@ public class GraphQLControllerTest {
     when(graphQLExecutor.executeRequest(eq(query), eq(expectedVariables), isNull()))
         .thenReturn(executionResult);
 
-    Object response =
-        graphQLController.handleGraphQLRequest(
-            /*body=*/ null, /*operations=*/ operations, /*file=*/ file);
+    Object response = graphQLController.handleGraphQLRequest(null, operations, file);
 
     HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.setContentType(MediaType.APPLICATION_JSON);
