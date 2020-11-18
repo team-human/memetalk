@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.Part;
+import lombok.extern.slf4j.Slf4j;
 import memetalk.controller.graphql.GraphQLExecutor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * GraphQLController passes user's request to GraphQLExecutor to execute, then generates the
  * response.
  */
+@Slf4j
 @Controller
 class GraphQLController {
   private GraphQLExecutor graphQLExecutor;
@@ -52,7 +54,7 @@ class GraphQLController {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body("Unable to find valid request content.");
     } catch (JsonProcessingException e) {
-      System.err.println(e.getMessage());
+      log.error(e.getMessage());
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body("Unable to parse the request and/or executed response.");
     }
