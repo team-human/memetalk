@@ -66,7 +66,7 @@ class GraphQLController {
     Map<String, Object> variables =
         (payload.get("variables") != null)
             ? (Map<String, Object>) payload.get("variables")
-            : new HashMap<String, Object>();
+            : new HashMap<>();
 
     // We loads file variable manually as the tools don't parse it by default.
     variables.put("file", file);
