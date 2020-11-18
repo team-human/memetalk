@@ -16,8 +16,9 @@ import memetalk.model.MemeCounter;
 import memetalk.model.User;
 
 /**
- * DataFetchers is a collection of DataFetcher of each GraphQL entry point. DataFetcher parses the
- * request content and accesses database adapter to return the response.
+ * DataFetchers is a collection of DataFetcher of each GraphQL entry point.
+ * DataFetcher parses the request content and accesses database adapter to
+ * return the response.
  */
 public class DataFetchers {
 
@@ -28,8 +29,8 @@ public class DataFetchers {
   public static List<String> tags = generateFakeTags();
   public static List<Meme> memes = generateFakeMemes();
 
-  public DataFetchers(DatabaseAdapter databaseAdapter, StaticFileManager staticFileManager)
-      throws Exception {
+  public DataFetchers(DatabaseAdapter databaseAdapter,
+                      StaticFileManager staticFileManager) throws Exception {
     this.databaseAdapter = databaseAdapter;
     this.staticFileManager = staticFileManager;
   }
@@ -56,7 +57,8 @@ public class DataFetchers {
   public DataFetcher getMemesByAuthorIdDataFetcher() {
     return dataFetchingEnvironment -> {
       final String userId = dataFetchingEnvironment.getArgument("userId");
-      final boolean validUserId = users.stream().anyMatch(user -> user.getId().equals(userId));
+      final boolean validUserId =
+          users.stream().anyMatch(user -> user.getId().equals(userId));
       if (!validUserId) {
         return ImmutableList.of();
       } else {
@@ -67,29 +69,14 @@ public class DataFetchers {
     };
   }
 
-  // TODO: Replace fake data.
   public DataFetcher createMemeDataFetcher() {
     return dataFetchingEnvironment -> {
       final File file = dataFetchingEnvironment.getArgument("file");
       final List<String> tags = dataFetchingEnvironment.getArgument("tags");
-
-      Meme meme =
-          Meme.builder()
-              .id("createMemeId")
-              .counter(
-                  MemeCounter.builder()
-                      .commentCount(123)
-                      .dislikeCount(0)
-                      .shareCount(321)
-                      .likeCount(1)
-                      .build())
-              .tags(tags)
-              .url("randomURL")
-              .author(users.get(0))
-              .createTime("2020-09-27T03:19:31.107115Z")
-              .image(file.getContent())
-              .build();
-
+      Meme meme = Meme.builder().tags(tags).image(file.getContent()).build();
+      databaseAdapter.addMeme(meme);
+      // TODO: Consider if we need to return a valid meme here or some response
+      // status is enough.
       return meme;
     };
   }
@@ -97,9 +84,10 @@ public class DataFetchers {
   private void fillUrl(List<Meme> memes) throws Exception {
     ConfigReader configReader = ConfigReader.getInstance();
     for (Meme meme : memes) {
-      // TODO: Store file extension in Meme and don't assume all of them are png files.
-      String url =
-          this.staticFileManager.write(configReader, meme.getId() + ".png", meme.getImage());
+      // TODO: Store file extension in Meme and don't assume all of them are png
+      // files.
+      String url = this.staticFileManager.write(
+          configReader, meme.getId() + ".png", meme.getImage());
       meme.setUrl(url);
     }
   }
