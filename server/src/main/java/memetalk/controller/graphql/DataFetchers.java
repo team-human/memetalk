@@ -12,7 +12,6 @@ import memetalk.controller.StaticFileManager;
 import memetalk.database.DatabaseAdapter;
 import memetalk.model.File;
 import memetalk.model.Meme;
-import memetalk.model.MemeCounter;
 import memetalk.model.User;
 
 /**
@@ -67,29 +66,14 @@ public class DataFetchers {
     };
   }
 
-  // TODO: Replace fake data.
   public DataFetcher createMemeDataFetcher() {
     return dataFetchingEnvironment -> {
       final File file = dataFetchingEnvironment.getArgument("file");
       final List<String> tags = dataFetchingEnvironment.getArgument("tags");
-
-      Meme meme =
-          Meme.builder()
-              .id("createMemeId")
-              .counter(
-                  MemeCounter.builder()
-                      .commentCount(123)
-                      .dislikeCount(0)
-                      .shareCount(321)
-                      .likeCount(1)
-                      .build())
-              .tags(tags)
-              .url("randomURL")
-              .author(users.get(0))
-              .createTime("2020-09-27T03:19:31.107115Z")
-              .image(file.getContent())
-              .build();
-
+      Meme meme = Meme.builder().tags(tags).image(file.getContent()).build();
+      databaseAdapter.addMeme(meme);
+      // TODO: Consider if we need to return a valid meme here or some response
+      // status is enough.
       return meme;
     };
   }
@@ -97,7 +81,8 @@ public class DataFetchers {
   private void fillUrl(List<Meme> memes) throws Exception {
     ConfigReader configReader = ConfigReader.getInstance();
     for (Meme meme : memes) {
-      // TODO: Store file extension in Meme and don't assume all of them are png files.
+      // TODO: Store file extension in Meme and don't assume all of them are png
+      // files.
       String url =
           this.staticFileManager.write(configReader, meme.getId() + ".png", meme.getImage());
       meme.setUrl(url);
