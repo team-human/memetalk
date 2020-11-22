@@ -17,18 +17,16 @@ import memetalk.ConfigReader;
 import memetalk.model.Meme;
 
 /**
- * DatabaseAdapter keeps a connection with the database and offers methods to
- * read/write the database. Always call `Shutdown()` after you're done using
- * this adapter to safely close the connection with the database. TODO: Add lock
- * on each public method to promise data consistency.
+ * DatabaseAdapter keeps a connection with the database and offers methods to read/write the
+ * database. Always call `Shutdown()` after you're done using this adapter to safely close the
+ * connection with the database. TODO: Add lock on each public method to promise data consistency.
  */
 @Slf4j
 public class DatabaseAdapter {
 
   private Connection connection = null;
 
-  public DatabaseAdapter(ConfigReader configReader)
-      throws URISyntaxException, SQLException {
+  public DatabaseAdapter(ConfigReader configReader) throws URISyntaxException, SQLException {
     String database_url = System.getenv("DATABASE_URL");
     if (database_url != null && database_url != "") {
       log.info("Connecting to database from env url.");
@@ -45,17 +43,17 @@ public class DatabaseAdapter {
 
     String username = dbUri.getUserInfo().split(":")[0];
     String password = dbUri.getUserInfo().split(":")[1];
-    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' +
-                   dbUri.getPort() + dbUri.getPath();
+    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
 
     return DriverManager.getConnection(dbUrl, username, password);
   }
 
-  private static Connection
-  getConnectionFromConfigReader(ConfigReader configReader) throws SQLException {
-    return DriverManager.getConnection(configReader.getConfig("db-url"),
-                                       configReader.getConfig("db-username"),
-                                       configReader.getConfig("db-password"));
+  private static Connection getConnectionFromConfigReader(ConfigReader configReader)
+      throws SQLException {
+    return DriverManager.getConnection(
+        configReader.getConfig("db-url"),
+        configReader.getConfig("db-username"),
+        configReader.getConfig("db-password"));
   }
 
   /** Returns all memes. */
@@ -78,8 +76,9 @@ public class DatabaseAdapter {
     List<String> tags = new ArrayList<>();
 
     Statement statement = connection.createStatement();
-    ResultSet result = statement.executeQuery(
-        "SELECT tag, COUNT(*) amount FROM meme_to_tag GROUP BY tag ORDER BY amount DESC;");
+    ResultSet result =
+        statement.executeQuery(
+            "SELECT tag, COUNT(*) amount FROM meme_to_tag GROUP BY tag ORDER BY amount DESC;");
     while (result.next()) {
       tags.add(result.getString("tag"));
     }
@@ -103,13 +102,15 @@ public class DatabaseAdapter {
     statement.close();
   }
 
-  public void shutdown() throws Exception { connection.close(); }
+  public void shutdown() throws Exception {
+    connection.close();
+  }
 
   private List<String> getMemeIdsByTag(String tag) throws SQLException {
     List<String> meme_ids = new ArrayList<>();
 
-    PreparedStatement statement = connection.prepareStatement(
-        "SELECT meme_id FROM meme_to_tag WHERE tag = ?;");
+    PreparedStatement statement =
+        connection.prepareStatement("SELECT meme_id FROM meme_to_tag WHERE tag = ?;");
     statement.setString(1, tag);
     ResultSet result = statement.executeQuery();
     while (result.next()) {
@@ -126,13 +127,14 @@ public class DatabaseAdapter {
 
     Statement statement = connection.createStatement();
     ResultSet result =
-        statement.executeQuery("SELECT id, image FROM meme WHERE id IN (" +
-                               String.join(",", meme_ids) + ");");
+        statement.executeQuery(
+            "SELECT id, image FROM meme WHERE id IN (" + String.join(",", meme_ids) + ");");
     while (result.next()) {
-      memes.add(Meme.builder()
-                    .id(Integer.toString(result.getInt("id")))
-                    .image(result.getBytes("image"))
-                    .build());
+      memes.add(
+          Meme.builder()
+              .id(Integer.toString(result.getInt("id")))
+              .image(result.getBytes("image"))
+              .build());
     }
     result.close();
     statement.close();
@@ -151,9 +153,11 @@ public class DatabaseAdapter {
     }
 
     Statement statement = connection.createStatement();
-    ResultSet result = statement.executeQuery(
-        "SELECT meme_id, tag FROM meme_to_tag WHERE meme_id IN (" +
-        String.join(",", meme_ids) + ");");
+    ResultSet result =
+        statement.executeQuery(
+            "SELECT meme_id, tag FROM meme_to_tag WHERE meme_id IN ("
+                + String.join(",", meme_ids)
+                + ");");
     while (result.next()) {
       String meme_id = Integer.toString(result.getInt("meme_id"));
       String tag = result.getString("tag");
