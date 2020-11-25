@@ -1,4 +1,4 @@
-package memetalk.controller;
+package memetalk.controller.graphql;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -13,10 +13,8 @@ import graphql.schema.idl.TypeDefinitionRegistry;
 import java.net.URL;
 import java.util.Map;
 import memetalk.ConfigReader;
+import memetalk.controller.StaticFileManager;
 import memetalk.database.DatabaseAdapter;
-import memetalk.graphql.DataFetchers;
-import memetalk.graphql.FileScalarCoercing;
-import memetalk.graphql.RunTimeWiringFactory;
 import org.springframework.stereotype.Component;
 
 /** GraphQLExecutor owns a GraphQL use it to execute the incoming queries. */
@@ -65,7 +63,7 @@ public class GraphQLExecutor {
         "Query", "memesByAuthorId", dataFetchers.getMemesByAuthorIdDataFetcher());
     factory.registerTypeWiring("Mutation", "createMeme", dataFetchers.createMemeDataFetcher());
 
-    factory.registerScalar(FileScalarCoercing.FILE);
+    factory.registerScalar(FileScalar.FILE);
 
     return factory.build();
   }

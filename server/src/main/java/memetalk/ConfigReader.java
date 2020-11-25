@@ -45,6 +45,9 @@ public class ConfigReader {
     if (isInTestEnvironment()) {
       return new ConfigReader(DeploymentEnvironment.TEST);
     }
+    if (isInProdEnvironment()) {
+      return new ConfigReader(DeploymentEnvironment.PROD);
+    }
     return new ConfigReader(DeploymentEnvironment.DEV);
   }
 
@@ -63,5 +66,10 @@ public class ConfigReader {
       }
     }
     return false;
+  }
+
+  private static boolean isInProdEnvironment() {
+    // In production environment, we always set "IS_PROD".
+    return System.getenv("IS_PROD") != null;
   }
 }

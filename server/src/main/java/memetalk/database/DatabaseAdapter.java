@@ -1,5 +1,7 @@
 package memetalk.database;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import memetalk.ConfigReader;
 import memetalk.model.Meme;
 
@@ -18,16 +21,39 @@ import memetalk.model.Meme;
  * database. Always call `Shutdown()` after you're done using this adapter to safely close the
  * connection with the database. TODO: Add lock on each public method to promise data consistency.
  */
+@Slf4j
 public class DatabaseAdapter {
 
   private Connection connection = null;
 
-  public DatabaseAdapter(ConfigReader configReader) throws SQLException {
-    connection =
-        DriverManager.getConnection(
-            configReader.getConfig("db-url"),
-            configReader.getConfig("db-username"),
-            configReader.getConfig("db-password"));
+  public DatabaseAdapter(ConfigReader configReader) throws URISyntaxException, SQLException {
+    String database_url = System.getenv("DATABASE_URL");
+    if (database_url != null && database_url != "") {
+      log.info("Connecting to database from env url.");
+      connection = getConnectionFromDatabaseUrl(database_url);
+    } else {
+      log.info("Connecting to database from config reader.");
+      connection = getConnectionFromConfigReader(configReader);
+    }
+  }
+
+  private static Connection getConnectionFromDatabaseUrl(String database_url)
+      throws URISyntaxException, SQLException {
+    URI dbUri = new URI(database_url);
+
+    String username = dbUri.getUserInfo().split(":")[0];
+    String password = dbUri.getUserInfo().split(":")[1];
+    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
+
+    return DriverManager.getConnection(dbUrl, username, password);
+  }
+
+  private static Connection getConnectionFromConfigReader(ConfigReader configReader)
+      throws SQLException {
+    return DriverManager.getConnection(
+        configReader.getConfig("db-url"),
+        configReader.getConfig("db-username"),
+        configReader.getConfig("db-password"));
   }
 
   /** Returns all memes. */
