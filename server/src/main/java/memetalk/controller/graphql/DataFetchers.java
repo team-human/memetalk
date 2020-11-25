@@ -11,6 +11,7 @@ import memetalk.ConfigReader;
 import memetalk.controller.StaticFileManager;
 import memetalk.database.DatabaseAdapter;
 import memetalk.model.File;
+import memetalk.model.LoginUser;
 import memetalk.model.Meme;
 import memetalk.model.User;
 
@@ -48,6 +49,15 @@ public class DataFetchers {
       List<Meme> memes = databaseAdapter.getMemesByTag(tag);
       fillUrl(memes);
       return memes;
+    };
+  }
+
+  public DataFetcher<LoginUser> loginUser() {
+    return dataFetchingEnvironment -> {
+      final String id = dataFetchingEnvironment.getArgument("id");
+      final String password = dataFetchingEnvironment.getArgument("password");
+
+      return new LoginUser("abc", User.builder().build());
     };
   }
 

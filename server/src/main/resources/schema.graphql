@@ -1,6 +1,12 @@
 type User {
   id: ID!
   name: String!
+  roles: [String]
+}
+
+type LoginUser {
+  user: User!
+  token: String!
 }
 
 type Meme {
@@ -35,4 +41,14 @@ type Query {
 scalar File
 type Mutation {
   createMeme(file: File!, tags: [String!]): Meme
+#  createUser(userInfo: CreateUserInput!): LoginUser
+#  login(id: String!, password: String!): LoginUser
 }
+
+input CreateUserInput {
+  id: String!
+  password: String!
+  name: String!
+}
+
+

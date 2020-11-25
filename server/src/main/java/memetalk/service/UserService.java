@@ -1,11 +1,15 @@
 package memetalk.service;
 
+import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import java.time.Instant;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -18,6 +22,7 @@ import memetalk.exception.UserExistsException;
 import memetalk.model.CreateUserInput;
 import memetalk.model.JwtUserDetails;
 import memetalk.model.User;
+import memetalk.security.SecurityProperties;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,6 +43,20 @@ public class UserService {
   private final UserRepository repository;
   private final JWTVerifier jwtVerifier;
   private final PasswordEncoder passwordEncoder;
+  private final SecurityProperties properties;
+  private final Algorithm algorithm;
+
+  @Transactional
+  public String getToken(User user) {
+    Instant now = Instant.now();
+    Instant expiry = Instant.now().plus(properties.getTokenExpiration());
+    return JWT.create()
+        .withIssuer(properties.getTokenIssuer())
+        .withIssuedAt(Date.from(now))
+        .withExpiresAt(Date.from(expiry))
+        .withSubject(user.getId())
+        .sign(algorithm);
+  }
 
   @Transactional
   public JwtUserDetails loadUserByToken(String token) {
