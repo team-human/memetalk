@@ -5,8 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import memetalk.ConfigReader;
+import org.springframework.stereotype.Component;
 
 /** StaticFileManager manages static files located under `resources` folder. */
+@Component
 public class StaticFileManager {
 
   /** Writes a file to storage and returns an URL reference. */

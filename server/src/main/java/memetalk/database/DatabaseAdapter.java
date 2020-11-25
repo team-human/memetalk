@@ -15,6 +15,7 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import memetalk.ConfigReader;
 import memetalk.model.Meme;
+import org.springframework.stereotype.Component;
 
 /**
  * DatabaseAdapter keeps a connection with the database and offers methods to read/write the
@@ -22,9 +23,9 @@ import memetalk.model.Meme;
  * connection with the database. TODO: Add lock on each public method to promise data consistency.
  */
 @Slf4j
+@Component
 public class DatabaseAdapter {
-
-  private Connection connection = null;
+  private final Connection connection;
 
   public DatabaseAdapter(ConfigReader configReader) throws URISyntaxException, SQLException {
     String database_url = System.getenv("DATABASE_URL");

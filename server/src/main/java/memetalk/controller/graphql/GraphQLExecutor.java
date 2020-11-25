@@ -12,7 +12,7 @@ import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import java.net.URL;
 import java.util.Map;
-import memetalk.ConfigReader;
+import lombok.NonNull;
 import memetalk.controller.StaticFileManager;
 import memetalk.database.DatabaseAdapter;
 import org.springframework.stereotype.Component;
@@ -25,9 +25,11 @@ public class GraphQLExecutor {
 
   private GraphQL graphQL;
 
-  public GraphQLExecutor() throws Exception {
-    dataFetchers =
-        new DataFetchers(new DatabaseAdapter(ConfigReader.getInstance()), new StaticFileManager());
+  public GraphQLExecutor(
+      @NonNull final DatabaseAdapter databaseAdapter,
+      @NonNull final StaticFileManager staticFileManager)
+      throws Exception {
+    dataFetchers = new DataFetchers(databaseAdapter, staticFileManager);
     URL url = Resources.getResource(GRAPHQL_SCHEMA_NAME);
     String sdl = Resources.toString(url, Charsets.UTF_8);
     GraphQLSchema graphQLSchema = buildSchema(sdl);

@@ -7,6 +7,8 @@ import static memetalk.data.FakeDataGenerator.generateFakeUsers;
 import com.google.common.collect.ImmutableList;
 import graphql.schema.DataFetcher;
 import java.util.List;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import memetalk.ConfigReader;
 import memetalk.controller.StaticFileManager;
 import memetalk.database.DatabaseAdapter;
@@ -19,20 +21,15 @@ import memetalk.model.User;
  * DataFetchers is a collection of DataFetcher of each GraphQL entry point. DataFetcher parses the
  * request content and accesses database adapter to return the response.
  */
+@RequiredArgsConstructor
 public class DataFetchers {
 
-  public DatabaseAdapter databaseAdapter;
-  public StaticFileManager staticFileManager;
+  @NonNull private DatabaseAdapter databaseAdapter;
+  @NonNull private StaticFileManager staticFileManager;
 
   public static List<User> users = generateFakeUsers();
   public static List<String> tags = generateFakeTags();
   public static List<Meme> memes = generateFakeMemes();
-
-  public DataFetchers(DatabaseAdapter databaseAdapter, StaticFileManager staticFileManager)
-      throws Exception {
-    this.databaseAdapter = databaseAdapter;
-    this.staticFileManager = staticFileManager;
-  }
 
   // TODO: Replace fake data.
   public DataFetcher getCurrentUserDataFetcher() {

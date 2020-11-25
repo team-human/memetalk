@@ -27,11 +27,6 @@ class GraphQLController {
   private GraphQLExecutor graphQLExecutor;
   private ObjectMapper objectMapper;
 
-  public GraphQLController() throws Exception {
-    this.graphQLExecutor = new GraphQLExecutor();
-    this.objectMapper = new ObjectMapper();
-  }
-
   // This constructor is for test only.
   protected GraphQLController(GraphQLExecutor graphQLExecutor) {
     this.graphQLExecutor = graphQLExecutor;
