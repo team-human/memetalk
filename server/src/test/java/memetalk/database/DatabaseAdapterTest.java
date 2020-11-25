@@ -1,5 +1,6 @@
 package memetalk.database;
 
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -78,7 +79,7 @@ public class DatabaseAdapterTest {
   }
 
   @Test
-  public void testGetMemesSucceed() throws SQLException {
+  public void testGetMemesSucceed() throws URISyntaxException, SQLException {
     DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     List<Meme> memes = databaseAdapter.getMemes();
     Assert.assertEquals(2, memes.size());
@@ -87,7 +88,7 @@ public class DatabaseAdapterTest {
   }
 
   @Test
-  public void testAddMemeSucceed() throws SQLException {
+  public void testAddMemeSucceed() throws URISyntaxException, SQLException {
     DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     byte[] imageBytes = "fake_image".getBytes();
     Meme newMeme = Meme.builder().image(imageBytes).build();
@@ -100,7 +101,7 @@ public class DatabaseAdapterTest {
   }
 
   @Test
-  public void testGetMemesByTagSingleResultSucceed() throws SQLException {
+  public void testGetMemesByTagSingleResultSucceed() throws URISyntaxException, SQLException {
     DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     List<Meme> memes = databaseAdapter.getMemesByTag("funny");
     Assert.assertEquals(1, memes.size());
@@ -111,14 +112,14 @@ public class DatabaseAdapterTest {
   }
 
   @Test
-  public void testGetMemesByTagMultipleResultSucceed() throws SQLException {
+  public void testGetMemesByTagMultipleResultSucceed() throws URISyntaxException, SQLException {
     DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     List<Meme> memes = databaseAdapter.getMemesByTag("humor");
     Assert.assertEquals(2, memes.size());
   }
 
   @Test
-  public void testGetTagsSucceed() throws SQLException {
+  public void testGetTagsSucceed() throws URISyntaxException, SQLException {
     DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     List<String> tags = databaseAdapter.getTags();
     Assert.assertEquals(2, tags.size());
