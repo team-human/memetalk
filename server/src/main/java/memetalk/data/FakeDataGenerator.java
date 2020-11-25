@@ -3,6 +3,7 @@ package memetalk.data;
 import com.google.common.collect.ImmutableList;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import memetalk.model.Meme;
 import memetalk.model.MemeCounter;
@@ -15,9 +16,27 @@ import memetalk.model.User;
 public class FakeDataGenerator {
   public static List<User> generateFakeUsers() {
     return Arrays.asList(
-        User.builder().id("userId1").name("John").email("John@gmail.com").password("123").build(),
-        User.builder().id("userId2").name("Alice").email("Alice@gmail.com").password("123").build(),
-        User.builder().id("userId3").name("Bob").email("Bob@gmail.com").password("123").build());
+        User.builder()
+            .id("userId1")
+            .name("John")
+            .email("John@gmail.com")
+            .password("123")
+            .roles(new HashSet<>(Arrays.asList("ADMIN")))
+            .build(),
+        User.builder()
+            .id("userId2")
+            .name("Alice")
+            .email("Alice@gmail.com")
+            .password("123")
+            .roles(new HashSet<>(Arrays.asList("USER")))
+            .build(),
+        User.builder()
+            .id("userId3")
+            .name("Bob")
+            .email("Bob@gmail.com")
+            .password("123")
+            .roles(new HashSet<>(Arrays.asList("USER")))
+            .build());
   }
 
   public static List<String> generateFakeTags() {

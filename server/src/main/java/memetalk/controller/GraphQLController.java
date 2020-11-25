@@ -53,8 +53,8 @@ class GraphQLController {
       }
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body("Unable to find valid request content.");
-    } catch (JsonProcessingException e) {
-      log.error(e.getMessage());
+    } catch (JsonProcessingException ex) {
+      log.error("Handling handleGraphQLRequest encounters error", ex);
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body("Unable to parse the request and/or executed response.");
     }
