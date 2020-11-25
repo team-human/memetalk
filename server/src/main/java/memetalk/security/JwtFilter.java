@@ -9,7 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import memetalk.store.UserStore;
+import memetalk.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -21,14 +21,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtFilter extends OncePerRequestFilter {
   private static final String AUTHORIZATION_HEADER = "Authorization";
   private static final Pattern BEARER_PATTERN = Pattern.compile("^Bearer (.+?)$");
-  private final UserStore userStore;
+  private final UserService userService;
 
   @Override
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws IOException, ServletException {
     getTokenFromRequest(request)
-        .map(userStore::loadUserByToken)
+        .map(userService::loadUserByToken)
         .map(
             userDetails ->
                 JWTPreAuthenticationToken.builder()

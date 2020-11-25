@@ -1,4 +1,4 @@
-package memetalk.store;
+package memetalk.service;
 
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -14,7 +14,10 @@ import memetalk.database.UserRepository;
 import memetalk.model.JwtUserDetails;
 import memetalk.model.User;
 import memetalk.security.BadTokenException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -22,7 +25,7 @@ import org.springframework.util.CollectionUtils;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserStore {
+public class UserService {
   private final UserRepository repository;
   private final JWTVerifier jwtVerifier;
 
@@ -33,6 +36,15 @@ public class UserStore {
         .flatMap(repository::findUserByEmail)
         .map(user -> getUserDetails(user, token))
         .orElseThrow(BadTokenException::new);
+  }
+
+  @Transactional
+  public User getCurrentUser() {
+    return Optional.ofNullable(SecurityContextHolder.getContext())
+        .map(SecurityContext::getAuthentication)
+        .map(Authentication::getName)
+        .flatMap(repository::findUserByEmail)
+        .orElse(null);
   }
 
   private JwtUserDetails getUserDetails(User user, String token) {
