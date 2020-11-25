@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 import javax.annotation.PostConstruct;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /** GraphQLExecutor owns a GraphQL use it to execute the incoming queries. */
@@ -23,7 +23,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class GraphQLExecutor {
   private static final String GRAPHQL_SCHEMA_NAME = "schema.graphql";
-  @Autowired private DataFetchers dataFetchers;
+  @NonNull private DataFetchers dataFetchers;
+
   private GraphQL graphQL;
 
   @PostConstruct
