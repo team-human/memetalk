@@ -18,21 +18,28 @@ import memetalk.database.DatabaseAdapter;
 import memetalk.model.File;
 import memetalk.model.Meme;
 import memetalk.model.User;
+import memetalk.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.security.authentication.AuthenticationProvider;
 
 public class DataFetchersTest {
   private DataFetchers dataFetchers;
   private StaticFileManager staticFileManager;
   private DataFetchingEnvironment dataFetchingEnvironment;
   private DatabaseAdapter databaseAdapter;
+  private UserService userService;
+  private AuthenticationProvider authenticationProvider;
 
   @Before
   public void setUp() throws Exception {
     dataFetchingEnvironment = mock(DataFetchingEnvironment.class);
     databaseAdapter = mock(DatabaseAdapter.class);
     staticFileManager = mock(StaticFileManager.class);
-    dataFetchers = new DataFetchers(databaseAdapter, staticFileManager);
+    userService = mock(UserService.class);
+    authenticationProvider = mock(AuthenticationProvider.class);
+    dataFetchers =
+        new DataFetchers(databaseAdapter, staticFileManager, userService, authenticationProvider);
   }
 
   @Test

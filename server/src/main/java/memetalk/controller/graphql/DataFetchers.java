@@ -16,23 +16,34 @@ import memetalk.model.File;
 import memetalk.model.LoginUser;
 import memetalk.model.Meme;
 import memetalk.model.User;
+import memetalk.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
 /**
  * DataFetchers is a collection of DataFetcher of each GraphQL entry point. DataFetcher parses the
  * request content and accesses database adapter to return the response.
  */
+@Component
 @RequiredArgsConstructor
 public class DataFetchers {
 
-  @NonNull private DatabaseAdapter databaseAdapter;
-  @NonNull private StaticFileManager staticFileManager;
+  @NonNull private final DatabaseAdapter databaseAdapter;
+  @NonNull private final StaticFileManager staticFileManager;
+  @NonNull private final UserService userService;
+  @NonNull private final AuthenticationProvider authenticationProvider;
 
   public static List<User> users = generateFakeUsers();
   public static List<String> tags = generateFakeTags();
   public static List<Meme> memes = generateFakeMemes();
 
   // TODO: Replace fake data.
-  public DataFetcher getCurrentUserDataFetcher() {
+  public DataFetcher<User> getCurrentUserDataFetcher() {
     return dataFetchingEnvironment -> users.get(0);
   }
 
@@ -49,17 +60,26 @@ public class DataFetchers {
     };
   }
 
+  @PreAuthorize("isAnonymous()")
   public DataFetcher<LoginUser> loginUser() {
     return dataFetchingEnvironment -> {
       final String id = dataFetchingEnvironment.getArgument("id");
       final String password = dataFetchingEnvironment.getArgument("password");
+      final UsernamePasswordAuthenticationToken credentials =
+          new UsernamePasswordAuthenticationToken(id, password);
 
-      return new LoginUser("abc", User.builder().build());
+      try {
+        SecurityContextHolder.getContext()
+            .setAuthentication(authenticationProvider.authenticate(credentials));
+        return userService.getCurrentUser();
+      } catch (AuthenticationException ex) {
+        throw new BadCredentialsException(id);
+      }
     };
   }
 
   // TODO: Replace fake data.
-  public DataFetcher getMemesByAuthorIdDataFetcher() {
+  public DataFetcher<List<Meme>> getMemesByAuthorIdDataFetcher() {
     return dataFetchingEnvironment -> {
       final String userId = dataFetchingEnvironment.getArgument("userId");
       final boolean validUserId = users.stream().anyMatch(user -> user.getId().equals(userId));
@@ -73,7 +93,7 @@ public class DataFetchers {
     };
   }
 
-  public DataFetcher createMemeDataFetcher() {
+  public DataFetcher<Meme> createMemeDataFetcher() {
     return dataFetchingEnvironment -> {
       final File file = dataFetchingEnvironment.getArgument("file");
       final List<String> tags = dataFetchingEnvironment.getArgument("tags");

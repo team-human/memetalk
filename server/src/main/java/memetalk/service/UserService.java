@@ -21,6 +21,7 @@ import memetalk.exception.BadTokenException;
 import memetalk.exception.UserExistsException;
 import memetalk.model.CreateUserInput;
 import memetalk.model.JwtUserDetails;
+import memetalk.model.LoginUser;
 import memetalk.model.User;
 import memetalk.security.SecurityProperties;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -29,6 +30,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +40,7 @@ import org.springframework.util.CollectionUtils;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
   private static final String USER_AUTHORITY = "USER";
   private static final String ADMIN_AUTHORITY = "ADMIN";
   private final UserRepository repository;
@@ -46,8 +49,7 @@ public class UserService {
   private final SecurityProperties properties;
   private final Algorithm algorithm;
 
-  @Transactional
-  public String getToken(User user) {
+  protected String getToken(User user) {
     Instant now = Instant.now();
     Instant expiry = Instant.now().plus(properties.getTokenExpiration());
     return JWT.create()
@@ -56,6 +58,15 @@ public class UserService {
         .withExpiresAt(Date.from(expiry))
         .withSubject(user.getId())
         .sign(algorithm);
+  }
+
+  @Override
+  @Transactional
+  public JwtUserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
+    return repository
+        .findUserById(id)
+        .map(user -> getUserDetails(user, getToken(user)))
+        .orElseThrow(() -> new UsernameNotFoundException("Username or password didn''t match"));
   }
 
   @Transactional
@@ -68,12 +79,19 @@ public class UserService {
   }
 
   @Transactional
-  public User getCurrentUser() {
-    return Optional.ofNullable(SecurityContextHolder.getContext())
-        .map(SecurityContext::getAuthentication)
-        .map(Authentication::getName)
-        .flatMap(repository::findUserById)
-        .orElse(null);
+  public LoginUser getCurrentUser() {
+    User user =
+        Optional.ofNullable(SecurityContextHolder.getContext())
+            .map(SecurityContext::getAuthentication)
+            .map(Authentication::getName)
+            .flatMap(repository::findUserById)
+            .orElse(null);
+
+    if (user == null) {
+      return null;
+    } else {
+      return LoginUser.builder().token(getToken(user)).user(user).build();
+    }
   }
 
   public boolean isAdmin() {

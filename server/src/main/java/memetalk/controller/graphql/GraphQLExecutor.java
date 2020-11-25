@@ -10,26 +10,24 @@ import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
-import lombok.NonNull;
-import memetalk.controller.StaticFileManager;
-import memetalk.database.DatabaseAdapter;
+import javax.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /** GraphQLExecutor owns a GraphQL use it to execute the incoming queries. */
 @Component
+@RequiredArgsConstructor
 public class GraphQLExecutor {
   private static final String GRAPHQL_SCHEMA_NAME = "schema.graphql";
-  private static DataFetchers dataFetchers;
-
+  @Autowired private DataFetchers dataFetchers;
   private GraphQL graphQL;
 
-  public GraphQLExecutor(
-      @NonNull final DatabaseAdapter databaseAdapter,
-      @NonNull final StaticFileManager staticFileManager)
-      throws Exception {
-    dataFetchers = new DataFetchers(databaseAdapter, staticFileManager);
+  @PostConstruct
+  public void init() throws IOException {
     URL url = Resources.getResource(GRAPHQL_SCHEMA_NAME);
     String sdl = Resources.toString(url, Charsets.UTF_8);
     GraphQLSchema graphQLSchema = buildSchema(sdl);
@@ -64,6 +62,7 @@ public class GraphQLExecutor {
     factory.registerTypeWiring(
         "Query", "memesByAuthorId", dataFetchers.getMemesByAuthorIdDataFetcher());
     factory.registerTypeWiring("Mutation", "createMeme", dataFetchers.createMemeDataFetcher());
+    factory.registerTypeWiring("Mutation", "login", dataFetchers.loginUser());
 
     factory.registerScalar(FileScalar.FILE);
 
