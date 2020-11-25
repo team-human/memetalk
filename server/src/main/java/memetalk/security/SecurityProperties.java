@@ -6,10 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
-@ConstructorBinding
-@ConfigurationProperties(prefix = "memetalk.security.jwt")
-@Getter
-@RequiredArgsConstructor
 /**
  * SecurityProperties is for JWT related setting. We use spring boot ConfigurationProperties
  * annotation to create this object with Environment variables. For example, to give the
@@ -23,6 +19,10 @@ import org.springframework.boot.context.properties.ConstructorBinding;
  * secret key we need to use to validate the token, and later create a new token based on the
  * currentKeyID. So, we can rotate the key without use to login again.
  */
+@ConstructorBinding
+@ConfigurationProperties(prefix = "memetalk.security.jwt")
+@Getter
+@RequiredArgsConstructor
 public class SecurityProperties {
   /** Amound of hashing iterations, where formula is 2^passwordStrength iterations */
   private final int passwordStrength;
