@@ -8,9 +8,8 @@ import lombok.NonNull;
 @Data
 @Builder
 public class User {
-  @NonNull private String id; // login userId
-  @NonNull private String name; // user real name
+  @NonNull private String id; // login username
+  @NonNull private String name;
   @NonNull private Set<String> roles;
-  @NonNull private String email;
-  @NonNull private String password;
+  @NonNull private String password; // login password
 }

@@ -19,21 +19,18 @@ public class FakeDataGenerator {
         User.builder()
             .id("userId1")
             .name("John")
-            .email("John@gmail.com")
             .password("123")
             .roles(new HashSet<>(Arrays.asList("ADMIN")))
             .build(),
         User.builder()
             .id("userId2")
             .name("Alice")
-            .email("Alice@gmail.com")
             .password("123")
             .roles(new HashSet<>(Arrays.asList("USER")))
             .build(),
         User.builder()
             .id("userId3")
             .name("Bob")
-            .email("Bob@gmail.com")
             .password("123")
             .roles(new HashSet<>(Arrays.asList("USER")))
             .build());
