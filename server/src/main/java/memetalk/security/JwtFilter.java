@@ -31,7 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
         .map(userService::loadUserByToken)
         .map(
             userDetails ->
-                JWTPreAuthenticationToken.builder()
+                JwtPreAuthenticationToken.builder()
                     .principal(userDetails)
                     .details(new WebAuthenticationDetailsSource().buildDetails(request))
                     .build())
