@@ -31,5 +31,5 @@ public class SecurityProperties {
   /** Name of the token issuer */
   private final String tokenIssuer = "memetalk";
   /** Duration after which a token will expire */
-  private final Duration tokenExpiration = Duration.ofHours(4);
+  private final Duration tokenExpiration = Duration.ofDays(30);
 }

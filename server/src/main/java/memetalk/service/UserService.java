@@ -104,7 +104,8 @@ public class UserService implements UserDetailsService {
         .anyMatch(ADMIN_AUTHORITY::equals);
   }
 
-  public boolean isAuthenticated() {
+  // Used in security annotation @PreAuthorize("@userService.isAuthenticated()")
+  public static boolean isAuthenticated() {
     return Optional.ofNullable(SecurityContextHolder.getContext())
         .map(SecurityContext::getAuthentication)
         .filter(Authentication::isAuthenticated)
@@ -112,8 +113,17 @@ public class UserService implements UserDetailsService {
         .isPresent();
   }
 
-  private boolean isAnonymous(Authentication authentication) {
+  private static boolean isAnonymous(Authentication authentication) {
     return authentication instanceof AnonymousAuthenticationToken;
+  }
+
+  // Used in security annotation @PreAuthorize("@userService.isAnonymous()")
+  public static boolean isAnonymous() {
+    return Optional.ofNullable(SecurityContextHolder.getContext())
+        .map(SecurityContext::getAuthentication)
+        .filter(Authentication::isAuthenticated)
+        .filter(auth -> isAnonymous(auth))
+        .isPresent();
   }
 
   @Transactional

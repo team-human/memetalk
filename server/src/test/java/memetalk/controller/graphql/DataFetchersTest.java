@@ -30,6 +30,7 @@ public class DataFetchersTest {
   private DatabaseAdapter databaseAdapter;
   private UserService userService;
   private AuthenticationProvider authenticationProvider;
+  private DataFetchersAuth dataFetchersAuth;
 
   @Before
   public void setUp() throws Exception {
@@ -38,8 +39,8 @@ public class DataFetchersTest {
     staticFileManager = mock(StaticFileManager.class);
     userService = mock(UserService.class);
     authenticationProvider = mock(AuthenticationProvider.class);
-    dataFetchers =
-        new DataFetchers(databaseAdapter, staticFileManager, userService, authenticationProvider);
+    dataFetchersAuth = new DataFetchersAuth(userService, authenticationProvider);
+    dataFetchers = new DataFetchers(databaseAdapter, staticFileManager, dataFetchersAuth);
   }
 
   @Test
