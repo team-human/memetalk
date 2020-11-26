@@ -59,14 +59,19 @@ public class GraphQLExecutor {
   private RuntimeWiring buildWiring() {
     RunTimeWiringFactory factory = RunTimeWiringFactory.getInstance();
 
+    // Query type
     factory.registerTypeWiring("Query", "currentUser", dataFetchers.getCurrentUserDataFetcher());
     factory.registerTypeWiring("Query", "popularTags", dataFetchers.getPopularTagsDataFetcher());
     factory.registerTypeWiring("Query", "memesByTag", dataFetchers.getMemesByTagDataFetcher());
     factory.registerTypeWiring(
         "Query", "memesByAuthorId", dataFetchers.getMemesByAuthorIdDataFetcher());
+
+    // Mutation type
     factory.registerTypeWiring("Mutation", "createMeme", dataFetchers.createMemeDataFetcher());
     factory.registerTypeWiring("Mutation", "login", dataFetchers.loginUser());
+    factory.registerTypeWiring("Mutation", "createUser", dataFetchers.createUser());
 
+    // Scalar type
     factory.registerScalar(FileScalar.FILE);
 
     return factory.build();

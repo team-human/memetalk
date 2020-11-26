@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import memetalk.database.UserRepository;
 import memetalk.exception.BadTokenException;
 import memetalk.exception.UserExistsException;
+import memetalk.exception.UserNotFoundException;
 import memetalk.model.CreateUserInput;
 import memetalk.model.JwtUserDetails;
 import memetalk.model.LoginUser;
@@ -48,51 +49,6 @@ public class UserService implements UserDetailsService {
   private final PasswordEncoder passwordEncoder;
   private final SecurityProperties properties;
   private final Algorithm algorithm;
-
-  protected String getToken(User user) {
-    Instant now = Instant.now();
-    Instant expiry = Instant.now().plus(properties.getTokenExpiration());
-    return JWT.create()
-        .withIssuer(properties.getTokenIssuer())
-        .withIssuedAt(Date.from(now))
-        .withExpiresAt(Date.from(expiry))
-        .withSubject(user.getId())
-        .sign(algorithm);
-  }
-
-  @Override
-  @Transactional
-  public JwtUserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-    return repository
-        .findUserById(id)
-        .map(user -> getUserDetails(user, getToken(user)))
-        .orElseThrow(() -> new UsernameNotFoundException("Username or password didn''t match"));
-  }
-
-  @Transactional
-  public JwtUserDetails loadUserByToken(String token) {
-    return getDecodedToken(token)
-        .map(DecodedJWT::getSubject)
-        .flatMap(repository::findUserById)
-        .map(user -> getUserDetails(user, token))
-        .orElseThrow(BadTokenException::new);
-  }
-
-  @Transactional
-  public LoginUser getCurrentUser() {
-    User user =
-        Optional.ofNullable(SecurityContextHolder.getContext())
-            .map(SecurityContext::getAuthentication)
-            .map(Authentication::getName)
-            .flatMap(repository::findUserById)
-            .orElse(null);
-
-    if (user == null) {
-      return null;
-    } else {
-      return LoginUser.builder().token(getToken(user)).user(user).build();
-    }
-  }
 
   public boolean isAdmin() {
     return Optional.ofNullable(SecurityContextHolder.getContext())
@@ -126,17 +82,75 @@ public class UserService implements UserDetailsService {
         .isPresent();
   }
 
+  protected String getToken(User user) {
+    Instant now = Instant.now();
+    Instant expiry = Instant.now().plus(properties.getTokenExpiration());
+    return JWT.create()
+        .withIssuer(properties.getTokenIssuer())
+        .withIssuedAt(Date.from(now))
+        .withExpiresAt(Date.from(expiry))
+        .withSubject(user.getId())
+        .sign(algorithm);
+  }
+
+  @Override
   @Transactional
-  public User createUser(CreateUserInput input) {
-    if (!exists(input)) {
-      return repository.storeUser(
-          User.builder()
-              .password(passwordEncoder.encode(input.getPassword()))
-              .roles(ImmutableSet.of(USER_AUTHORITY))
-              .id(input.getId())
-              .build());
+  public JwtUserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
+    return repository
+        .findUserById(id)
+        .map(user -> getUserDetails(user, getToken(user)))
+        .orElseThrow(() -> new UsernameNotFoundException("Username or password didn''t match"));
+  }
+
+  @Transactional
+  public JwtUserDetails loadUserByToken(String token) {
+    return getDecodedToken(token)
+        .map(DecodedJWT::getSubject)
+        .flatMap(repository::findUserById)
+        .map(user -> getUserDetails(user, token))
+        .orElseThrow(BadTokenException::new);
+  }
+
+  @Transactional
+  public LoginUser getCurrentUser() {
+    final User user =
+        Optional.ofNullable(SecurityContextHolder.getContext())
+            .map(SecurityContext::getAuthentication)
+            .map(Authentication::getName)
+            .flatMap(repository::findUserById)
+            .orElse(null);
+
+
+    if (user == null) {
+      log.error("can't find user");
+      throw new UserNotFoundException("Can't find User in DB");
     } else {
-      throw new UserExistsException("Creating a new User encounters error. Id is " + input.getId());
+      return LoginUser.builder().token(getToken(user)).user(user).build();
+    }
+  }
+
+  @Transactional
+  public LoginUser createUser(CreateUserInput input) {
+    if (!exists(input)) {
+
+      final User user =
+          repository.storeUser(
+              User.builder()
+                  .password(passwordEncoder.encode(input.getPassword()))
+                  .roles(ImmutableSet.of(USER_AUTHORITY))
+                  .name(input.getName())
+                  .id(input.getId())
+                  .build());
+
+      if (user == null) {
+        throw new UserNotFoundException("Can't Create User in DB");
+      } else {
+        return LoginUser.builder().token(getToken(user)).user(user).build();
+      }
+
+    } else {
+      throw new UserExistsException(
+          "Creating a new User encounters error. Id `{}` exists" + input.getId());
     }
   }
 

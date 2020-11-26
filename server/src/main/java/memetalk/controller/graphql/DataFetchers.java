@@ -4,15 +4,19 @@ import static memetalk.data.FakeDataGenerator.generateFakeMemes;
 import static memetalk.data.FakeDataGenerator.generateFakeTags;
 import static memetalk.data.FakeDataGenerator.generateFakeUsers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import graphql.schema.DataFetcher;
 import java.util.List;
+import java.util.Map;
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import memetalk.ConfigReader;
 import memetalk.controller.StaticFileManager;
 import memetalk.database.DatabaseAdapter;
+import memetalk.model.CreateUserInput;
 import memetalk.model.File;
 import memetalk.model.LoginUser;
 import memetalk.model.Meme;
@@ -31,6 +35,7 @@ public class DataFetchers {
   @NonNull private final DatabaseAdapter databaseAdapter;
   @NonNull private final StaticFileManager staticFileManager;
   @NonNull private final DataFetchersAuth dataFetchersAuth;
+  @NonNull private final ObjectMapper objectMapper;
 
   public static List<User> users = generateFakeUsers();
   public static List<String> tags = generateFakeTags();
@@ -59,6 +64,13 @@ public class DataFetchers {
       final String id = dataFetchingEnvironment.getArgument("id");
       final String password = dataFetchingEnvironment.getArgument("password");
       return dataFetchersAuth.loginUserAuth(id, password);
+    };
+  }
+
+  public DataFetcher<LoginUser> createUser() {
+    return dataFetchingEnvironment -> {
+      final CreateUserInput userInput = objectMapper.convertValue(dataFetchingEnvironment.getArgument("userInfo"), CreateUserInput.class);
+      return dataFetchersAuth.createUserAuth(userInput);
     };
   }
 

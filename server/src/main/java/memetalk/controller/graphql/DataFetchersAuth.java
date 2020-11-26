@@ -3,6 +3,7 @@ package memetalk.controller.graphql;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import memetalk.model.CreateUserInput;
 import memetalk.model.LoginUser;
 import memetalk.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,7 +16,8 @@ import org.springframework.stereotype.Component;
 
 /*
  * Any dataFetcher that needs @PreAuthorize should complement them here.
- * @PreAuthorize doesn't work in DataFetchers.class
+ * @PreAuthorize doesn't work in DataFetchers.class.
+ * Note: the annotated methods need to be public
  */
 
 @Slf4j
@@ -37,5 +39,10 @@ public class DataFetchersAuth {
     } catch (AuthenticationException ex) {
       throw new BadCredentialsException(id);
     }
+  }
+
+  @PreAuthorize("@userService.isAnonymous()")
+  public LoginUser createUserAuth(@NonNull final CreateUserInput userInput) {
+    return userService.createUser(userInput);
   }
 }
