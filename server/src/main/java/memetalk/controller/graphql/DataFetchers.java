@@ -9,6 +9,7 @@ import graphql.schema.DataFetcher;
 import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import memetalk.ConfigReader;
 import memetalk.controller.StaticFileManager;
 import memetalk.database.DatabaseAdapter;
@@ -17,7 +18,6 @@ import memetalk.model.LoginUser;
 import memetalk.model.Meme;
 import memetalk.model.User;
 import memetalk.service.UserService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
  * DataFetchers is a collection of DataFetcher of each GraphQL entry point. DataFetcher parses the
  * request content and accesses database adapter to return the response.
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DataFetchers {
@@ -60,13 +61,15 @@ public class DataFetchers {
     };
   }
 
-  @PreAuthorize("isAnonymous()")
+  //  @PreAuthorize("isAnonymous()") // this has an issue
   public DataFetcher<LoginUser> loginUser() {
     return dataFetchingEnvironment -> {
       final String id = dataFetchingEnvironment.getArgument("id");
       final String password = dataFetchingEnvironment.getArgument("password");
       final UsernamePasswordAuthenticationToken credentials =
           new UsernamePasswordAuthenticationToken(id, password);
+
+      log.info("debug {} {}. {}", id, password, credentials);
 
       try {
         SecurityContextHolder.getContext()
@@ -93,6 +96,7 @@ public class DataFetchers {
     };
   }
 
+  //  @PreAuthorize("isAuthenticated()") // this has an issue
   public DataFetcher<Meme> createMemeDataFetcher() {
     return dataFetchingEnvironment -> {
       final File file = dataFetchingEnvironment.getArgument("file");

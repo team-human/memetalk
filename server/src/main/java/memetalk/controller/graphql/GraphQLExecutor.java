@@ -16,9 +16,11 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /** GraphQLExecutor owns a GraphQL use it to execute the incoming queries. */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class GraphQLExecutor {

@@ -3,6 +3,7 @@ package memetalk.config;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import lombok.extern.slf4j.Slf4j;
 import memetalk.security.SecurityProperties;
 import memetalk.service.UserService;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -13,6 +14,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+@Slf4j
 @Configuration
 // In order to let Spring Boot injection to find out SecurityProperties
 @EnableConfigurationProperties(SecurityProperties.class)
