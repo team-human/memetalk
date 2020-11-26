@@ -18,6 +18,7 @@ import memetalk.model.LoginUser;
 import memetalk.model.Meme;
 import memetalk.model.User;
 import memetalk.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -61,24 +62,26 @@ public class DataFetchers {
     };
   }
 
-  //  @PreAuthorize("isAnonymous()") // this has an issue
   public DataFetcher<LoginUser> loginUser() {
     return dataFetchingEnvironment -> {
       final String id = dataFetchingEnvironment.getArgument("id");
       final String password = dataFetchingEnvironment.getArgument("password");
-      final UsernamePasswordAuthenticationToken credentials =
-          new UsernamePasswordAuthenticationToken(id, password);
-
-      log.info("debug {} {}. {}", id, password, credentials);
-
-      try {
-        SecurityContextHolder.getContext()
-            .setAuthentication(authenticationProvider.authenticate(credentials));
-        return userService.getCurrentUser();
-      } catch (AuthenticationException ex) {
-        throw new BadCredentialsException(id);
-      }
+      return loginUserAuth(id, password);
     };
+  }
+
+  @PreAuthorize("isAnonymous()")
+  public LoginUser loginUserAuth(@NonNull final String id, @NonNull final String password) {
+    final UsernamePasswordAuthenticationToken credentials =
+        new UsernamePasswordAuthenticationToken(id, password);
+
+    try {
+      SecurityContextHolder.getContext()
+          .setAuthentication(authenticationProvider.authenticate(credentials));
+      return userService.getCurrentUser();
+    } catch (AuthenticationException ex) {
+      throw new BadCredentialsException(id);
+    }
   }
 
   // TODO: Replace fake data.
