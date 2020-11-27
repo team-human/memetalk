@@ -120,7 +120,6 @@ public class UserService implements UserDetailsService {
             .flatMap(repository::findUserById)
             .orElse(null);
 
-
     if (user == null) {
       log.error("can't find user");
       throw new UserNotFoundException("Can't find User in DB");

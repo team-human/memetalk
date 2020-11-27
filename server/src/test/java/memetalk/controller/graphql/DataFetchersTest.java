@@ -9,6 +9,7 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import graphql.schema.DataFetchingEnvironment;
 import java.util.ArrayList;
@@ -39,8 +40,9 @@ public class DataFetchersTest {
     staticFileManager = mock(StaticFileManager.class);
     userService = mock(UserService.class);
     authenticationProvider = mock(AuthenticationProvider.class);
-    dataFetchersAuth = new DataFetchersAuth(userService, authenticationProvider);
-    dataFetchers = new DataFetchers(databaseAdapter, staticFileManager, dataFetchersAuth);
+    dataFetchersAuth = new DataFetchersAuth(userService, authenticationProvider, databaseAdapter);
+    dataFetchers =
+        new DataFetchers(databaseAdapter, staticFileManager, dataFetchersAuth, new ObjectMapper());
   }
 
   @Test

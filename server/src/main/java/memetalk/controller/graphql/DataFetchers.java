@@ -8,8 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import graphql.schema.DataFetcher;
 import java.util.List;
-import java.util.Map;
-
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,7 +67,9 @@ public class DataFetchers {
 
   public DataFetcher<LoginUser> createUser() {
     return dataFetchingEnvironment -> {
-      final CreateUserInput userInput = objectMapper.convertValue(dataFetchingEnvironment.getArgument("userInfo"), CreateUserInput.class);
+      final CreateUserInput userInput =
+          objectMapper.convertValue(
+              dataFetchingEnvironment.getArgument("userInfo"), CreateUserInput.class);
       return dataFetchersAuth.createUserAuth(userInput);
     };
   }
@@ -95,7 +95,7 @@ public class DataFetchers {
       final File file = dataFetchingEnvironment.getArgument("file");
       final List<String> tags = dataFetchingEnvironment.getArgument("tags");
       Meme meme = Meme.builder().tags(tags).image(file.getContent()).build();
-      databaseAdapter.addMeme(meme);
+      dataFetchersAuth.createMemeAuth(meme);
       // TODO: Consider if we need to return a valid meme here or some response
       // status is enough.
       return meme;
