@@ -62,11 +62,15 @@ public class UserService implements UserDetailsService {
 
   // Used in security annotation @PreAuthorize("@userService.isAuthenticated()")
   public static boolean isAuthenticated() {
-    return Optional.ofNullable(SecurityContextHolder.getContext())
-        .map(SecurityContext::getAuthentication)
-        .filter(Authentication::isAuthenticated)
-        .filter(auth -> !isAnonymous(auth))
-        .isPresent();
+
+    final boolean isAuthenticated = Optional.ofNullable(SecurityContextHolder.getContext())
+            .map(SecurityContext::getAuthentication)
+            .filter(Authentication::isAuthenticated)
+            .isPresent();
+
+    // Add debug here. After we are comfortable with it, we can remove this debug log.
+    log.info("isAuthenticated() is called, and it is {}", isAuthenticated ? "authenticated" : "not authenticated");
+    return isAuthenticated;
   }
 
   private static boolean isAnonymous(Authentication authentication) {
