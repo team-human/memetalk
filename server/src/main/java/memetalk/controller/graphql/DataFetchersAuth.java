@@ -50,7 +50,8 @@ public class DataFetchersAuth {
     return userService.createUser(userInput);
   }
 
-  @PreAuthorize("@userService.isAuthenticated()")
+  // Not blocking the current frontEnd integration, but the annotation is ready to be used
+  // @PreAuthorize("@userService.isAuthenticated()")
   public void createMemeAuth(@NonNull final Meme meme) throws SQLException {
     databaseAdapter.addMeme(meme);
   }
