@@ -15,7 +15,6 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import memetalk.ConfigReader;
 import memetalk.model.Meme;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 /**

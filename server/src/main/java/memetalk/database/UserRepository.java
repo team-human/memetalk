@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import memetalk.data.FakeDataGenerator;
 import memetalk.model.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 @Repository
