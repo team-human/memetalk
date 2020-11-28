@@ -52,10 +52,10 @@ import org.springframework.util.CollectionUtils;
 public class UserService implements UserDetailsService {
   private static final String USER_AUTHORITY = "USER";
   private static final String ADMIN_AUTHORITY = "ADMIN";
-  private final UserRepository repository;
+  private final UserRepository userRepository;
   private final JWTVerifier jwtVerifier;
   private final PasswordEncoder passwordEncoder;
-  private final SecurityProperties properties;
+  private final SecurityProperties securityProperties;
   private final Algorithm algorithm;
 
   public boolean isAdmin() {
@@ -100,9 +100,9 @@ public class UserService implements UserDetailsService {
 
   protected String getToken(User user) {
     Instant now = Instant.now();
-    Instant expiry = Instant.now().plus(properties.getTokenExpiration());
+    Instant expiry = Instant.now().plus(securityProperties.getTokenExpiration());
     return JWT.create()
-        .withIssuer(properties.getTokenIssuer())
+        .withIssuer(securityProperties.getTokenIssuer())
         .withIssuedAt(Date.from(now))
         .withExpiresAt(Date.from(expiry))
         .withSubject(user.getId())
@@ -112,7 +112,7 @@ public class UserService implements UserDetailsService {
   @Override
   @Transactional
   public JwtUserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-    return repository
+    return userRepository
         .findUserById(id)
         .map(user -> getUserDetails(user, getToken(user)))
         .orElseThrow(() -> new UsernameNotFoundException("Username or password didn''t match"));
@@ -122,7 +122,7 @@ public class UserService implements UserDetailsService {
   public JwtUserDetails loadUserByToken(String token) {
     return getDecodedToken(token)
         .map(DecodedJWT::getSubject)
-        .flatMap(repository::findUserById)
+        .flatMap(userRepository::findUserById)
         .map(user -> getUserDetails(user, token))
         .orElseThrow(BadTokenException::new);
   }
@@ -133,7 +133,7 @@ public class UserService implements UserDetailsService {
         Optional.ofNullable(SecurityContextHolder.getContext())
             .map(SecurityContext::getAuthentication)
             .map(Authentication::getName)
-            .flatMap(repository::findUserById)
+            .flatMap(userRepository::findUserById)
             .orElse(null);
 
     if (user == null) {
@@ -149,7 +149,7 @@ public class UserService implements UserDetailsService {
     if (!exists(input)) {
 
       final User user =
-          repository.storeUser(
+          userRepository.storeUser(
               User.builder()
                   .password(passwordEncoder.encode(input.getPassword()))
                   .roles(ImmutableSet.of(USER_AUTHORITY))
@@ -170,7 +170,7 @@ public class UserService implements UserDetailsService {
   }
 
   private boolean exists(CreateUserInput input) {
-    return repository.existsById(input.getId());
+    return userRepository.existsById(input.getId());
   }
 
   private JwtUserDetails getUserDetails(User user, String token) {
