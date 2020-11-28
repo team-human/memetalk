@@ -1,11 +1,15 @@
 package memetalk.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Value
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateUserInput {
-  @JsonProperty private final String id;
-  @JsonProperty private final String password;
-  @JsonProperty private final String name;
+  @JsonProperty private String id = "test";
+  @JsonProperty private String password = "password";
+  @JsonProperty private String name = "name";
 }

@@ -96,17 +96,17 @@ public class GraphQLAuthenticatorTest {
 
   @Test
   public void testCreateUserAuth() {
-    CreateUserInput input = new CreateUserInput("test_id", "password", "sam");
+    CreateUserInput createUserInput = new CreateUserInput("test_id", "password", "sam");
     User expectedUser =
         User.builder()
-            .password(passwordEncoder.encode(input.getPassword()))
+            .password(passwordEncoder.encode(createUserInput.getPassword()))
             .roles(ImmutableSet.of(USER_AUTHORITY))
-            .name(input.getName())
-            .id(input.getId())
+            .name(createUserInput.getName())
+            .id(createUserInput.getId())
             .build();
 
     when(userRepository.storeUser(any())).thenReturn(expectedUser);
-    LoginUser loginUser = graphQLAuthenticator.createUserAuth(input);
+    LoginUser loginUser = graphQLAuthenticator.createUserAuth(createUserInput);
 
     assertEquals(expectedUser, loginUser.getUser());
     assertNotNull(loginUser.getToken());

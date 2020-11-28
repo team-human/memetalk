@@ -11,12 +11,17 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import graphql.schema.DataFetchingEnvironment;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import memetalk.controller.StaticFileManager;
 import memetalk.database.DatabaseAdapter;
+import memetalk.model.CreateUserInput;
 import memetalk.model.File;
+import memetalk.model.LoginUser;
 import memetalk.model.Meme;
 import memetalk.model.User;
 import memetalk.service.UserService;
@@ -24,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.authentication.AuthenticationProvider;
 
+@Slf4j
 public class DataFetchersTest {
   private DataFetchers dataFetchers;
   private StaticFileManager staticFileManager;
@@ -32,6 +38,7 @@ public class DataFetchersTest {
   private UserService userService;
   private AuthenticationProvider authenticationProvider;
   private GraphQLAuthenticator graphQLAuthenticator;
+  private ObjectMapper objectMapper = new ObjectMapper();
 
   @Before
   public void setUp() throws Exception {
@@ -43,8 +50,7 @@ public class DataFetchersTest {
     graphQLAuthenticator =
         new GraphQLAuthenticator(userService, authenticationProvider, databaseAdapter);
     dataFetchers =
-        new DataFetchers(
-            databaseAdapter, staticFileManager, graphQLAuthenticator, new ObjectMapper());
+        new DataFetchers(databaseAdapter, staticFileManager, graphQLAuthenticator, objectMapper);
   }
 
   @Test
@@ -132,5 +138,57 @@ public class DataFetchersTest {
     Meme expectedMeme = Meme.builder().tags(argumentTags).image(fakeFile.getContent()).build();
 
     assertEquals(expectedMeme, actualMeme);
+  }
+
+  @Test
+  public void testLogin() throws Exception {
+    final String id = "id";
+    final String password = "password";
+    LoginUser expectedLoginUser =
+        LoginUser.builder()
+            .token("test_token")
+            .user(
+                User.builder()
+                    .id(id)
+                    .password(password)
+                    .name("name")
+                    .roles(ImmutableSet.of("USER"))
+                    .build())
+            .build();
+    when(dataFetchingEnvironment.getArgument("id")).thenReturn(id);
+    when(dataFetchingEnvironment.getArgument("password")).thenReturn(password);
+    when(graphQLAuthenticator.loginUserAuth(id, password)).thenReturn(expectedLoginUser);
+
+    LoginUser actualLoginUser = dataFetchers.loginUser().get(dataFetchingEnvironment);
+
+    assertEquals(expectedLoginUser, actualLoginUser);
+  }
+
+  @Test
+  public void testCreateUser() throws Exception {
+    final String id = "id";
+    final String password = "password";
+    final String name = "name";
+    final LoginUser expectedLoginUser =
+        LoginUser.builder()
+            .token("test_token")
+            .user(
+                User.builder()
+                    .id(id)
+                    .password(password)
+                    .name(name)
+                    .roles(ImmutableSet.of("USER"))
+                    .build())
+            .build();
+    final CreateUserInput createUserInput = new CreateUserInput(id, password, name);
+
+    Map<String, Object> converted = objectMapper.convertValue(createUserInput, Map.class);
+    log.info("test {}", converted);
+    when(dataFetchingEnvironment.getArgument("userInfo")).thenReturn(converted);
+    when(graphQLAuthenticator.createUserAuth(createUserInput)).thenReturn(expectedLoginUser);
+
+    LoginUser actualLoginUser = dataFetchers.createUser().get(dataFetchingEnvironment);
+
+    assertEquals(expectedLoginUser, actualLoginUser);
   }
 }
