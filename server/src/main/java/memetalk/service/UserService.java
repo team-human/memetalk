@@ -1,5 +1,7 @@
 package memetalk.service;
 
+import static java.util.function.Predicate.not;
+
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -73,6 +75,7 @@ public class UserService implements UserDetailsService {
         Optional.ofNullable(SecurityContextHolder.getContext())
             .map(SecurityContext::getAuthentication)
             .filter(Authentication::isAuthenticated)
+            .filter(not(UserService::isAnonymous))
             .isPresent();
 
     // Add debug here. After we are comfortable with it, we can remove this debug log.
@@ -91,7 +94,7 @@ public class UserService implements UserDetailsService {
     return Optional.ofNullable(SecurityContextHolder.getContext())
         .map(SecurityContext::getAuthentication)
         .filter(Authentication::isAuthenticated)
-        .filter(auth -> isAnonymous(auth))
+        .filter(UserService::isAnonymous)
         .isPresent();
   }
 
