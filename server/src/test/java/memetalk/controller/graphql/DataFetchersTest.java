@@ -182,9 +182,8 @@ public class DataFetchersTest {
             .build();
     final CreateUserInput createUserInput = new CreateUserInput(id, password, name);
 
-    Map<String, Object> converted = objectMapper.convertValue(createUserInput, Map.class);
-    log.info("test {}", converted);
-    when(dataFetchingEnvironment.getArgument("userInfo")).thenReturn(converted);
+    when(dataFetchingEnvironment.getArgument("userInfo"))
+        .thenReturn(objectMapper.convertValue(createUserInput, Map.class));
     when(graphQLAuthenticator.createUserAuth(createUserInput)).thenReturn(expectedLoginUser);
 
     LoginUser actualLoginUser = dataFetchers.createUser().get(dataFetchingEnvironment);

@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import graphql.schema.DataFetcher;
 import java.util.List;
-import java.util.Map;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -68,7 +67,6 @@ public class DataFetchers {
 
   public DataFetcher<LoginUser> createUser() {
     return dataFetchingEnvironment -> {
-      log.info("datafetcher {}", (Map) dataFetchingEnvironment.getArgument("userInfo"));
       final CreateUserInput userInput =
           objectMapper.convertValue(
               dataFetchingEnvironment.getArgument("userInfo"), CreateUserInput.class);
