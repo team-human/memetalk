@@ -41,7 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
     filterChain.doFilter(request, response);
   }
 
-  private Optional<String> getTokenFromRequest(HttpServletRequest request) {
+  protected Optional<String> getTokenFromRequest(HttpServletRequest request) {
     return Optional.ofNullable(request.getHeader(AUTHORIZATION_HEADER))
         .filter(token -> !StringUtils.isEmpty(token))
         .map(BEARER_PATTERN::matcher)
