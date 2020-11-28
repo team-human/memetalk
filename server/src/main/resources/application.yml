@@ -1,5 +1,0 @@
-memetalk:
-  security:
-    jwt:
-      passwordStrength: 15
-      secretKey: for_demo_service_usage

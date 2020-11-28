@@ -25,9 +25,9 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @RequiredArgsConstructor
 public class SecurityProperties {
   /** Amound of hashing iterations, where formula is 2^passwordStrength iterations */
-  private final Integer passwordStrength;
+  private final Integer passwordStrength = 10;
   /** Secret used to generate and verify JWT tokens */
-  private final String secretKey;
+  private final String secretKey = "default_security_key"; // TODO: create this value secretly
   /** Name of the token issuer */
   private final String tokenIssuer = "memetalk";
   /** Duration after which a token will expire */
