@@ -10,8 +10,9 @@ import memetalk.data.FakeDataGenerator;
 import memetalk.model.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component
+@Repository
 @RequiredArgsConstructor
 public class UserRepository {
   // TODO: connect to the real database

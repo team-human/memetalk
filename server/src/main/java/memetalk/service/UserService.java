@@ -38,6 +38,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+/*
+ * This class is for User related data (User table) and AoP for User authentication.
+ * Note: The reason why it is implements UserDetailsService is because we need it for AuthenticationProvider,
+ * which will be used for Spring boot security authentication parts.
+ */
+
 @Slf4j
 @Service
 @RequiredArgsConstructor

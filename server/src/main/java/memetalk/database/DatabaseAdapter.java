@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import memetalk.ConfigReader;
 import memetalk.model.Meme;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 /**
  * DatabaseAdapter keeps a connection with the database and offers methods to read/write the
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Component;
  * connection with the database. TODO: Add lock on each public method to promise data consistency.
  */
 @Slf4j
-@Component
+@Repository
 public class DatabaseAdapter {
   private final Connection connection;
 

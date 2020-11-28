@@ -89,7 +89,6 @@ public class DataFetchers {
     };
   }
 
-  //  @PreAuthorize("isAuthenticated()") // this has an issue
   public DataFetcher<Meme> createMemeDataFetcher() {
     return dataFetchingEnvironment -> {
       final File file = dataFetchingEnvironment.getArgument("file");
