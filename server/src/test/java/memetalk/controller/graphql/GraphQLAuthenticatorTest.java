@@ -39,7 +39,6 @@ public class GraphQLAuthenticatorTest {
   private Algorithm algorithm;
   private UserService userService;
   private AuthenticationProvider authenticationProvider;
-  ;
   private DatabaseAdapter databaseAdapter;
   private GraphQLAuthenticator graphQLAuthenticator;
   private Authentication authentication;

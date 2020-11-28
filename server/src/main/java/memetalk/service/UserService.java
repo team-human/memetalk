@@ -70,7 +70,6 @@ public class UserService implements UserDetailsService {
 
   // Used in security annotation @PreAuthorize("@userService.isAuthenticated()")
   public static boolean isAuthenticated() {
-
     final boolean isAuthenticated =
         Optional.ofNullable(SecurityContextHolder.getContext())
             .map(SecurityContext::getAuthentication)
