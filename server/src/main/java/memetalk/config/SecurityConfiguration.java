@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Slf4j
 @Configuration
-// In order to let Spring Boot injection to find out SecurityProperties
+// EnableConfigurationProperties instruct Spring boot where to find out SecurityProperties.class is.
 @EnableConfigurationProperties(SecurityProperties.class)
 public class SecurityConfiguration {
   @Bean

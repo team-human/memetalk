@@ -25,7 +25,7 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @RequiredArgsConstructor
 public class SecurityProperties {
   /** Amound of hashing iterations, where formula is 2^passwordStrength iterations */
-  private final int passwordStrength;
+  private final Integer passwordStrength;
   /** Secret used to generate and verify JWT tokens */
   private final String secretKey;
   /** Name of the token issuer */

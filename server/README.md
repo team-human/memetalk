@@ -52,7 +52,7 @@ $ ./gradlew build
 To run a spring boot application
 
 ```bash
-$ MEMETALK_SECURITY_JWT_PASSWORDSTRENGTH=10 MEMETALK_SECURITY_JWT_SECRETKEY=myspecialsecret ./gradlew bootRun
+$ ./gradlew bootRun
 ```
 
 ### Test

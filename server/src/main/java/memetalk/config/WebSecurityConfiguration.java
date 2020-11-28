@@ -31,7 +31,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    // May need to change if we want to support API user
     http.authorizeRequests()
         .anyRequest()
         .permitAll()

@@ -32,7 +32,7 @@ public class DataFetchers {
 
   @NonNull private final DatabaseAdapter databaseAdapter;
   @NonNull private final StaticFileManager staticFileManager;
-  @NonNull private final DataFetchersAuth dataFetchersAuth;
+  @NonNull private final GraphQLAuthenticator graphQLAuthenticator;
   @NonNull private final ObjectMapper objectMapper;
 
   public static List<User> users = generateFakeUsers();
@@ -61,7 +61,7 @@ public class DataFetchers {
     return dataFetchingEnvironment -> {
       final String id = dataFetchingEnvironment.getArgument("id");
       final String password = dataFetchingEnvironment.getArgument("password");
-      return dataFetchersAuth.loginUserAuth(id, password);
+      return graphQLAuthenticator.loginUserAuth(id, password);
     };
   }
 
@@ -70,7 +70,7 @@ public class DataFetchers {
       final CreateUserInput userInput =
           objectMapper.convertValue(
               dataFetchingEnvironment.getArgument("userInfo"), CreateUserInput.class);
-      return dataFetchersAuth.createUserAuth(userInput);
+      return graphQLAuthenticator.createUserAuth(userInput);
     };
   }
 
@@ -95,7 +95,7 @@ public class DataFetchers {
       final File file = dataFetchingEnvironment.getArgument("file");
       final List<String> tags = dataFetchingEnvironment.getArgument("tags");
       Meme meme = Meme.builder().tags(tags).image(file.getContent()).build();
-      dataFetchersAuth.createMemeAuth(meme);
+      graphQLAuthenticator.createMemeAuth(meme);
       // TODO: Consider if we need to return a valid meme here or some response
       // status is enough.
       return meme;

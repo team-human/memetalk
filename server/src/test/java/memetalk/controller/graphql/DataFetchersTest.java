@@ -31,7 +31,7 @@ public class DataFetchersTest {
   private DatabaseAdapter databaseAdapter;
   private UserService userService;
   private AuthenticationProvider authenticationProvider;
-  private DataFetchersAuth dataFetchersAuth;
+  private GraphQLAuthenticator graphQLAuthenticator;
 
   @Before
   public void setUp() throws Exception {
@@ -40,9 +40,11 @@ public class DataFetchersTest {
     staticFileManager = mock(StaticFileManager.class);
     userService = mock(UserService.class);
     authenticationProvider = mock(AuthenticationProvider.class);
-    dataFetchersAuth = new DataFetchersAuth(userService, authenticationProvider, databaseAdapter);
+    graphQLAuthenticator =
+        new GraphQLAuthenticator(userService, authenticationProvider, databaseAdapter);
     dataFetchers =
-        new DataFetchers(databaseAdapter, staticFileManager, dataFetchersAuth, new ObjectMapper());
+        new DataFetchers(
+            databaseAdapter, staticFileManager, graphQLAuthenticator, new ObjectMapper());
   }
 
   @Test

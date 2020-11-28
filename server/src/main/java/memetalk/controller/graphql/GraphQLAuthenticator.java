@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class DataFetchersAuth {
+public class GraphQLAuthenticator {
   @NonNull private final UserService userService;
   @NonNull private final AuthenticationProvider authenticationProvider;
   @NonNull private final DatabaseAdapter databaseAdapter;

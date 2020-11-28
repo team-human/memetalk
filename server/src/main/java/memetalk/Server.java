@@ -13,9 +13,8 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /*
- * We use @Transactional, but it expects DataSourceAutoConfiguration, and throw errors. We have our ConfigReader,
- * so we don't use it and exclude it. (maybe consider deprecate ConfigReader, and use Spring boot configuration)
- * See this SO https://stackoverflow.com/questions/51221777/failed-to-configure-a-datasource-url-attribute-is-not-specified-and-no-embedd
+ * We exclude DataSourceAutoConfiguration as part of the spring application because we have our own ConfigReader.
+ * (Maybe consider deprecate ConfigReader, and use Spring boot configuration only)
  */
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class Server {
