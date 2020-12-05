@@ -1,3 +1,4 @@
+import { useQuery } from '@apollo/client'
 import React, { useState } from 'react'
 import {
   SafeAreaView,
@@ -7,6 +8,8 @@ import {
   View,
 } from 'react-native'
 import { FlatGrid } from 'react-native-super-grid'
+import { GET_CURRENT_USER, GET_MEMES_BY_AUTHORID } from '../Query/TopicsQuery'
+import { Profile } from '../View/Profile/Profile'
 
 const DATA = [
     { name: 'TURQUOISE', code: '#1abc9c' },
@@ -54,16 +57,23 @@ const DATA = [
 
 export default function ProfileScreen({ navigation }) {
   const [selectedId, setSelectedId] = useState(null)
-  const userData = {
-      isTopInDay: true,
-      date: '2020/07/14',
-      like: 1300,
-      unLike: 100,
-      name: 'A'
-  }
+  const { loading: currentUserIsLoading, data: currentUserData } = useQuery(
+    GET_CURRENT_USER
+  )
+  const { loading: authMemeIsLoading, data: authMemeData } = useQuery(
+    GET_MEMES_BY_AUTHORID,
+    {
+      skip: !currentUserData?.currentUser,
+      variables: {
+        userId: currentUserData?.currentUser?.id,
+      },
+    }
+  )
+    console.log(authMemeData);
 
   return (
     <>
+    <Profile {...currentUserData?.currentUser}/>
       <SafeAreaView style={styles.container}>
         <FlatGrid
             itemDimension={100}
@@ -77,24 +87,6 @@ export default function ProfileScreen({ navigation }) {
                     <Text style={styles.itemCode}>{item.code}</Text>
                 </View>
             )}
-            ListHeaderComponent={() => {
-                return (
-                    <View style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", marginBottom: 24}}>
-                        <View style={{ 
-                                backgroundColor: 'rgba(196, 196, 196, 0.8)', borderRadius: 32, height:64, width: 64,
-                                display: "flex", justifyContent: "center", alignItems: "center"
-                            }}>
-                            <Text>{userData.name}</Text>
-                        </View>
-                        <View style={{ marginLeft: 8}}>
-                            {
-                                userData.isTopInDay ? <Text>榮登 {userData.date } 題王</Text> : null
-                            }
-                            <Text>總獲得喜歡 {userData.like} 討厭 {userData.unLike}</Text>
-                        </View>
-                    </View>
-                )
-            }}
         />
       </SafeAreaView>
     </>

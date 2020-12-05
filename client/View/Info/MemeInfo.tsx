@@ -47,8 +47,8 @@ export const MemeInfo = ({
         <Text>{dateString}</Text>
       </View>
       <View style={styles.number}>
-        <Text>{`Discussion: ${discussionNum} > 1 : ${pluralize("Discussion")} : "Discussion"`}</Text>
-        <Text>{`Share: ${shareNum} > 1 : ${pluralize("Share")} : "Share"`}</Text>
+        <Text>{`${discussionNum || 0} ${discussionNum > 1 ? pluralize("Discussion") : "Discussion"}  `}</Text>
+        <Text>{`${shareNum || 0} ${shareNum > 1 ? pluralize("Share") : "Share"}  `}</Text>
       </View>
     </View>
   )
