@@ -123,7 +123,7 @@ public class UserService implements UserDetailsService {
         .map(DecodedJWT::getSubject)
         .flatMap(userRepository::findUserById)
         .map(user -> getUserDetails(user, token))
-        .orElseThrow(BadTokenException::new);
+        .orElseThrow(() -> new BadTokenException("Bad Jwt token"));
   }
 
   @Transactional

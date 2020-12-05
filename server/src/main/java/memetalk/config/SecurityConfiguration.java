@@ -19,6 +19,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 // EnableConfigurationProperties instruct Spring boot where to find out SecurityProperties.class is.
 @EnableConfigurationProperties(SecurityProperties.class)
 public class SecurityConfiguration {
+  // We follow https://github.com/g00glen00b/whoiswho-graphql to create required objects
+
   @Bean
   public Algorithm jwtAlgorithm(SecurityProperties properties) {
     return Algorithm.HMAC256(properties.getSecretKey());
