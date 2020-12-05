@@ -7,6 +7,7 @@ import static org.mockito.Mockito.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,15 +22,16 @@ import org.springframework.http.ResponseEntity;
 
 public class GraphQLControllerTest {
   private GraphQLExecutor graphQLExecutor;
+  private GraphQLController graphQLController;
 
   @Before
   public void setUp() {
     this.graphQLExecutor = mock(GraphQLExecutor.class);
+    this.graphQLController = new GraphQLController(graphQLExecutor, new ObjectMapper());
   }
 
   @Test
   public void testHandleGraphQLRequestWithEmptyBody() {
-    GraphQLController graphQLController = new GraphQLController(graphQLExecutor);
     Object response = graphQLController.handleGraphQLRequest(null, null, null);
     ResponseEntity<String> expectedResponse =
         ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to find valid request content.");
@@ -38,7 +40,6 @@ public class GraphQLControllerTest {
 
   @Test
   public void testHandleGraphQLRequestWithInvalidQuery() {
-    GraphQLController graphQLController = new GraphQLController(graphQLExecutor);
     Object response = graphQLController.handleGraphQLRequest("bad content", null, null);
     ResponseEntity<String> expectedResponse =
         ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -48,7 +49,6 @@ public class GraphQLControllerTest {
 
   @Test
   public void testHandleGraphQLRequestWithValidQuery() {
-    GraphQLController graphQLController = new GraphQLController(graphQLExecutor);
     String query = "query { popularTags }";
     String body = "{\"query\":\"" + query + "\"}";
 
@@ -70,7 +70,6 @@ public class GraphQLControllerTest {
     // request param separately. That is, the variables we pass into
     // GraphQLExecutor is composed by the variables in the `operations` string
     // and the `file` object from the request param.
-    GraphQLController graphQLController = new GraphQLController(graphQLExecutor);
 
     String query =
         "mutation ($file: File!, $tags: [String!]) { createMeme(file: $file, tags: $tags) { tags } }";

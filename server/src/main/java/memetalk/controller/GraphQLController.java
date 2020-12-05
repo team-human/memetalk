@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.Part;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import memetalk.controller.graphql.GraphQLExecutor;
 import org.springframework.http.HttpHeaders;
@@ -23,20 +25,10 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Slf4j
 @Controller
+@RequiredArgsConstructor
 class GraphQLController {
-  private GraphQLExecutor graphQLExecutor;
-  private ObjectMapper objectMapper;
-
-  public GraphQLController() throws Exception {
-    this.graphQLExecutor = new GraphQLExecutor();
-    this.objectMapper = new ObjectMapper();
-  }
-
-  // This constructor is for test only.
-  protected GraphQLController(GraphQLExecutor graphQLExecutor) {
-    this.graphQLExecutor = graphQLExecutor;
-    this.objectMapper = new ObjectMapper();
-  }
+  @NonNull private GraphQLExecutor graphQLExecutor;
+  @NonNull private ObjectMapper objectMapper;
 
   @PostMapping(value = "/graphql")
   public Object handleGraphQLRequest(
@@ -53,8 +45,8 @@ class GraphQLController {
       }
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body("Unable to find valid request content.");
-    } catch (JsonProcessingException e) {
-      log.error(e.getMessage());
+    } catch (JsonProcessingException ex) {
+      log.error("Handling handleGraphQLRequest encounters error", ex);
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body("Unable to parse the request and/or executed response.");
     }
