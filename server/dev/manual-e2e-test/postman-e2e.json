@@ -1,17 +1,17 @@
 {
 	"info": {
-		"_postman_id": "2cfbec76-9e77-4ddd-84c9-55bb1bc6e223",
+		"_postman_id": "4136c25f-8652-4731-b843-3e0bf19cd6ce",
 		"name": "MemeTalk-E2E",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "localhost:8080/graphql",
+			"name": "Query popularTags",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "8ac7740f-c29f-40df-82a5-b0a819bd224b",
+						"id": "9cf7e52a-42f6-4748-b781-bef87bb8ae38",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
