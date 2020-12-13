@@ -15,6 +15,7 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import memetalk.ConfigReader;
 import memetalk.model.Meme;
+import memetalk.model.User;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -59,7 +60,11 @@ public class DatabaseAdapter {
                                        configReader.getConfig("db-password"));
   }
 
-  /** Returns all memes. */
+  /**
+   * Returns all memes.
+   * DEPRECATED: Reasons are (1) it populates incompleted fields of a meme, (2)
+   * it shows unfiltered data and they will be too many.
+   * */
   public List<Meme> getMemes() throws SQLException {
     List<Meme> memes = new ArrayList<>();
 
@@ -127,11 +132,13 @@ public class DatabaseAdapter {
 
     Statement statement = connection.createStatement();
     ResultSet result = statement.executeQuery(
-        "SELECT id, image, create_time FROM meme WHERE id IN (" +
+        "SELECT id, image, create_time, user_id FROM meme WHERE id IN (" +
         String.join(",", meme_ids) + ");");
     while (result.next()) {
+      User author = getUserById(result.getInt("user_id"));
       memes.add(Meme.builder()
                     .id(Integer.toString(result.getInt("id")))
+                    .author(author)
                     .image(result.getBytes("image"))
                     .createTime(result.getString("create_time"))
                     .build());
@@ -173,5 +180,31 @@ public class DatabaseAdapter {
       }
     }
     return memes;
+  }
+
+  private User getUserById(int id) throws SQLException {
+    PreparedStatement statement = connection.prepareStatement(
+        "SELECT id, name FROM meme_user WHERE id = ?;");
+    statement.setInt(1, id);
+    ResultSet result = statement.executeQuery();
+
+    User user = null;
+    if (result.next()) {
+      user = User.builder()
+                 .id(Integer.toString(result.getInt("id")))
+                 .name(result.getString("name"))
+                 .build();
+    }
+
+    // If we didn't find 'exact one' user with the given id, we log error and
+    // continue.
+    if (result.next() || user == null) {
+      log.error("Failed to find exact one user record with id={}", id);
+    }
+
+    result.close();
+    statement.close();
+
+    return user;
   }
 }

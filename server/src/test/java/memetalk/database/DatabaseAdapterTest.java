@@ -55,20 +55,30 @@ public class DatabaseAdapterTest {
 
   private void generateFakeData() throws Exception {
     Statement statement = connection.createStatement();
+    generateFakeMemeUserTable(statement);
     generateFakeMemeTable(statement);
     generateFakeMemeToTagTable(statement);
     statement.close();
     connection.commit();
   }
 
+  private void generateFakeMemeUserTable(Statement statement) throws Exception {
+    statement.execute("DROP TABLE meme_user IF EXISTS;");
+    statement.execute(
+        "CREATE TABLE meme_user (id SERIAL PRIMARY KEY, name VARCHAR(64));");
+    statement.execute("INSERT INTO meme_user (name) VALUES ('Harry Potter');");
+    statement.execute(
+        "INSERT INTO meme_user (name) VALUES ('Hermione Granger');");
+  }
+
   private void generateFakeMemeTable(Statement statement) throws Exception {
     statement.execute("DROP TABLE meme IF EXISTS;");
     statement.execute(
-        "CREATE TABLE meme (id SERIAL PRIMARY KEY, image BYTEA, create_time TIMESTAMP);");
+        "CREATE TABLE meme (id SERIAL PRIMARY KEY, image BYTEA, create_time TIMESTAMP, user_id INTEGER);");
     statement.execute(
-        "INSERT INTO meme (image, create_time) VALUES (x'ABCD', {ts '2020-10-20 12:34:56.78'});");
+        "INSERT INTO meme (image, create_time, user_id) VALUES (x'ABCD', {ts '2020-10-20 12:34:56.78'}, 1);");
     statement.execute(
-        "INSERT INTO meme (image, create_time) VALUES (x'EF12', {ts '2020-10-20 12:34:56.78'});");
+        "INSERT INTO meme (image, create_time, user_id) VALUES (x'EF12', {ts '2020-10-20 12:34:56.78'}, 2);");
   }
 
   private void generateFakeMemeToTagTable(Statement statement)
@@ -119,6 +129,7 @@ public class DatabaseAdapterTest {
     Assert.assertEquals("funny", memes.get(0).getTags().get(0));
     Assert.assertEquals("humor", memes.get(0).getTags().get(1));
     Assert.assertEquals("2020-10-20 12:34:56.78", memes.get(0).getCreateTime());
+    Assert.assertEquals("Harry Potter", memes.get(0).getAuthor().getName());
   }
 
   @Test

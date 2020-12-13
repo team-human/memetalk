@@ -10,6 +10,10 @@ import lombok.NonNull;
 public class User {
   @NonNull private String id;
   @NonNull private String name;
-  @NonNull private Set<String> roles;
-  @NonNull private String password;
+  // TODO: Replace Set<String> to Set<Enum>.
+  // TODO: User is currently a data model used as part of GraphQL response. We
+  // might want to move the followings to somewhere else so it won't be exposed
+  // to GraphQL.
+  private Set<String> roles;
+  private String password;
 }
