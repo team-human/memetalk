@@ -7,7 +7,8 @@ CREATE DATABASE memetalk;
 
 CREATE TABLE meme (
   id SERIAL PRIMARY KEY,
-  image BYTEA
+  image BYTEA,
+  create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE meme_to_tag (

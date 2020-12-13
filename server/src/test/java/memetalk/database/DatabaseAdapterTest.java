@@ -17,10 +17,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * DatabaseAdapterTest tests the functionalities of DatabaseAdapter by injecting a fake in-memory
- * database. DatabaseAdapterTest connects to a fake database before running any test case,
- * genereates fake data before running each test case, and disconnects the database after running
- * all tests.
+ * DatabaseAdapterTest tests the functionalities of DatabaseAdapter by injecting
+ * a fake in-memory database. DatabaseAdapterTest connects to a fake database
+ * before running any test case, genereates fake data before running each test
+ * case, and disconnects the database after running all tests.
  */
 public class DatabaseAdapterTest {
 
@@ -44,11 +44,9 @@ public class DatabaseAdapterTest {
   }
 
   private static void connectToFakeDatabase() throws Exception {
-    connection =
-        DriverManager.getConnection(
-            configReader.getConfig("db-url"),
-            configReader.getConfig("db-username"),
-            configReader.getConfig("db-password"));
+    connection = DriverManager.getConnection(
+        configReader.getConfig("db-url"), configReader.getConfig("db-username"),
+        configReader.getConfig("db-password"));
   }
 
   private static void disconnectFromFakeDatabase() throws Exception {
@@ -65,17 +63,25 @@ public class DatabaseAdapterTest {
 
   private void generateFakeMemeTable(Statement statement) throws Exception {
     statement.execute("DROP TABLE meme IF EXISTS;");
-    statement.execute("CREATE TABLE meme (id SERIAL PRIMARY KEY, image BYTEA);");
-    statement.execute("INSERT INTO meme (image) VALUES (x'ABCD');");
-    statement.execute("INSERT INTO meme (image) VALUES (x'EF12');");
+    statement.execute(
+        "CREATE TABLE meme (id SERIAL PRIMARY KEY, image BYTEA, create_time TIMESTAMP);");
+    statement.execute(
+        "INSERT INTO meme (image, create_time) VALUES (x'ABCD', {ts '2020-10-20 12:34:56.78'});");
+    statement.execute(
+        "INSERT INTO meme (image, create_time) VALUES (x'EF12', {ts '2020-10-20 12:34:56.78'});");
   }
 
-  private void generateFakeMemeToTagTable(Statement statement) throws Exception {
+  private void generateFakeMemeToTagTable(Statement statement)
+      throws Exception {
     statement.execute("DROP TABLE meme_to_tag IF EXISTS;");
-    statement.execute("CREATE TABLE meme_to_tag (meme_id INTEGER, tag VARCHAR(20));");
-    statement.execute("INSERT INTO meme_to_tag (meme_id, tag) VALUES (1, 'funny');");
-    statement.execute("INSERT INTO meme_to_tag (meme_id, tag) VALUES (1, 'humor');");
-    statement.execute("INSERT INTO meme_to_tag (meme_id, tag) VALUES (2, 'humor');");
+    statement.execute(
+        "CREATE TABLE meme_to_tag (meme_id INTEGER, tag VARCHAR(20));");
+    statement.execute(
+        "INSERT INTO meme_to_tag (meme_id, tag) VALUES (1, 'funny');");
+    statement.execute(
+        "INSERT INTO meme_to_tag (meme_id, tag) VALUES (1, 'humor');");
+    statement.execute(
+        "INSERT INTO meme_to_tag (meme_id, tag) VALUES (2, 'humor');");
   }
 
   @Test
@@ -83,8 +89,10 @@ public class DatabaseAdapterTest {
     DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     List<Meme> memes = databaseAdapter.getMemes();
     Assert.assertEquals(2, memes.size());
-    Assert.assertEquals("ABCD", DatatypeConverter.printHexBinary(memes.get(0).getImage()));
-    Assert.assertEquals("EF12", DatatypeConverter.printHexBinary(memes.get(1).getImage()));
+    Assert.assertEquals(
+        "ABCD", DatatypeConverter.printHexBinary(memes.get(0).getImage()));
+    Assert.assertEquals(
+        "EF12", DatatypeConverter.printHexBinary(memes.get(1).getImage()));
   }
 
   @Test
@@ -101,7 +109,8 @@ public class DatabaseAdapterTest {
   }
 
   @Test
-  public void testGetMemesByTagSingleResultSucceed() throws URISyntaxException, SQLException {
+  public void testGetMemesByTagSingleResultSucceed()
+      throws URISyntaxException, SQLException {
     DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     List<Meme> memes = databaseAdapter.getMemesByTag("funny");
     Assert.assertEquals(1, memes.size());
@@ -109,10 +118,12 @@ public class DatabaseAdapterTest {
     Assert.assertEquals(2, memes.get(0).getTags().size());
     Assert.assertEquals("funny", memes.get(0).getTags().get(0));
     Assert.assertEquals("humor", memes.get(0).getTags().get(1));
+    Assert.assertEquals("2020-10-20 12:34:56.78", memes.get(0).getCreateTime());
   }
 
   @Test
-  public void testGetMemesByTagMultipleResultSucceed() throws URISyntaxException, SQLException {
+  public void testGetMemesByTagMultipleResultSucceed()
+      throws URISyntaxException, SQLException {
     DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     List<Meme> memes = databaseAdapter.getMemesByTag("humor");
     Assert.assertEquals(2, memes.size());
