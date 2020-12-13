@@ -46,6 +46,62 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Query memesByTag",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "84257201-6fc8-4d6b-9566-247fade7e23f",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Body is correct\", function () {",
+							"    const memes = pm.response.json().data.memesByTag;",
+							"    pm.expect(memes.length).to.eql(2);",
+							"    pm.expect(memes[0].id).to.eql(\"1\");",
+							"    pm.expect(memes[0].author).to.eql({id: '1', name: 'Harry Potter'});",
+							"    pm.expect(memes[0].tags).to.eql([\"humor\", \"software\"]);",
+							"    pm.expect(memes[0].url).to.eql(\"http://localhost:8080/1.png\");",
+							"    // The createTime should be a valid date before now.",
+							"    pm.expect(new Date(memes[0].createTime).getTime()).to.be.below(new Date().getTime());",
+							"    ",
+							"    pm.expect(memes[1].id).to.eql(\"2\");",
+							"    pm.expect(memes[1].author).to.eql({id: '2', name: 'Hermione Granger'});",
+							"    pm.expect(memes[1].tags).to.eql([\"humor\", \"software\"]);",
+							"    pm.expect(memes[1].url).to.eql(\"http://localhost:8080/2.png\");",
+							"    // The createTime should be a valid date before now.",
+							"    pm.expect(new Date(memes[1].createTime).getTime()).to.be.below(new Date().getTime());",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\n    memesByTag(tag: \"software\") {\n        id,\n        author { id, name },\n        tags,\n        url,\n        createTime,\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/graphql",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"protocolProfileBehavior": {}
