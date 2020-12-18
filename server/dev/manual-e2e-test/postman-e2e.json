@@ -1,0 +1,52 @@
+{
+	"info": {
+		"_postman_id": "4136c25f-8652-4731-b843-3e0bf19cd6ce",
+		"name": "MemeTalk-E2E",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Query popularTags",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cf7e52a-42f6-4748-b781-bef87bb8ae38",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Body is correct\", function () {",
+							"    pm.response.to.have.body('{\"data\":{\"popularTags\":[\"humor\",\"software\",\"life\"]}}');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\n    popularTags\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/graphql",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

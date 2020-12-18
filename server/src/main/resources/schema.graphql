@@ -1,6 +1,16 @@
 type User {
   id: ID!
   name: String!
+
+  # The current role is ADMIN or USER. ADMIN role has a super power to delete
+  # any Meme, update password, remove a user account, and so on. USER role can only delete
+  # his/her Meme, update his/her passowrd.
+  roles: [String]
+}
+
+type LoginUser {
+  user: User!
+  token: String!
 }
 
 type Meme {
@@ -35,4 +45,14 @@ type Query {
 scalar File
 type Mutation {
   createMeme(file: File!, tags: [String!]): Meme
+  createUser(userInfo: CreateUserInput!): LoginUser
+  login(id: String!, password: String!): LoginUser
 }
+
+input CreateUserInput {
+  id: String!
+  password: String!
+  name: String!
+}
+
+

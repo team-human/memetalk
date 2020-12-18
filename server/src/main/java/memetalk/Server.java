@@ -2,6 +2,7 @@ package memetalk;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +12,11 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-@SpringBootApplication
+/*
+ * We exclude DataSourceAutoConfiguration as part of the spring application because we have our own ConfigReader.
+ * (Maybe consider deprecate ConfigReader, and use Spring boot configuration only)
+ */
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class Server {
   public static void main(String[] args) {
     SpringApplication.run(Server.class, args);

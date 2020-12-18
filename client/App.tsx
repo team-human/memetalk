@@ -1,4 +1,5 @@
 import * as React from 'react'
+import * as eva from '@eva-design/eva';
 import { Text, View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
@@ -7,6 +8,7 @@ import TopicScreen from './pages/topic'
 import ProfileScreen from './pages/profile'
 import { apolloClient } from './Providers/ApolloClient'
 import { ApolloProvider } from '@apollo/client'
+import { ApplicationProvider} from '@ui-kitten/components';
 
 function NotificationsScreen({ navigation }) {
   return (
@@ -53,6 +55,7 @@ const Tab = createBottomTabNavigator()
 
 export default function App() {
   return (
+    <ApplicationProvider {...eva} theme={eva.light}>
     <ApolloProvider client={apolloClient}>
       <NavigationContainer>
         <Tab.Navigator>
@@ -65,5 +68,7 @@ export default function App() {
         </Tab.Navigator>
       </NavigationContainer>
     </ApolloProvider>
+    </ApplicationProvider>
+
   )
 }
