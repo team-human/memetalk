@@ -98,6 +98,32 @@ public class DatabaseAdapter {
     return getMemesByIds(getMemeIdsByTag(tag));
   }
 
+  /** Returns all memes added by an user. */
+  public List<Meme> getMemesByUserId(String userId) throws SQLException {
+    List<Meme> memes = new ArrayList<>();
+
+    Statement statement = connection.createStatement();
+    ResultSet result =
+        statement.executeQuery(
+            "SELECT id, image, create_time, user_id FROM meme WHERE user_id = " + userId + ";");
+    while (result.next()) {
+      User author = getUserById(result.getInt("user_id"));
+      memes.add(
+          Meme.builder()
+              .id(Integer.toString(result.getInt("id")))
+              .author(author)
+              .image(result.getBytes("image"))
+              .createTime(result.getString("create_time"))
+              .build());
+    }
+    result.close();
+    statement.close();
+
+    fillTagsIntoMeme(memes);
+
+    return memes;
+  }
+
   /** Adds a new meme with an attached image. */
   public void addMeme(Meme meme) throws SQLException {
     PreparedStatement statement =

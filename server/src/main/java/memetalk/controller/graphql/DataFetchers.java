@@ -5,7 +5,6 @@ import static memetalk.data.FakeDataGenerator.generateFakeTags;
 import static memetalk.data.FakeDataGenerator.generateFakeUsers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import graphql.schema.DataFetcher;
 import java.util.List;
 import lombok.NonNull;
@@ -57,6 +56,15 @@ public class DataFetchers {
     };
   }
 
+  public DataFetcher<List<Meme>> getMemesByAuthorIdDataFetcher() {
+    return dataFetchingEnvironment -> {
+      final String userId = dataFetchingEnvironment.getArgument("userId");
+      List<Meme> memes = databaseAdapter.getMemesByUserId(userId);
+      fillUrl(memes);
+      return memes;
+    };
+  }
+
   public DataFetcher<LoginUser> loginUser() {
     return dataFetchingEnvironment -> {
       final String id = dataFetchingEnvironment.getArgument("id");
@@ -71,21 +79,6 @@ public class DataFetchers {
           objectMapper.convertValue(
               dataFetchingEnvironment.getArgument("userInfo"), CreateUserInput.class);
       return graphQLAuthenticator.createUserAuth(userInput);
-    };
-  }
-
-  // TODO: Replace fake data.
-  public DataFetcher<List<Meme>> getMemesByAuthorIdDataFetcher() {
-    return dataFetchingEnvironment -> {
-      final String userId = dataFetchingEnvironment.getArgument("userId");
-      final boolean validUserId = users.stream().anyMatch(user -> user.getId().equals(userId));
-      if (!validUserId) {
-        return ImmutableList.of();
-      } else {
-        return memes.stream()
-            .filter(meme -> meme.getAuthor().getId().equals(userId))
-            .collect(ImmutableList.toImmutableList());
-      }
     };
   }
 
