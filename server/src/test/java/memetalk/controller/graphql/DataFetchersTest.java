@@ -47,16 +47,17 @@ public class DataFetchersTest {
     staticFileManager = mock(StaticFileManager.class);
     userService = mock(UserService.class);
     authenticationProvider = mock(AuthenticationProvider.class);
-    graphQLAuthenticator =
-        new GraphQLAuthenticator(userService, authenticationProvider, databaseAdapter);
-    dataFetchers =
-        new DataFetchers(databaseAdapter, staticFileManager, graphQLAuthenticator, objectMapper);
+    graphQLAuthenticator = new GraphQLAuthenticator(
+        userService, authenticationProvider, databaseAdapter);
+    dataFetchers = new DataFetchers(databaseAdapter, staticFileManager,
+                                    graphQLAuthenticator, objectMapper);
   }
 
   @Test
   public void testGetCurrentUserDataFetcher() throws Exception {
     User expectedUser = generateFakeUsers().get(0);
-    User actualUser = (User) dataFetchers.getCurrentUserDataFetcher().get(dataFetchingEnvironment);
+    User actualUser = (User)dataFetchers.getCurrentUserDataFetcher().get(
+        dataFetchingEnvironment);
 
     assertEquals(expectedUser, actualUser);
   }
@@ -66,7 +67,8 @@ public class DataFetchersTest {
     List<String> expectedTags = ImmutableList.of(generateFakeTags().get(0));
     when(databaseAdapter.getTags()).thenReturn(expectedTags);
 
-    List<String> actualTags = dataFetchers.getPopularTagsDataFetcher().get(dataFetchingEnvironment);
+    List<String> actualTags =
+        dataFetchers.getPopularTagsDataFetcher().get(dataFetchingEnvironment);
     assertEquals(expectedTags, actualTags);
   }
 
@@ -77,11 +79,15 @@ public class DataFetchersTest {
     memesFromDatabase.add(Meme.builder().id("id2").build());
 
     when(dataFetchingEnvironment.getArgument("tag")).thenReturn("fake_tag");
-    when(databaseAdapter.getMemesByTag("fake_tag")).thenReturn(memesFromDatabase);
-    when(staticFileManager.write(any(), eq("id1.png"), any())).thenReturn("url1");
-    when(staticFileManager.write(any(), eq("id2.png"), any())).thenReturn("url2");
+    when(databaseAdapter.getMemesByTag("fake_tag"))
+        .thenReturn(memesFromDatabase);
+    when(staticFileManager.write(any(), eq("id1.png"), any()))
+        .thenReturn("url1");
+    when(staticFileManager.write(any(), eq("id2.png"), any()))
+        .thenReturn("url2");
 
-    List<Meme> actualMemes = dataFetchers.getMemesByTagDataFetcher().get(dataFetchingEnvironment);
+    List<Meme> actualMemes =
+        dataFetchers.getMemesByTagDataFetcher().get(dataFetchingEnvironment);
     List<Meme> expectedMemes = new ArrayList<>();
     expectedMemes.add(Meme.builder().id("id1").url("url1").build());
     expectedMemes.add(Meme.builder().id("id2").url("url2").build());
@@ -93,35 +99,46 @@ public class DataFetchersTest {
   public void testGetMemesByTagDataFetcherNothingMatched() throws Exception {
     when(dataFetchingEnvironment.getArgument("tag")).thenReturn("fake_tag");
     when(databaseAdapter.getMemesByTag("fake_tag")).thenReturn(new ArrayList());
-    List<Meme> actualMemes = dataFetchers.getMemesByTagDataFetcher().get(dataFetchingEnvironment);
+    List<Meme> actualMemes =
+        dataFetchers.getMemesByTagDataFetcher().get(dataFetchingEnvironment);
     assertEquals(new ArrayList(), actualMemes);
   }
 
   @Test
   public void testGetMemesByAuthorIdDataFetcherValidUserId() throws Exception {
-    String argumentUserId = generateFakeUsers().get(0).getId();
+    List<Meme> memesFromDatabase = new ArrayList<>();
+    memesFromDatabase.add(Meme.builder().id("id1").build());
+    memesFromDatabase.add(Meme.builder().id("id2").build());
 
-    when(dataFetchingEnvironment.getArgument("userId")).thenReturn(argumentUserId);
+    when(dataFetchingEnvironment.getArgument("userId"))
+        .thenReturn("fake_user_id");
+    when(databaseAdapter.getMemesByUserId("fake_user_id"))
+        .thenReturn(memesFromDatabase);
+    when(staticFileManager.write(any(), eq("id1.png"), any()))
+        .thenReturn("url1");
+    when(staticFileManager.write(any(), eq("id2.png"), any()))
+        .thenReturn("url2");
 
-    List<Meme> actualMemes =
-        (List<Meme>) dataFetchers.getMemesByAuthorIdDataFetcher().get(dataFetchingEnvironment);
-
-    List<Meme> expectedMemes =
-        generateFakeMemes().stream()
-            .filter(meme -> meme.getAuthor().getId().equals(argumentUserId))
-            .collect(ImmutableList.toImmutableList());
+    List<Meme> actualMemes = dataFetchers.getMemesByAuthorIdDataFetcher().get(
+        dataFetchingEnvironment);
+    List<Meme> expectedMemes = new ArrayList<>();
+    expectedMemes.add(Meme.builder().id("id1").url("url1").build());
+    expectedMemes.add(Meme.builder().id("id2").url("url2").build());
 
     assertEquals(expectedMemes, actualMemes);
   }
 
   @Test
-  public void testGetMemesByAuthorIdDataFetcherInvalidUserId() throws Exception {
+  public void testGetMemesByAuthorIdDataFetcherInvalidUserId()
+      throws Exception {
     String argumentUserId = "fakeRandomWrongUserId";
 
-    when(dataFetchingEnvironment.getArgument("userId")).thenReturn(argumentUserId);
+    when(dataFetchingEnvironment.getArgument("userId"))
+        .thenReturn(argumentUserId);
 
     List<Meme> actualMemes =
-        (List<Meme>) dataFetchers.getMemesByAuthorIdDataFetcher().get(dataFetchingEnvironment);
+        (List<Meme>)dataFetchers.getMemesByAuthorIdDataFetcher().get(
+            dataFetchingEnvironment);
 
     assertEquals(ImmutableList.of(), actualMemes);
   }
@@ -129,13 +146,16 @@ public class DataFetchersTest {
   @Test
   public void testCreateMemeDataFetcher() throws Exception {
     List<String> argumentTags = ImmutableList.of("tag1", "tag2");
-    File fakeFile = File.builder().content("dummyData".getBytes()).type("fakeType").build();
+    File fakeFile =
+        File.builder().content("dummyData".getBytes()).type("fakeType").build();
 
     when(dataFetchingEnvironment.getArgument("file")).thenReturn(fakeFile);
     when(dataFetchingEnvironment.getArgument("tags")).thenReturn(argumentTags);
 
-    Meme actualMeme = (Meme) dataFetchers.createMemeDataFetcher().get(dataFetchingEnvironment);
-    Meme expectedMeme = Meme.builder().tags(argumentTags).image(fakeFile.getContent()).build();
+    Meme actualMeme =
+        (Meme)dataFetchers.createMemeDataFetcher().get(dataFetchingEnvironment);
+    Meme expectedMeme =
+        Meme.builder().tags(argumentTags).image(fakeFile.getContent()).build();
 
     assertEquals(expectedMeme, actualMeme);
   }
@@ -144,22 +164,22 @@ public class DataFetchersTest {
   public void testLogin() throws Exception {
     final String id = "id";
     final String password = "password";
-    LoginUser expectedLoginUser =
-        LoginUser.builder()
-            .token("test_token")
-            .user(
-                User.builder()
-                    .id(id)
-                    .password(password)
-                    .name("name")
-                    .roles(ImmutableSet.of("USER"))
-                    .build())
-            .build();
+    LoginUser expectedLoginUser = LoginUser.builder()
+                                      .token("test_token")
+                                      .user(User.builder()
+                                                .id(id)
+                                                .password(password)
+                                                .name("name")
+                                                .roles(ImmutableSet.of("USER"))
+                                                .build())
+                                      .build();
     when(dataFetchingEnvironment.getArgument("id")).thenReturn(id);
     when(dataFetchingEnvironment.getArgument("password")).thenReturn(password);
-    when(graphQLAuthenticator.loginUserAuth(id, password)).thenReturn(expectedLoginUser);
+    when(graphQLAuthenticator.loginUserAuth(id, password))
+        .thenReturn(expectedLoginUser);
 
-    LoginUser actualLoginUser = dataFetchers.loginUser().get(dataFetchingEnvironment);
+    LoginUser actualLoginUser =
+        dataFetchers.loginUser().get(dataFetchingEnvironment);
 
     assertEquals(expectedLoginUser, actualLoginUser);
   }
@@ -172,21 +192,23 @@ public class DataFetchersTest {
     final LoginUser expectedLoginUser =
         LoginUser.builder()
             .token("test_token")
-            .user(
-                User.builder()
-                    .id(id)
-                    .password(password)
-                    .name(name)
-                    .roles(ImmutableSet.of("USER"))
-                    .build())
+            .user(User.builder()
+                      .id(id)
+                      .password(password)
+                      .name(name)
+                      .roles(ImmutableSet.of("USER"))
+                      .build())
             .build();
-    final CreateUserInput createUserInput = new CreateUserInput(id, password, name);
+    final CreateUserInput createUserInput =
+        new CreateUserInput(id, password, name);
 
     when(dataFetchingEnvironment.getArgument("userInfo"))
         .thenReturn(objectMapper.convertValue(createUserInput, Map.class));
-    when(graphQLAuthenticator.createUserAuth(createUserInput)).thenReturn(expectedLoginUser);
+    when(graphQLAuthenticator.createUserAuth(createUserInput))
+        .thenReturn(expectedLoginUser);
 
-    LoginUser actualLoginUser = dataFetchers.createUser().get(dataFetchingEnvironment);
+    LoginUser actualLoginUser =
+        dataFetchers.createUser().get(dataFetchingEnvironment);
 
     assertEquals(expectedLoginUser, actualLoginUser);
   }
