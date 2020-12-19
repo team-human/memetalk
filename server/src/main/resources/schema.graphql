@@ -19,6 +19,7 @@ type Meme {
   tags: [String!]
   url: String!
   createTime: String!
+  # NOTE: This field is unsupported. Don't query this field.
   counter: MemeCounter!
 }
 
