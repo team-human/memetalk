@@ -9,14 +9,7 @@ import ProfileScreen from './pages/profile'
 import { apolloClient } from './Providers/ApolloClient'
 import { ApolloProvider } from '@apollo/client'
 import { ApplicationProvider} from '@ui-kitten/components';
-
-function NotificationsScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Notification screen</Text>
-    </View>
-  )
-}
+import ComposeScreen from './pages/compose';
 
 const TopicStack = createStackNavigator()
 
@@ -38,16 +31,13 @@ function ProfileStackScreen() {
   )
 }
 
-const NotificationStack = createStackNavigator()
+const ComposeStack = createStackNavigator()
 
-function NotificationsStackScreen() {
+function ComposeStackScreen() {
   return (
-    <NotificationStack.Navigator>
-      <NotificationStack.Screen
-        name="Notifications"
-        component={NotificationsScreen}
-      />
-    </NotificationStack.Navigator>
+    <ComposeStack.Navigator>
+      <ComposeStack.Screen name="Compose" component={ComposeScreen}/>
+    </ComposeStack.Navigator>
   )
 }
 
@@ -61,10 +51,7 @@ export default function App() {
         <Tab.Navigator>
           <Tab.Screen name="Topic" component={TopicStackScreen} />
           <Tab.Screen name="Profile" component={ProfileStackScreen} />
-          <Tab.Screen
-            name="Notification"
-            component={NotificationsStackScreen}
-          />
+          <Tab.Screen name="Compose" component={ComposeStackScreen}/>
         </Tab.Navigator>
       </NavigationContainer>
     </ApolloProvider>
