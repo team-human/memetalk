@@ -70,11 +70,11 @@ public class DatabaseAdapterTest {
     // Also, insert array data need to follow
     // https://stackoverflow.com/questions/48643892/jdbc-inserting-an-array-variable-into-a-postgresql-table
     statement.execute(
-        "CREATE TABLE meme_user (id SERIAL PRIMARY KEY, user_name VARCHAR(64), name VARCHAR(64), password VARCHAR(64));");
+        "CREATE TABLE meme_user (id SERIAL PRIMARY KEY, username VARCHAR(64), name VARCHAR(64), password VARCHAR(64));");
     statement.execute(
-        "INSERT INTO meme_user (user_name, name, password) VALUES ('john', 'Harry Potter', '$2a$10$w4Op9AHpvs.MMc0c.oZAQeYRKxd0qfom8YxRP5bYmE.doyagUuU3a');");
+        "INSERT INTO meme_user (username, name, password) VALUES ('john', 'Harry Potter', '$2a$10$w4Op9AHpvs.MMc0c.oZAQeYRKxd0qfom8YxRP5bYmE.doyagUuU3a');");
     statement.execute(
-        "INSERT INTO meme_user (user_name, name, password) VALUES ('marry', 'Hermione Granger', '$2a$10$w4Op9AHpvs.MMc0c.oZAQeYRKxd0qfom8YxRP5bYmE.doyagUuU3a');");
+        "INSERT INTO meme_user (username, name, password) VALUES ('marry', 'Hermione Granger', '$2a$10$w4Op9AHpvs.MMc0c.oZAQeYRKxd0qfom8YxRP5bYmE.doyagUuU3a');");
   }
 
   private void generateFakeMemeTable(Statement statement) throws Exception {

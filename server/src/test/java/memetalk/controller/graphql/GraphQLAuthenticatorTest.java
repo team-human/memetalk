@@ -94,7 +94,7 @@ public class GraphQLAuthenticatorTest {
 
   @Test
   public void testCreateUserAuth() {
-    CreateUserInput createUserInput = new CreateUserInput("user_name", "password", "sam");
+    CreateUserInput createUserInput = new CreateUserInput("username", "password", "sam");
     User expectedUser =
         User.builder()
             .userName(createUserInput.getUserName())

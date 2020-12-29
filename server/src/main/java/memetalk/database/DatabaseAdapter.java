@@ -117,7 +117,7 @@ public class DatabaseAdapter {
     Array roles = connection.createArrayOf("VARCHAR", user.getRoles().toArray());
     PreparedStatement statement =
         connection.prepareStatement("INSERT INTO meme_user VALUES (? ? ? ?);");
-    statement.setString(/*user_name*/ 1, user.getUserName());
+    statement.setString(/*username*/ 1, user.getUserName());
     statement.setString(/*name*/ 2, user.getName());
     statement.setString(/*password*/ 3, user.getPassword());
     statement.setArray(/*roles*/ 4, roles);
@@ -130,7 +130,7 @@ public class DatabaseAdapter {
   public boolean checkUserNameExist(@NonNull final String userName) throws SQLException {
     PreparedStatement statement =
         connection.prepareStatement(
-            "SELECT EXISTS (SELECT id FROM meme_user WHERE user_name = ?) AS exist;");
+            "SELECT EXISTS (SELECT id FROM meme_user WHERE username = ?) AS exist;");
     statement.setString(1, userName);
     ResultSet result = statement.executeQuery();
     boolean exist = result.getBoolean("exist");
@@ -144,7 +144,7 @@ public class DatabaseAdapter {
   /** Return User based on User name */
   public Optional<User> findUserByUserName(@NonNull final String userName) throws SQLException {
     PreparedStatement statement =
-        connection.prepareStatement("SELECT * FROM meme_user WHERE user_name = ?);");
+        connection.prepareStatement("SELECT * FROM meme_user WHERE username = ?);");
     statement.setString(1, userName);
     ResultSet result = statement.executeQuery();
 
@@ -250,7 +250,7 @@ public class DatabaseAdapter {
 
   private User getUserById(int id) throws SQLException {
     PreparedStatement statement =
-        connection.prepareStatement("SELECT id, user_name, name FROM meme_user WHERE id = ?;");
+        connection.prepareStatement("SELECT id, username, name FROM meme_user WHERE id = ?;");
     statement.setInt(1, id);
     ResultSet result = statement.executeQuery();
 
@@ -259,7 +259,7 @@ public class DatabaseAdapter {
       user =
           User.builder()
               .id(Integer.toString(result.getInt("id")))
-              .userName(result.getString("user_name"))
+              .userName(result.getString("username"))
               .name(result.getString("name"))
               .build();
     }

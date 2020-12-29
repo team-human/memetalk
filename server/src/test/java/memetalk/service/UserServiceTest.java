@@ -183,7 +183,7 @@ public class UserServiceTest {
 
   @Test
   public void testCreateUser() {
-    CreateUserInput createUserInput = new CreateUserInput("user_name", "password", "name");
+    CreateUserInput createUserInput = new CreateUserInput("username", "password", "name");
     User user =
         User.builder()
             .id(createUserInput.getUserName())

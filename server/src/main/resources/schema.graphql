@@ -1,6 +1,6 @@
 type User {
   id: ID!
-  userName: String!
+  username: String!
   name: String!
 
   # The current role is ADMIN or USER. ADMIN role has a super power to delete
@@ -52,7 +52,7 @@ type Mutation {
 }
 
 input CreateUserInput {
-  userName: String!
+  username: String!
   password: String!
   name: String!
 }
