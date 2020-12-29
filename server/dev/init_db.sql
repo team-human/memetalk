@@ -1,17 +1,24 @@
+--Need to remove all objects associated with USER memetalk_dev before dropping it
+DROP DATABASE IF EXISTS memetalk;
 DROP USER IF EXISTS memetalk_dev;
+
 CREATE USER memetalk_dev PASSWORD '1234';
 
-DROP DATABASE IF EXISTS memetalk;
 CREATE DATABASE memetalk;
 \c memetalk;
 
 /* Table: meme_user */
 CREATE TABLE meme_user (
   id SERIAL PRIMARY KEY,
+  user_name VARCHAR(64),
   name VARCHAR(64),
+  password VARCHAR(64),
+  roles VARCHAR(16)[]
 );
-INSERT INTO meme_user (name) VALUES ('Harry Potter');
-INSERT INTO meme_user (name) VALUES ('Hermione Granger');
+
+--'$2a..UuU3a' is 1234
+INSERT INTO meme_user (user_name, name, password, roles) VALUES ('john', 'Harry Potter', '$2a$10$w4Op9AHpvs.MMc0c.oZAQeYRKxd0qfom8YxRP5bYmE.doyagUuU3a', '{"USER"}');
+INSERT INTO meme_user (user_name, name, password, roles) VALUES ('marry', 'Hermione Granger', '$2a$10$w4Op9AHpvs.MMc0c.oZAQeYRKxd0qfom8YxRP5bYmE.doyagUuU3a', '{"USER"}');
 
 /* Table: meme */
 CREATE TABLE meme (
