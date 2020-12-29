@@ -12,12 +12,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserRepositoryTest {
   private UserRepository userRepository;
+  private DatabaseAdapter databaseAdapter;
   private PasswordEncoder passwordEncoder;
 
   @Before
   public void setUp() {
     passwordEncoder = new BCryptPasswordEncoder(10);
-    userRepository = new UserRepository(passwordEncoder);
+    userRepository = new UserRepository(databaseAdapter, passwordEncoder);
     userRepository.init();
   }
 
@@ -32,9 +33,9 @@ public class UserRepositoryTest {
             .roles(ImmutableSet.of("USER"))
             .build();
 
-    userRepository.storeUser(expectedUser);
+    userRepository.createUser(expectedUser);
 
-    final String actualId = userRepository.findUserById(expectedUser.getId()).get().getId();
+    final String actualId = userRepository.findUserByUserName(expectedUser.getId()).get().getId();
     assertEquals(expectedUser.getId(), actualId);
   }
 
@@ -49,8 +50,8 @@ public class UserRepositoryTest {
             .roles(ImmutableSet.of("USER"))
             .build();
 
-    userRepository.storeUser(expectedUser);
+    userRepository.createUser(expectedUser);
 
-    assertTrue(userRepository.existsById(expectedUser.getId()));
+    assertTrue(userRepository.checkUserNameExist(expectedUser.getId()));
   }
 }

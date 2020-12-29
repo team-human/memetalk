@@ -2,7 +2,6 @@ package memetalk.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -140,7 +139,7 @@ public class UserServiceTest {
             .roles(ImmutableSet.of(USER_AUTHORITY))
             .build();
 
-    when(userRepository.findUserById(user.getId())).thenReturn(Optional.of(user));
+    when(userRepository.findUserByUserName(user.getId())).thenReturn(Optional.of(user));
     JwtUserDetails jwtUserDetails = userService.loadUserByUsername(user.getId());
 
     assertEquals(jwtUserDetails.getUsername(), user.getId());
@@ -158,7 +157,7 @@ public class UserServiceTest {
             .build();
 
     String actualToken = userService.getToken(user);
-    when(userRepository.findUserById(user.getId())).thenReturn(Optional.of(user));
+    when(userRepository.findUserByUserName(user.getId())).thenReturn(Optional.of(user));
 
     JwtUserDetails jwtUserDetails = userService.loadUserByToken(actualToken);
     assertEquals(jwtUserDetails.getUsername(), user.getId());
@@ -174,7 +173,7 @@ public class UserServiceTest {
             .password("password")
             .roles(ImmutableSet.of(USER_AUTHORITY))
             .build();
-    when(userRepository.findUserById(user.getId())).thenReturn(Optional.of(user));
+    when(userRepository.findUserByUserName(user.getId())).thenReturn(Optional.of(user));
 
     when(authentication.getName()).thenReturn(user.getId());
     when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -195,7 +194,6 @@ public class UserServiceTest {
             .password(createUserInput.getPassword())
             .roles(ImmutableSet.of(USER_AUTHORITY))
             .build();
-    when(userRepository.storeUser(any())).thenReturn(user);
 
     LoginUser loginUser = userService.createUser(createUserInput);
     assertEquals(user, loginUser.getUser());

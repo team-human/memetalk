@@ -2,6 +2,7 @@ package memetalk.database;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,9 +10,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import memetalk.ConfigReader;
 import memetalk.model.Meme;
@@ -105,6 +110,62 @@ public class DatabaseAdapter {
     statement.setBytes(/*image*/ 1, meme.getImage());
     statement.executeUpdate();
     statement.close();
+  }
+
+  /** Adds a new user */
+  public void createUser(@NonNull User user) throws SQLException {
+    Array roles = connection.createArrayOf("VARCHAR", user.getRoles().toArray());
+    PreparedStatement statement =
+        connection.prepareStatement("INSERT INTO meme_user VALUES (? ? ? ?);");
+    statement.setString(/*user_name*/ 1, user.getUserName());
+    statement.setString(/*name*/ 2, user.getName());
+    statement.setString(/*password*/ 3, user.getPassword());
+    statement.setArray(/*roles*/ 4, roles);
+
+    statement.executeUpdate();
+    statement.close();
+  }
+
+  /** Check Username exist or not */
+  public boolean checkUserNameExist(@NonNull final String userName) throws SQLException {
+    PreparedStatement statement =
+        connection.prepareStatement(
+            "SELECT EXISTS (SELECT id FROM meme_user WHERE user_name = ?) AS exist;");
+    statement.setString(1, userName);
+    ResultSet result = statement.executeQuery();
+    boolean exist = result.getBoolean("exist");
+
+    result.close();
+    statement.close();
+
+    return exist;
+  }
+
+  /** Return User based on User name */
+  public Optional<User> findUserByUserName(@NonNull final String userName) throws SQLException {
+    PreparedStatement statement =
+        connection.prepareStatement("SELECT * FROM meme_user WHERE user_name = ?);");
+    statement.setString(1, userName);
+    ResultSet result = statement.executeQuery();
+
+    Optional<User> user = Optional.empty();
+    if (result.getFetchSize() == 1) {
+      user =
+          Optional.of(
+              User.builder()
+                  .userName(userName)
+                  .password(result.getString("password"))
+                  .name(result.getString("name"))
+                  .roles(
+                      new HashSet<>(
+                          Arrays.asList(((String[]) result.getArray("roles").getArray()))))
+                  .build());
+    }
+
+    result.close();
+    statement.close();
+
+    return user;
   }
 
   public void shutdown() throws Exception {

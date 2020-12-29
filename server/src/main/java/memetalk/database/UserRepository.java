@@ -1,44 +1,42 @@
 package memetalk.database;
 
+import java.sql.SQLException;
 import java.util.Optional;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import javax.annotation.PostConstruct;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import memetalk.data.FakeDataGenerator;
+import lombok.extern.slf4j.Slf4j;
+import memetalk.exception.SQLExecutionException;
 import memetalk.model.User;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class UserRepository {
-  // TODO: connect to the real database
-  private static Queue<User> concurrentQueue =
-      new ConcurrentLinkedQueue<>(FakeDataGenerator.generateFakeUsers());
+  @NonNull private final DatabaseAdapter databaseAdapter;
 
-  @NonNull private final PasswordEncoder passwordEncoder;
-
-  // This is a little bit hacky. After we remove FakeDataGenerator, we can remove this
-  @PostConstruct
-  public void init() {
-    concurrentQueue.forEach(
-        user -> {
-          user.setPassword(passwordEncoder.encode(user.getPassword()));
-        });
+  public Optional<User> findUserByUserName(@NonNull final String userName) {
+    try {
+      return databaseAdapter.findUserByUserName(userName);
+    } catch (SQLException ex) {
+      log.error("Find user by username encounter errors", ex);
+      return Optional.empty();
+    }
   }
 
-  public Optional<User> findUserById(@NonNull final String userId) {
-    return concurrentQueue.stream().filter(user -> user.getId().equals(userId)).findFirst();
+  public boolean checkUserNameExist(@NonNull final String userName) {
+    try {
+      return databaseAdapter.checkUserNameExist(userName);
+    } catch (SQLException ex) {
+      throw new SQLExecutionException(ex);
+    }
   }
 
-  public boolean existsById(@NonNull final String userId) {
-    return concurrentQueue.stream().anyMatch(user -> user.getId().equals(userId));
-  }
-
-  public User storeUser(@NonNull final User user) {
-    concurrentQueue.add(user);
-    return user;
+  public void createUser(@NonNull final User user) {
+    try {
+      databaseAdapter.createUser(user);
+    } catch (SQLException ex) {
+      throw new SQLExecutionException(ex);
+    }
   }
 }

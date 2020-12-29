@@ -66,6 +66,9 @@ public class DatabaseAdapterTest {
 
   private void generateFakeMemeUserTable(Statement statement) throws Exception {
     statement.execute("DROP TABLE meme_user IF EXISTS;");
+    // TODO: array data field can't be created in the String, don't know what is the correct way
+    // Also, insert array data need to follow
+    // https://stackoverflow.com/questions/48643892/jdbc-inserting-an-array-variable-into-a-postgresql-table
     statement.execute(
         "CREATE TABLE meme_user (id SERIAL PRIMARY KEY, user_name VARCHAR(64), name VARCHAR(64), password VARCHAR(64));");
     statement.execute(

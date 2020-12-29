@@ -112,7 +112,7 @@ public class UserService implements UserDetailsService {
   @Transactional
   public JwtUserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
     return userRepository
-        .findUserById(id)
+        .findUserByUserName(id)
         .map(user -> getUserDetails(user, getToken(user)))
         .orElseThrow(() -> new UsernameNotFoundException("Username or password didn''t match"));
   }
@@ -121,7 +121,7 @@ public class UserService implements UserDetailsService {
   public JwtUserDetails loadUserByToken(String token) {
     return getDecodedToken(token)
         .map(DecodedJWT::getSubject)
-        .flatMap(userRepository::findUserById)
+        .flatMap(userRepository::findUserByUserName)
         .map(user -> getUserDetails(user, token))
         .orElseThrow(() -> new BadTokenException("Bad Jwt token"));
   }
@@ -132,7 +132,7 @@ public class UserService implements UserDetailsService {
         Optional.ofNullable(SecurityContextHolder.getContext())
             .map(SecurityContext::getAuthentication)
             .map(Authentication::getName)
-            .flatMap(userRepository::findUserById)
+            .flatMap(userRepository::findUserByUserName)
             .orElse(null);
 
     if (user == null) {
@@ -145,23 +145,20 @@ public class UserService implements UserDetailsService {
 
   @Transactional
   public LoginUser createUser(CreateUserInput input) {
-    if (!exists(input)) {
+    if (!checkUserNameExist(input)) {
 
       final User user =
-          userRepository.storeUser(
-              User.builder()
-                  .password(passwordEncoder.encode(input.getPassword()))
-                  .roles(ImmutableSet.of(USER_AUTHORITY))
-                  .userName(input.getUserName())
-                  .name(input.getName())
-                  .id(input.getUserName())
-                  .build());
+          User.builder()
+              .password(passwordEncoder.encode(input.getPassword()))
+              .roles(ImmutableSet.of(USER_AUTHORITY))
+              .userName(input.getUserName())
+              .name(input.getName())
+              .id(input.getUserName())
+              .build();
 
-      if (user == null) {
-        throw new UserNotFoundException("Can't Create User in DB");
-      } else {
-        return LoginUser.builder().token(getToken(user)).user(user).build();
-      }
+      userRepository.createUser(user);
+
+      return LoginUser.builder().token(getToken(user)).user(user).build();
 
     } else {
       throw new UserExistsException(
@@ -169,8 +166,8 @@ public class UserService implements UserDetailsService {
     }
   }
 
-  private boolean exists(CreateUserInput input) {
-    return userRepository.existsById(input.getUserName());
+  private boolean checkUserNameExist(CreateUserInput input) {
+    return userRepository.checkUserNameExist(input.getUserName());
   }
 
   private JwtUserDetails getUserDetails(User user, String token) {

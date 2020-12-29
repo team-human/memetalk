@@ -2,7 +2,7 @@ package memetalk.controller.graphql;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -12,6 +12,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.google.common.collect.ImmutableSet;
 import java.time.Duration;
 import java.util.Optional;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import memetalk.database.DatabaseAdapter;
 import memetalk.database.UserRepository;
@@ -87,7 +88,7 @@ public class GraphQLAuthenticatorTest {
     when(securityContext.getAuthentication()).thenReturn(authentication);
     SecurityContextHolder.setContext(securityContext);
 
-    when(userRepository.findUserById(id)).thenReturn(Optional.of(expectedUser));
+    when(userRepository.findUserByUserName(id)).thenReturn(Optional.of(expectedUser));
 
     LoginUser loginUser = graphQLAuthenticator.loginUserAuth(id, password);
     assertEquals(expectedUser, loginUser.getUser());
@@ -100,16 +101,23 @@ public class GraphQLAuthenticatorTest {
     User expectedUser =
         User.builder()
             .userName(createUserInput.getUserName())
-            .password(passwordEncoder.encode(createUserInput.getPassword()))
+            .password(createUserInput.getPassword())
             .roles(ImmutableSet.of(USER_AUTHORITY))
             .name(createUserInput.getName())
             .id(createUserInput.getUserName())
             .build();
 
-    when(userRepository.storeUser(any())).thenReturn(expectedUser);
     LoginUser loginUser = graphQLAuthenticator.createUserAuth(createUserInput);
 
-    assertEquals(expectedUser, loginUser.getUser());
+    checkUserIsEqual(expectedUser, loginUser.getUser());
     assertNotNull(loginUser.getToken());
+  }
+
+  private void checkUserIsEqual(@NonNull User expectedUser, @NonNull User actualUser) {
+    assertEquals(expectedUser.getId(), actualUser.getId());
+    assertEquals(expectedUser.getName(), actualUser.getName());
+    assertTrue(passwordEncoder.matches(expectedUser.getPassword(), actualUser.getPassword()));
+    assertEquals(expectedUser.getRoles(), actualUser.getRoles());
+    assertEquals(expectedUser.getRoles(), actualUser.getRoles());
   }
 }
