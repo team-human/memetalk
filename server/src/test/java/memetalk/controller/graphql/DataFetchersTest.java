@@ -150,6 +150,7 @@ public class DataFetchersTest {
             .user(
                 User.builder()
                     .id(id)
+                    .userName("userName")
                     .password(password)
                     .name("name")
                     .roles(ImmutableSet.of("USER"))
@@ -166,6 +167,7 @@ public class DataFetchersTest {
 
   @Test
   public void testCreateUser() throws Exception {
+    final String id = "id";
     final String userName = "userName";
     final String password = "password";
     final String name = "name";
@@ -174,7 +176,8 @@ public class DataFetchersTest {
             .token("test_token")
             .user(
                 User.builder()
-                    .id(userName)
+                    .id(id)
+                    .userName(userName)
                     .password(password)
                     .name(name)
                     .roles(ImmutableSet.of("USER"))

@@ -189,7 +189,7 @@ public class DatabaseAdapter {
 
   private User getUserById(int id) throws SQLException {
     PreparedStatement statement =
-        connection.prepareStatement("SELECT id, name FROM meme_user WHERE id = ?;");
+        connection.prepareStatement("SELECT id, user_name, name FROM meme_user WHERE id = ?;");
     statement.setInt(1, id);
     ResultSet result = statement.executeQuery();
 
@@ -198,6 +198,7 @@ public class DatabaseAdapter {
       user =
           User.builder()
               .id(Integer.toString(result.getInt("id")))
+              .userName(result.getString("user_name"))
               .name(result.getString("name"))
               .build();
     }

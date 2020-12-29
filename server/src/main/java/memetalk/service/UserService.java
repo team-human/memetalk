@@ -152,6 +152,7 @@ public class UserService implements UserDetailsService {
               User.builder()
                   .password(passwordEncoder.encode(input.getPassword()))
                   .roles(ImmutableSet.of(USER_AUTHORITY))
+                  .userName(input.getUserName())
                   .name(input.getName())
                   .id(input.getUserName())
                   .build());

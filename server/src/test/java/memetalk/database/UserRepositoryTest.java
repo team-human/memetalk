@@ -26,6 +26,7 @@ public class UserRepositoryTest {
     User expectedUser =
         User.builder()
             .id("id")
+            .userName("userName")
             .password("password")
             .name("name")
             .roles(ImmutableSet.of("USER"))
@@ -42,6 +43,7 @@ public class UserRepositoryTest {
     User expectedUser =
         User.builder()
             .id("id")
+            .userName("userName")
             .password("password")
             .name("name")
             .roles(ImmutableSet.of("USER"))

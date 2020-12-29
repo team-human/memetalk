@@ -18,18 +18,21 @@ public class FakeDataGenerator {
     return Arrays.asList(
         User.builder()
             .id("userId1")
+            .userName("userName")
             .name("John")
             .password("123")
             .roles(new HashSet<>(Arrays.asList("ADMIN")))
             .build(),
         User.builder()
             .id("userId2")
+            .userName("userName")
             .name("Alice")
             .password("123")
             .roles(new HashSet<>(Arrays.asList("USER")))
             .build(),
         User.builder()
             .id("userId3")
+            .userName("userName")
             .name("Bob")
             .password("123")
             .roles(new HashSet<>(Arrays.asList("USER")))

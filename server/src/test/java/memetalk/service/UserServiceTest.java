@@ -117,6 +117,7 @@ public class UserServiceTest {
     User user =
         User.builder()
             .id("id")
+            .userName("userName")
             .name("name")
             .password("password")
             .roles(ImmutableSet.of(USER_AUTHORITY))
@@ -133,6 +134,7 @@ public class UserServiceTest {
     User user =
         User.builder()
             .id("id")
+            .userName("userName")
             .name("name")
             .password("password")
             .roles(ImmutableSet.of(USER_AUTHORITY))
@@ -149,6 +151,7 @@ public class UserServiceTest {
     User user =
         User.builder()
             .id("id")
+            .userName("userName")
             .name("name")
             .password("password")
             .roles(ImmutableSet.of(USER_AUTHORITY))
@@ -166,6 +169,7 @@ public class UserServiceTest {
     User user =
         User.builder()
             .id("id")
+            .userName("userName")
             .name("name")
             .password("password")
             .roles(ImmutableSet.of(USER_AUTHORITY))
@@ -186,6 +190,7 @@ public class UserServiceTest {
     User user =
         User.builder()
             .id(createUserInput.getUserName())
+            .userName(createUserInput.getUserName())
             .name(createUserInput.getName())
             .password(createUserInput.getPassword())
             .roles(ImmutableSet.of(USER_AUTHORITY))

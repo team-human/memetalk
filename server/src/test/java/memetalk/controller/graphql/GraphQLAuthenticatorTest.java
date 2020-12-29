@@ -77,6 +77,7 @@ public class GraphQLAuthenticatorTest {
     final User expectedUser =
         User.builder()
             .id(id)
+            .userName("userName")
             .password(passwordEncoder.encode(password))
             .name(name)
             .roles(ImmutableSet.of(USER_AUTHORITY))
@@ -98,6 +99,7 @@ public class GraphQLAuthenticatorTest {
     CreateUserInput createUserInput = new CreateUserInput("user_name", "password", "sam");
     User expectedUser =
         User.builder()
+            .userName(createUserInput.getUserName())
             .password(passwordEncoder.encode(createUserInput.getPassword()))
             .roles(ImmutableSet.of(USER_AUTHORITY))
             .name(createUserInput.getName())
