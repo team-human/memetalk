@@ -182,10 +182,10 @@ public class UserServiceTest {
 
   @Test
   public void testCreateUser() {
-    CreateUserInput createUserInput = new CreateUserInput("id", "password", "name");
+    CreateUserInput createUserInput = new CreateUserInput("user_name", "password", "name");
     User user =
         User.builder()
-            .id(createUserInput.getId())
+            .id(createUserInput.getUserName())
             .name(createUserInput.getName())
             .password(createUserInput.getPassword())
             .roles(ImmutableSet.of(USER_AUTHORITY))

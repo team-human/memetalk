@@ -153,7 +153,7 @@ public class UserService implements UserDetailsService {
                   .password(passwordEncoder.encode(input.getPassword()))
                   .roles(ImmutableSet.of(USER_AUTHORITY))
                   .name(input.getName())
-                  .id(input.getId())
+                  .id(input.getUserName())
                   .build());
 
       if (user == null) {
@@ -164,12 +164,12 @@ public class UserService implements UserDetailsService {
 
     } else {
       throw new UserExistsException(
-          "Creating a new User encounters error. Id `{}` exists" + input.getId());
+          "Creating a new User encounters error. Id `{}` exists" + input.getUserName());
     }
   }
 
   private boolean exists(CreateUserInput input) {
-    return userRepository.existsById(input.getId());
+    return userRepository.existsById(input.getUserName());
   }
 
   private JwtUserDetails getUserDetails(User user, String token) {
