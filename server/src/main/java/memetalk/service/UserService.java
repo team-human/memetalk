@@ -9,6 +9,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import java.sql.SQLException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
@@ -16,10 +17,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import memetalk.database.UserRepository;
+import memetalk.database.DatabaseAdapter;
 import memetalk.exception.BadTokenException;
+import memetalk.exception.SQLExecutionException;
 import memetalk.exception.UserExistsException;
 import memetalk.exception.UserNotFoundException;
 import memetalk.model.CreateUserInput;
@@ -52,7 +55,7 @@ import org.springframework.util.CollectionUtils;
 public class UserService implements UserDetailsService {
   private static final String USER_AUTHORITY = "USER";
   private static final String ADMIN_AUTHORITY = "ADMIN";
-  private final UserRepository userRepository;
+  private final DatabaseAdapter databaseAdapter;
   private final JWTVerifier jwtVerifier;
   private final PasswordEncoder passwordEncoder;
   private final SecurityProperties securityProperties;
@@ -110,18 +113,26 @@ public class UserService implements UserDetailsService {
 
   @Override
   @Transactional
-  public JwtUserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-    return userRepository
-        .findUserByUserName(id)
+  public JwtUserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+    return findUserByUserName(userName)
         .map(user -> getUserDetails(user, getToken(user)))
         .orElseThrow(() -> new UsernameNotFoundException("Username or password didn''t match"));
+  }
+
+  private Optional<User> findUserByUserName(@NonNull final String userName) {
+    try {
+      return databaseAdapter.findUserByUserName(userName);
+    } catch (SQLException ex) {
+      log.error("Find user by username encounter errors", ex);
+      return Optional.empty();
+    }
   }
 
   @Transactional
   public JwtUserDetails loadUserByToken(String token) {
     return getDecodedToken(token)
         .map(DecodedJWT::getSubject)
-        .flatMap(userRepository::findUserByUserName)
+        .flatMap(this::findUserByUserName)
         .map(user -> getUserDetails(user, token))
         .orElseThrow(() -> new BadTokenException("Bad Jwt token"));
   }
@@ -132,7 +143,7 @@ public class UserService implements UserDetailsService {
         Optional.ofNullable(SecurityContextHolder.getContext())
             .map(SecurityContext::getAuthentication)
             .map(Authentication::getName)
-            .flatMap(userRepository::findUserByUserName)
+            .flatMap(this::findUserByUserName)
             .orElse(null);
 
     if (user == null) {
@@ -156,7 +167,11 @@ public class UserService implements UserDetailsService {
               .id(input.getUserName())
               .build();
 
-      userRepository.createUser(user);
+      try {
+        databaseAdapter.createUser(user);
+      } catch (SQLException ex) {
+        throw new SQLExecutionException(ex);
+      }
 
       return LoginUser.builder().token(getToken(user)).user(user).build();
 
@@ -167,7 +182,11 @@ public class UserService implements UserDetailsService {
   }
 
   private boolean checkUserNameExist(CreateUserInput input) {
-    return userRepository.checkUserNameExist(input.getUserName());
+    try {
+      return databaseAdapter.checkUserNameExist(input.getUserName());
+    } catch (SQLException ex) {
+      throw new SQLExecutionException(ex);
+    }
   }
 
   private JwtUserDetails getUserDetails(User user, String token) {
