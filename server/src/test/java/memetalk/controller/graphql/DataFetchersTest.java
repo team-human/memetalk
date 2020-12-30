@@ -1,6 +1,5 @@
 package memetalk.controller.graphql;
 
-import static memetalk.data.FakeDataGenerator.generateFakeMemes;
 import static memetalk.data.FakeDataGenerator.generateFakeTags;
 import static memetalk.data.FakeDataGenerator.generateFakeUsers;
 import static org.junit.Assert.assertEquals;
@@ -50,7 +49,9 @@ public class DataFetchersTest {
     graphQLAuthenticator =
         new GraphQLAuthenticator(userService, authenticationProvider, databaseAdapter);
     dataFetchers =
-        new DataFetchers(databaseAdapter, staticFileManager, graphQLAuthenticator, objectMapper);
+        new DataFetchers(
+            databaseAdapter, staticFileManager,
+            graphQLAuthenticator, objectMapper);
   }
 
   @Test
@@ -99,17 +100,20 @@ public class DataFetchersTest {
 
   @Test
   public void testGetMemesByAuthorIdDataFetcherValidUserId() throws Exception {
-    String argumentUserId = generateFakeUsers().get(0).getId();
+    List<Meme> memesFromDatabase = new ArrayList<>();
+    memesFromDatabase.add(Meme.builder().id("id1").build());
+    memesFromDatabase.add(Meme.builder().id("id2").build());
 
-    when(dataFetchingEnvironment.getArgument("userId")).thenReturn(argumentUserId);
+    when(dataFetchingEnvironment.getArgument("userId")).thenReturn("fake_user_id");
+    when(databaseAdapter.getMemesByUserId("fake_user_id")).thenReturn(memesFromDatabase);
+    when(staticFileManager.write(any(), eq("id1.png"), any())).thenReturn("url1");
+    when(staticFileManager.write(any(), eq("id2.png"), any())).thenReturn("url2");
 
     List<Meme> actualMemes =
-        (List<Meme>) dataFetchers.getMemesByAuthorIdDataFetcher().get(dataFetchingEnvironment);
-
-    List<Meme> expectedMemes =
-        generateFakeMemes().stream()
-            .filter(meme -> meme.getAuthor().getId().equals(argumentUserId))
-            .collect(ImmutableList.toImmutableList());
+        dataFetchers.getMemesByAuthorIdDataFetcher().get(dataFetchingEnvironment);
+    List<Meme> expectedMemes = new ArrayList<>();
+    expectedMemes.add(Meme.builder().id("id1").url("url1").build());
+    expectedMemes.add(Meme.builder().id("id2").url("url2").build());
 
     assertEquals(expectedMemes, actualMemes);
   }

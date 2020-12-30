@@ -1,14 +1,17 @@
 import React from 'react'
 import { View, Text, Image, StyleSheet } from 'react-native'
 import { AntDesign } from '@expo/vector-icons';
-interface IUserProps {
+
+export interface IUserProps {
   id?: string;
   imageUrl?: string
   name?: string
+  customizedStyles?: any;
 }
-export const User = ({ id, imageUrl, name }: IUserProps) => {
+
+export const User = ({ id, customizedStyles, imageUrl, name }: IUserProps) => {
   return (
-    <View style={styles.user}>
+    <View style={[styles.user, customizedStyles ? customizedStyles.user :{}]}>
       {imageUrl ? <Image source={{ uri: imageUrl }} /> : <AntDesign name="user" size={36} color="black" />}
       <Text style={styles.name}>{name}</Text>
     </View>

@@ -90,7 +90,9 @@ public class DatabaseAdapterTest {
     statement.execute(
         "INSERT INTO meme (image, create_time, user_id) VALUES (x'ABCD', {ts '2020-10-20 12:34:56.78'}, 1);");
     statement.execute(
-        "INSERT INTO meme (image, create_time, user_id) VALUES (x'EF12', {ts '2020-10-20 12:34:56.78'}, 2);");
+        "INSERT INTO meme (image, create_time, user_id) VALUES (x'EF12', {ts '2020-10-20 12:34:57.87'}, 2);");
+    statement.execute(
+        "INSERT INTO meme (image, create_time, user_id) VALUES (x'DCBA', {ts '2020-10-20 12:21:12.34'}, 1);");
   }
 
   private void generateFakeMemeToTagTable(Statement statement) throws Exception {
@@ -104,9 +106,10 @@ public class DatabaseAdapterTest {
   @Test
   public void testGetMemesSucceed() throws URISyntaxException, SQLException {
     List<Meme> memes = databaseAdapter.getMemes();
-    Assert.assertEquals(2, memes.size());
+    Assert.assertEquals(3, memes.size());
     Assert.assertEquals("ABCD", DatatypeConverter.printHexBinary(memes.get(0).getImage()));
     Assert.assertEquals("EF12", DatatypeConverter.printHexBinary(memes.get(1).getImage()));
+    Assert.assertEquals("DCBA", DatatypeConverter.printHexBinary(memes.get(2).getImage()));
   }
 
   @Test
@@ -117,8 +120,8 @@ public class DatabaseAdapterTest {
     databaseAdapter.addMeme(newMeme);
 
     List<Meme> allMemes = databaseAdapter.getMemes();
-    Assert.assertEquals(3, allMemes.size());
-    Assert.assertTrue(Arrays.equals(imageBytes, allMemes.get(2).getImage()));
+    Assert.assertEquals(4, allMemes.size());
+    Assert.assertTrue(Arrays.equals(imageBytes, allMemes.get(3).getImage()));
   }
 
   @Test
@@ -136,6 +139,26 @@ public class DatabaseAdapterTest {
   @Test
   public void testGetMemesByTagMultipleResultSucceed() throws URISyntaxException, SQLException {
     List<Meme> memes = databaseAdapter.getMemesByTag("humor");
+    Assert.assertEquals(2, memes.size());
+  }
+
+  @Test
+  public void testGetMemesByUserIdSingleResultSucceed() throws URISyntaxException, SQLException {
+    DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
+    List<Meme> memes = databaseAdapter.getMemesByUserId("2");
+    Assert.assertEquals(1, memes.size());
+
+    Assert.assertEquals("2", memes.get(0).getId());
+    Assert.assertEquals(1, memes.get(0).getTags().size());
+    Assert.assertEquals("humor", memes.get(0).getTags().get(0));
+    Assert.assertEquals("2020-10-20 12:34:57.87", memes.get(0).getCreateTime());
+    Assert.assertEquals("Hermione Granger", memes.get(0).getAuthor().getName());
+  }
+
+  @Test
+  public void testGetMemesByUserIdMultipleResultSucceed() throws URISyntaxException, SQLException {
+    DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
+    List<Meme> memes = databaseAdapter.getMemesByUserId("1");
     Assert.assertEquals(2, memes.size());
   }
 

@@ -8,7 +8,6 @@ interface IMemeInfoProps {
 
 const pluralize = require('pluralize')
 
-
 export const MemeInfo = ({
   creationTime,
   discussionCount,
@@ -29,8 +28,12 @@ export const MemeInfo = ({
         <Text>{creationDate.toLocaleString()}</Text>
       </View>
       <View style={styles.number}>
-        <Text>{` ${discussionNum} ${discussionNum > 1 ? pluralize("Discussion") : "Discussion"} `}</Text>
-        <Text>{` ${shareNum} ${shareNum > 1 ? pluralize("Share") : "Share"} `}</Text>
+        <Text>{` ${discussionNum} ${
+          discussionNum > 1 ? pluralize('Discussion') : 'Discussion'
+        } `}</Text>
+        <Text>{` ${shareNum} ${
+          shareNum > 1 ? pluralize('Share') : 'Share'
+        } `}</Text>
       </View>
     </View>
   )
@@ -39,7 +42,7 @@ export const MemeInfo = ({
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   date: {
     display: 'flex',
@@ -50,5 +53,5 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row-reverse',
     flex: 1,
-  }
+  },
 })
