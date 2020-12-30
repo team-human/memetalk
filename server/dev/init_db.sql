@@ -1,4 +1,3 @@
---Need to remove all objects associated with USER memetalk_dev before dropping it
 DROP DATABASE IF EXISTS memetalk;
 DROP USER IF EXISTS memetalk_dev;
 
@@ -16,9 +15,9 @@ CREATE TABLE meme_user (
   roles VARCHAR(128)
 );
 
---'$2a..UuU3a' is 1234
+-- Password is hashed, so '$2a...UuU3a' is `1234`, and '$2a...n6.QG' is `abcd`
 INSERT INTO meme_user (username, name, password, roles) VALUES ('john', 'Harry Potter', '$2a$10$w4Op9AHpvs.MMc0c.oZAQeYRKxd0qfom8YxRP5bYmE.doyagUuU3a', 'USER;');
-INSERT INTO meme_user (username, name, password, roles) VALUES ('marry', 'Hermione Granger', '$2a$10$w4Op9AHpvs.MMc0c.oZAQeYRKxd0qfom8YxRP5bYmE.doyagUuU3a', 'USER;');
+INSERT INTO meme_user (username, name, password, roles) VALUES ('marry', 'Hermione Granger', '$2a$10$rXMooigm9.Zwtib6bIMnu.xoMH7gLvyVOa29yyc6Z2kqIejKn6.QG', 'USER;');
 
 /* Table: meme */
 CREATE TABLE meme (

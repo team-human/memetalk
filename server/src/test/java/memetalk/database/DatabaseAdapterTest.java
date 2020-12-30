@@ -73,15 +73,14 @@ public class DatabaseAdapterTest {
   }
 
   private void generateFakeMemeUserTable(Statement statement) throws Exception {
-
-    // TODO: can't create roles in execute string. Need to have a way to do so
     statement.execute("DROP TABLE meme_user IF EXISTS;");
     statement.execute(
         "CREATE TABLE meme_user (id SERIAL PRIMARY KEY, username VARCHAR(64), name VARCHAR(64), password VARCHAR(64), roles VARCHAR(128));");
+    // password is hashed, so '$2a...UuU3a' is `1234`, and '$2a...n6.QG' is `abcd`
     statement.execute(
         "INSERT INTO meme_user (username, name, password, roles) VALUES ('john', 'Harry Potter', '$2a$10$w4Op9AHpvs.MMc0c.oZAQeYRKxd0qfom8YxRP5bYmE.doyagUuU3a', 'USER');");
     statement.execute(
-        "INSERT INTO meme_user (username, name, password, roles) VALUES ('marry', 'Hermione Granger', '$2a$10$w4Op9AHpvs.MMc0c.oZAQeYRKxd0qfom8YxRP5bYmE.doyagUuU3a', 'USER');");
+        "INSERT INTO meme_user (username, name, password, roles) VALUES ('marry', 'Hermione Granger', '$2a$10$rXMooigm9.Zwtib6bIMnu.xoMH7gLvyVOa29yyc6Z2kqIejKn6.QG', 'USER');");
   }
 
   private void generateFakeMemeTable(Statement statement) throws Exception {

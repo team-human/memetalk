@@ -114,7 +114,7 @@ public class DatabaseAdapter {
     statement.close();
   }
 
-  /** Adds a new user */
+  /** Adds a new user. */
   public void createUser(@NonNull User user) throws SQLException {
     PreparedStatement statement =
         connection.prepareStatement(
@@ -129,9 +129,9 @@ public class DatabaseAdapter {
   }
 
   /**
-   * Serialize User roles to a String for DB record, since Array data type in DB is not easy to use
+   * Serialize User roles to a String for DB record, since Array data type in DB is not easy to use.
    *
-   * @param roles User rolse
+   * @param roles User roles
    * @return String presentation of the set of roles. If roles is not valid, will return default
    *     "USER"
    */
@@ -151,7 +151,7 @@ public class DatabaseAdapter {
     }
   }
 
-  /** Check Username exist or not */
+  /** Check Username exist or not. */
   public boolean checkUserNameExist(@NonNull final String username) throws SQLException {
     PreparedStatement statement =
         connection.prepareStatement(
@@ -170,7 +170,7 @@ public class DatabaseAdapter {
     return exist;
   }
 
-  /** Return User based on User name */
+  /** Return User based on username. */
   public Optional<User> findUserByUsername(@NonNull final String username) throws SQLException {
     PreparedStatement statement =
         connection.prepareStatement("SELECT * FROM meme_user WHERE username = ?;");

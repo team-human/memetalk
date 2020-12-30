@@ -1,5 +1,8 @@
 type User {
+  # a unique identifier, and currently the DB primary key
   id: ID!
+
+  # username is used for login
   username: String!
   name: String!
 
