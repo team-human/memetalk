@@ -32,16 +32,16 @@ public class GraphQLAuthenticator {
   @NonNull private final DatabaseAdapter databaseAdapter;
 
   @PreAuthorize("@userService.isAnonymous()")
-  public LoginUser loginUserAuth(@NonNull final String id, @NonNull final String password) {
+  public LoginUser loginUserAuth(@NonNull final String username, @NonNull final String password) {
     final UsernamePasswordAuthenticationToken credentials =
-        new UsernamePasswordAuthenticationToken(id, password);
+        new UsernamePasswordAuthenticationToken(username, password);
 
     try {
       SecurityContextHolder.getContext()
           .setAuthentication(authenticationProvider.authenticate(credentials));
       return userService.getCurrentUser();
     } catch (AuthenticationException ex) {
-      throw new BadCredentialsException(id);
+      throw new BadCredentialsException(username);
     }
   }
 

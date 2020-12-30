@@ -176,7 +176,7 @@ public class UserService implements UserDetailsService {
 
     } else {
       throw new UserExistsException(
-          "Creating a new User encounters error. Id `{}` exists" + input.getUsername());
+          String.format("UserExistsException. Username `%s` exists", input.getUsername()));
     }
   }
 

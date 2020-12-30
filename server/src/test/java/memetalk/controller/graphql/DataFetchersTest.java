@@ -142,23 +142,23 @@ public class DataFetchersTest {
 
   @Test
   public void testLogin() throws Exception {
-    final String id = "id";
+    final String username = "id";
     final String password = "password";
     LoginUser expectedLoginUser =
         LoginUser.builder()
             .token("test_token")
             .user(
                 User.builder()
-                    .id(id)
+                    .id("123")
                     .username("username")
                     .password(password)
                     .name("name")
                     .roles(ImmutableSet.of("USER"))
                     .build())
             .build();
-    when(dataFetchingEnvironment.getArgument("id")).thenReturn(id);
+    when(dataFetchingEnvironment.getArgument("username")).thenReturn(username);
     when(dataFetchingEnvironment.getArgument("password")).thenReturn(password);
-    when(graphQLAuthenticator.loginUserAuth(id, password)).thenReturn(expectedLoginUser);
+    when(graphQLAuthenticator.loginUserAuth(username, password)).thenReturn(expectedLoginUser);
 
     LoginUser actualLoginUser = dataFetchers.loginUser().get(dataFetchingEnvironment);
 

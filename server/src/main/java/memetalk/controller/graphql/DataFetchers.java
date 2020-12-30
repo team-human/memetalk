@@ -59,7 +59,7 @@ public class DataFetchers {
 
   public DataFetcher<LoginUser> loginUser() {
     return dataFetchingEnvironment -> {
-      final String id = dataFetchingEnvironment.getArgument("id");
+      final String id = dataFetchingEnvironment.getArgument("username");
       final String password = dataFetchingEnvironment.getArgument("password");
       return graphQLAuthenticator.loginUserAuth(id, password);
     };
