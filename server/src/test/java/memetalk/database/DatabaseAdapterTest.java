@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import javax.xml.bind.DatatypeConverter;
 import memetalk.ConfigReader;
 import memetalk.model.Meme;
@@ -182,5 +183,25 @@ public class DatabaseAdapterTest {
             .build();
 
     databaseAdapter.createUser(user);
+  }
+
+  @Test
+  public void testSerializeUserRolesWithTwoRoles() {
+    Set<String> expectedRoles = ImmutableSet.of("USER", "ADMIN");
+    Set<String> actualRoles =
+        DatabaseAdapter.deserializeUserRoles(DatabaseAdapter.serializeUserRoles(expectedRoles));
+
+    Assert.assertEquals(expectedRoles, actualRoles);
+  }
+
+  @Test
+  public void testSerializeUserRolesEmpty() {
+    Set<String> expectedRoles = ImmutableSet.of("USER");
+    Set<String> actualRoles =
+        DatabaseAdapter.deserializeUserRoles(DatabaseAdapter.serializeUserRoles(ImmutableSet.of()));
+    Assert.assertEquals(expectedRoles, actualRoles);
+
+    actualRoles = DatabaseAdapter.deserializeUserRoles("");
+    Assert.assertEquals(expectedRoles, actualRoles);
   }
 }

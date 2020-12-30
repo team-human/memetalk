@@ -122,7 +122,7 @@ public class DatabaseAdapter {
     statement.setString(/*username*/ 1, user.getUsername());
     statement.setString(/*name*/ 2, user.getName());
     statement.setString(/*password*/ 3, user.getPassword());
-    statement.setString(/*roles*/ 4, SerializeUserRoles(user.getRoles()));
+    statement.setString(/*roles*/ 4, serializeUserRoles(user.getRoles()));
 
     statement.executeUpdate();
     statement.close();
@@ -135,7 +135,7 @@ public class DatabaseAdapter {
    * @return String presentation of the set of roles. If roles is not valid, will return default
    *     "USER"
    */
-  public static String SerializeUserRoles(Set<String> roles) {
+  public static String serializeUserRoles(Set<String> roles) {
     if (roles == null || roles.isEmpty()) {
       return "USER";
     }
@@ -143,7 +143,7 @@ public class DatabaseAdapter {
     return String.join(ROLE_DELIMITER, roles);
   }
 
-  public static Set<String> DeserializeUserRoles(String roles) {
+  public static Set<String> deserializeUserRoles(String roles) {
     if (roles == null || roles.isEmpty()) {
       return ImmutableSet.of("USER");
     } else {
@@ -186,7 +186,7 @@ public class DatabaseAdapter {
                   .username(username)
                   .password(result.getString("password"))
                   .name(result.getString("name"))
-                  .roles(DeserializeUserRoles(result.getString("roles")))
+                  .roles(deserializeUserRoles(result.getString("roles")))
                   .build());
     }
 
