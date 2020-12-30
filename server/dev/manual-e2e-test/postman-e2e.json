@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f94dde13-429f-476d-b92c-e517700643c4",
+		"_postman_id": "0a10341b-34f3-4de0-9c3d-a9a38ceb786a",
 		"name": "MemeTalk-E2E",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -11,7 +11,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "034404fa-6d96-494e-87b9-5048f8280bca",
+						"id": "300ec68b-26b7-4be5-8b8d-849f59159d38",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -53,7 +53,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "1c16a805-0159-4367-8934-31b46409ffe2",
+						"id": "7e86211e-0373-400a-b73f-71b6e8747a32",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -109,7 +109,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "d14b34fe-1c9d-467e-84a8-5d7461d01dea",
+						"id": "3f3a744a-ff4b-42d1-8a3f-899e2643cc2e",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -144,6 +144,53 @@
 					"graphql": {
 						"query": "query {\n    memesByTag(tag: \"software\") {\n        id,\n        author { id, name },\n        tags,\n        url,\n        createTime,\n    }\n}",
 						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/graphql",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Query loginUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "078c00ce-7b3e-478f-abfe-6f14c6b09a42",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Body is correct\", function () {",
+							"    const user = pm.response.json().data.login.user;",
+							"    const token = pm.response.json().data.token;",
+							"    pm.expect(user.username).to.eql(\"marry\");",
+							"    pm.expect(user.name).to.eql(\"Hermione Granger\");",
+							"    pm.expect(user.roles).to.deep.equal([\"USER\"]);",
+							"    pm.expect(token).not.equal(null);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "mutation login ($username: String!, $password: String!) {\n    login (username: $username, password: $password) {\n        user {\n            username\n            name\n            roles\n        }\n        token\n    }\n}",
+						"variables": "{\n  \"username\": \"marry\",\n  \"password\": \"abcd\"\n}"
 					}
 				},
 				"url": {
