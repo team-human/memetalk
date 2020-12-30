@@ -164,7 +164,6 @@ public class UserService implements UserDetailsService {
               .roles(ImmutableSet.of(USER_AUTHORITY))
               .username(input.getUsername())
               .name(input.getName())
-              .id(input.getUsername())
               .build();
 
       try {

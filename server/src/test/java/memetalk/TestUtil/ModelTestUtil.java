@@ -13,7 +13,6 @@ public class ModelTestUtil {
       @NonNull User expectedUser,
       @NonNull User actualUser,
       @NonNull PasswordEncoder passwordEncoder) {
-    assertEquals(expectedUser.getId(), actualUser.getId());
     assertEquals(expectedUser.getName(), actualUser.getName());
     assertTrue(passwordEncoder.matches(expectedUser.getPassword(), actualUser.getPassword()));
     assertEquals(expectedUser.getRoles(), actualUser.getRoles());

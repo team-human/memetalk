@@ -13,12 +13,12 @@ CREATE TABLE meme_user (
   username VARCHAR(64),
   name VARCHAR(64),
   password VARCHAR(64),
-  roles VARCHAR(16)[]
+  roles VARCHAR(128)
 );
 
 --'$2a..UuU3a' is 1234
-INSERT INTO meme_user (username, name, password, roles) VALUES ('john', 'Harry Potter', '$2a$10$w4Op9AHpvs.MMc0c.oZAQeYRKxd0qfom8YxRP5bYmE.doyagUuU3a', '{"USER"}');
-INSERT INTO meme_user (username, name, password, roles) VALUES ('marry', 'Hermione Granger', '$2a$10$w4Op9AHpvs.MMc0c.oZAQeYRKxd0qfom8YxRP5bYmE.doyagUuU3a', '{"USER"}');
+INSERT INTO meme_user (username, name, password, roles) VALUES ('john', 'Harry Potter', '$2a$10$w4Op9AHpvs.MMc0c.oZAQeYRKxd0qfom8YxRP5bYmE.doyagUuU3a', 'USER;');
+INSERT INTO meme_user (username, name, password, roles) VALUES ('marry', 'Hermione Granger', '$2a$10$w4Op9AHpvs.MMc0c.oZAQeYRKxd0qfom8YxRP5bYmE.doyagUuU3a', 'USER;');
 
 /* Table: meme */
 CREATE TABLE meme (
