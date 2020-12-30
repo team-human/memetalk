@@ -107,7 +107,7 @@ public class UserService implements UserDetailsService {
         .withIssuer(securityProperties.getTokenIssuer())
         .withIssuedAt(Date.from(now))
         .withExpiresAt(Date.from(expiry))
-        .withSubject(user.getId())
+        .withSubject(user.getUsername())
         .sign(algorithm);
   }
 
@@ -116,7 +116,7 @@ public class UserService implements UserDetailsService {
   public JwtUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     return findUserByUsername(username)
         .map(user -> getUserDetails(user, getToken(user)))
-        .orElseThrow(() -> new UsernameNotFoundException("Username or password didn''t match"));
+        .orElseThrow(() -> new UsernameNotFoundException("Username or password did not match"));
   }
 
   private Optional<User> findUserByUsername(@NonNull final String username) {
@@ -190,7 +190,7 @@ public class UserService implements UserDetailsService {
 
   private JwtUserDetails getUserDetails(User user, String token) {
     return JwtUserDetails.builder()
-        .username(user.getId())
+        .username(user.getUsername())
         .password(user.getPassword())
         .authorities(getSimpleGrantedAuthorities(user.getRoles()))
         .token(token)

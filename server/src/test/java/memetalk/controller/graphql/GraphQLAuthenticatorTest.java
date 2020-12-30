@@ -101,7 +101,7 @@ public class GraphQLAuthenticatorTest {
             .password(createUserInput.getPassword())
             .roles(ImmutableSet.of(USER_AUTHORITY))
             .name(createUserInput.getName())
-            .id(createUserInput.getUsername())
+            .id("123")
             .build();
 
     LoginUser loginUser = graphQLAuthenticator.createUserAuth(createUserInput);

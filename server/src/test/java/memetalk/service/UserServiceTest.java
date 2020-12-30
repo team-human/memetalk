@@ -123,7 +123,7 @@ public class UserServiceTest {
     String actualToken = userService.getToken(user);
     DecodedJWT decodedJWT = jwtVerifier.verify(actualToken);
 
-    assertEquals(user.getId(), decodedJWT.getSubject());
+    assertEquals(user.getUsername(), decodedJWT.getSubject());
   }
 
   @Test
@@ -137,10 +137,10 @@ public class UserServiceTest {
             .roles(ImmutableSet.of(USER_AUTHORITY))
             .build();
 
-    when(databaseAdapter.findUserByUsername(user.getId())).thenReturn(Optional.of(user));
-    JwtUserDetails jwtUserDetails = userService.loadUserByUsername(user.getId());
+    when(databaseAdapter.findUserByUsername(user.getUsername())).thenReturn(Optional.of(user));
+    JwtUserDetails jwtUserDetails = userService.loadUserByUsername(user.getUsername());
 
-    assertEquals(jwtUserDetails.getUsername(), user.getId());
+    assertEquals(user.getUsername(), jwtUserDetails.getUsername());
   }
 
   @Test
@@ -155,10 +155,10 @@ public class UserServiceTest {
             .build();
 
     String actualToken = userService.getToken(user);
-    when(databaseAdapter.findUserByUsername(user.getId())).thenReturn(Optional.of(user));
+    when(databaseAdapter.findUserByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
     JwtUserDetails jwtUserDetails = userService.loadUserByToken(actualToken);
-    assertEquals(jwtUserDetails.getUsername(), user.getId());
+    assertEquals(user.getUsername(), jwtUserDetails.getUsername());
   }
 
   @Test
@@ -171,9 +171,9 @@ public class UserServiceTest {
             .password("password")
             .roles(ImmutableSet.of(USER_AUTHORITY))
             .build();
-    when(databaseAdapter.findUserByUsername(user.getId())).thenReturn(Optional.of(user));
+    when(databaseAdapter.findUserByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
-    when(authentication.getName()).thenReturn(user.getId());
+    when(authentication.getName()).thenReturn(user.getUsername());
     when(securityContext.getAuthentication()).thenReturn(authentication);
     SecurityContextHolder.setContext(securityContext);
 
@@ -186,7 +186,7 @@ public class UserServiceTest {
     CreateUserInput createUserInput = new CreateUserInput("username", "password", "name");
     User user =
         User.builder()
-            .id(createUserInput.getUsername())
+            .id("123")
             .username(createUserInput.getUsername())
             .name(createUserInput.getName())
             .password(createUserInput.getPassword())
