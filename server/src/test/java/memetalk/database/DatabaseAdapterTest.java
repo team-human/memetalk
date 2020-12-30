@@ -145,4 +145,13 @@ public class DatabaseAdapterTest {
     Assert.assertEquals("humor", tags.get(0));
     Assert.assertEquals("funny", tags.get(1));
   }
+
+  @Test
+  public void testCheckUserNameExist() {}
+
+  @Test
+  public void testFindUserByUsername() {}
+
+  @Test
+  public void createUser() {}
 }

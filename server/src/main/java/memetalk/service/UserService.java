@@ -113,15 +113,15 @@ public class UserService implements UserDetailsService {
 
   @Override
   @Transactional
-  public JwtUserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-    return findUserByUserName(userName)
+  public JwtUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    return findUserByUsername(username)
         .map(user -> getUserDetails(user, getToken(user)))
         .orElseThrow(() -> new UsernameNotFoundException("Username or password didn''t match"));
   }
 
-  private Optional<User> findUserByUserName(@NonNull final String userName) {
+  private Optional<User> findUserByUsername(@NonNull final String username) {
     try {
-      return databaseAdapter.findUserByUserName(userName);
+      return databaseAdapter.findUserByUsername(username);
     } catch (SQLException ex) {
       log.error("Find user by username encounter errors", ex);
       return Optional.empty();
@@ -132,7 +132,7 @@ public class UserService implements UserDetailsService {
   public JwtUserDetails loadUserByToken(String token) {
     return getDecodedToken(token)
         .map(DecodedJWT::getSubject)
-        .flatMap(this::findUserByUserName)
+        .flatMap(this::findUserByUsername)
         .map(user -> getUserDetails(user, token))
         .orElseThrow(() -> new BadTokenException("Bad Jwt token"));
   }
@@ -143,7 +143,7 @@ public class UserService implements UserDetailsService {
         Optional.ofNullable(SecurityContextHolder.getContext())
             .map(SecurityContext::getAuthentication)
             .map(Authentication::getName)
-            .flatMap(this::findUserByUserName)
+            .flatMap(this::findUserByUsername)
             .orElse(null);
 
     if (user == null) {
@@ -162,9 +162,9 @@ public class UserService implements UserDetailsService {
           User.builder()
               .password(passwordEncoder.encode(input.getPassword()))
               .roles(ImmutableSet.of(USER_AUTHORITY))
-              .userName(input.getUserName())
+              .username(input.getUsername())
               .name(input.getName())
-              .id(input.getUserName())
+              .id(input.getUsername())
               .build();
 
       try {
@@ -177,13 +177,13 @@ public class UserService implements UserDetailsService {
 
     } else {
       throw new UserExistsException(
-          "Creating a new User encounters error. Id `{}` exists" + input.getUserName());
+          "Creating a new User encounters error. Id `{}` exists" + input.getUsername());
     }
   }
 
   private boolean checkUserNameExist(CreateUserInput input) {
     try {
-      return databaseAdapter.checkUserNameExist(input.getUserName());
+      return databaseAdapter.checkUserNameExist(input.getUsername());
     } catch (SQLException ex) {
       throw new SQLExecutionException(ex);
     }

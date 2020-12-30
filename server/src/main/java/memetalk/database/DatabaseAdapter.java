@@ -2,7 +2,6 @@ package memetalk.database;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -114,26 +113,31 @@ public class DatabaseAdapter {
 
   /** Adds a new user */
   public void createUser(@NonNull User user) throws SQLException {
-    Array roles = connection.createArrayOf("VARCHAR", user.getRoles().toArray());
+    //    Array roles = connection.createArrayOf("VARCHAR", user.getRoles().toArray());
     PreparedStatement statement =
-        connection.prepareStatement("INSERT INTO meme_user VALUES (? ? ? ?);");
-    statement.setString(/*username*/ 1, user.getUserName());
+        connection.prepareStatement(
+            "INSERT INTO meme_user(username, name, password) VALUES (? ? ?);");
+    statement.setString(/*username*/ 1, user.getUsername());
     statement.setString(/*name*/ 2, user.getName());
     statement.setString(/*password*/ 3, user.getPassword());
-    statement.setArray(/*roles*/ 4, roles);
+    //    statement.setArray(/*roles*/ 4, roles);
 
     statement.executeUpdate();
     statement.close();
   }
 
   /** Check Username exist or not */
-  public boolean checkUserNameExist(@NonNull final String userName) throws SQLException {
+  public boolean checkUserNameExist(@NonNull final String username) throws SQLException {
     PreparedStatement statement =
         connection.prepareStatement(
             "SELECT EXISTS (SELECT id FROM meme_user WHERE username = ?) AS exist;");
-    statement.setString(1, userName);
+    statement.setString(1, username);
     ResultSet result = statement.executeQuery();
-    boolean exist = result.getBoolean("exist");
+
+    boolean exist = false;
+    if (result.next()) {
+      exist = result.getBoolean("exist");
+    }
 
     result.close();
     statement.close();
@@ -142,10 +146,10 @@ public class DatabaseAdapter {
   }
 
   /** Return User based on User name */
-  public Optional<User> findUserByUserName(@NonNull final String userName) throws SQLException {
+  public Optional<User> findUserByUsername(@NonNull final String username) throws SQLException {
     PreparedStatement statement =
         connection.prepareStatement("SELECT * FROM meme_user WHERE username = ?);");
-    statement.setString(1, userName);
+    statement.setString(1, username);
     ResultSet result = statement.executeQuery();
 
     Optional<User> user = Optional.empty();
@@ -153,7 +157,7 @@ public class DatabaseAdapter {
       user =
           Optional.of(
               User.builder()
-                  .userName(userName)
+                  .username(username)
                   .password(result.getString("password"))
                   .name(result.getString("name"))
                   .roles(
@@ -259,7 +263,7 @@ public class DatabaseAdapter {
       user =
           User.builder()
               .id(Integer.toString(result.getInt("id")))
-              .userName(result.getString("username"))
+              .username(result.getString("username"))
               .name(result.getString("name"))
               .build();
     }

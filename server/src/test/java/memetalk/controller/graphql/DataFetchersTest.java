@@ -150,7 +150,7 @@ public class DataFetchersTest {
             .user(
                 User.builder()
                     .id(id)
-                    .userName("userName")
+                    .username("username")
                     .password(password)
                     .name("name")
                     .roles(ImmutableSet.of("USER"))
@@ -168,7 +168,7 @@ public class DataFetchersTest {
   @Test
   public void testCreateUser() throws Exception {
     final String id = "id";
-    final String userName = "userName";
+    final String username = "username";
     final String password = "password";
     final String name = "name";
     final LoginUser expectedLoginUser =
@@ -177,13 +177,13 @@ public class DataFetchersTest {
             .user(
                 User.builder()
                     .id(id)
-                    .userName(userName)
+                    .username(username)
                     .password(password)
                     .name(name)
                     .roles(ImmutableSet.of("USER"))
                     .build())
             .build();
-    final CreateUserInput createUserInput = new CreateUserInput(userName, password, name);
+    final CreateUserInput createUserInput = new CreateUserInput(username, password, name);
 
     when(dataFetchingEnvironment.getArgument("userInfo"))
         .thenReturn(objectMapper.convertValue(createUserInput, Map.class));

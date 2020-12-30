@@ -9,7 +9,7 @@ import lombok.NonNull;
 @Builder
 public class User {
   @NonNull private String id;
-  @NonNull String userName;
+  @NonNull String username;
   private String name;
   // TODO: Replace Set<String> to Set<Enum>.
   // TODO: User is currently a data model used as part of GraphQL response. We

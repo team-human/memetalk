@@ -114,7 +114,7 @@ public class UserServiceTest {
     User user =
         User.builder()
             .id("id")
-            .userName("userName")
+            .username("username")
             .name("name")
             .password("password")
             .roles(ImmutableSet.of(USER_AUTHORITY))
@@ -131,13 +131,13 @@ public class UserServiceTest {
     User user =
         User.builder()
             .id("id")
-            .userName("userName")
+            .username("username")
             .name("name")
             .password("password")
             .roles(ImmutableSet.of(USER_AUTHORITY))
             .build();
 
-    when(databaseAdapter.findUserByUserName(user.getId())).thenReturn(Optional.of(user));
+    when(databaseAdapter.findUserByUsername(user.getId())).thenReturn(Optional.of(user));
     JwtUserDetails jwtUserDetails = userService.loadUserByUsername(user.getId());
 
     assertEquals(jwtUserDetails.getUsername(), user.getId());
@@ -148,14 +148,14 @@ public class UserServiceTest {
     User user =
         User.builder()
             .id("id")
-            .userName("userName")
+            .username("username")
             .name("name")
             .password("password")
             .roles(ImmutableSet.of(USER_AUTHORITY))
             .build();
 
     String actualToken = userService.getToken(user);
-    when(databaseAdapter.findUserByUserName(user.getId())).thenReturn(Optional.of(user));
+    when(databaseAdapter.findUserByUsername(user.getId())).thenReturn(Optional.of(user));
 
     JwtUserDetails jwtUserDetails = userService.loadUserByToken(actualToken);
     assertEquals(jwtUserDetails.getUsername(), user.getId());
@@ -166,12 +166,12 @@ public class UserServiceTest {
     User user =
         User.builder()
             .id("id")
-            .userName("userName")
+            .username("username")
             .name("name")
             .password("password")
             .roles(ImmutableSet.of(USER_AUTHORITY))
             .build();
-    when(databaseAdapter.findUserByUserName(user.getId())).thenReturn(Optional.of(user));
+    when(databaseAdapter.findUserByUsername(user.getId())).thenReturn(Optional.of(user));
 
     when(authentication.getName()).thenReturn(user.getId());
     when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -186,8 +186,8 @@ public class UserServiceTest {
     CreateUserInput createUserInput = new CreateUserInput("username", "password", "name");
     User user =
         User.builder()
-            .id(createUserInput.getUserName())
-            .userName(createUserInput.getUserName())
+            .id(createUserInput.getUsername())
+            .username(createUserInput.getUsername())
             .name(createUserInput.getName())
             .password(createUserInput.getPassword())
             .roles(ImmutableSet.of(USER_AUTHORITY))

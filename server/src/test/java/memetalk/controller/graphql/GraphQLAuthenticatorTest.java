@@ -75,7 +75,7 @@ public class GraphQLAuthenticatorTest {
     final User expectedUser =
         User.builder()
             .id(id)
-            .userName("userName")
+            .username("username")
             .password(passwordEncoder.encode(password))
             .name(name)
             .roles(ImmutableSet.of(USER_AUTHORITY))
@@ -85,7 +85,7 @@ public class GraphQLAuthenticatorTest {
     when(securityContext.getAuthentication()).thenReturn(authentication);
     SecurityContextHolder.setContext(securityContext);
 
-    when(databaseAdapter.findUserByUserName(id)).thenReturn(Optional.of(expectedUser));
+    when(databaseAdapter.findUserByUsername(id)).thenReturn(Optional.of(expectedUser));
 
     LoginUser loginUser = graphQLAuthenticator.loginUserAuth(id, password);
     assertEquals(expectedUser, loginUser.getUser());
@@ -97,11 +97,11 @@ public class GraphQLAuthenticatorTest {
     CreateUserInput createUserInput = new CreateUserInput("username", "password", "sam");
     User expectedUser =
         User.builder()
-            .userName(createUserInput.getUserName())
+            .username(createUserInput.getUsername())
             .password(createUserInput.getPassword())
             .roles(ImmutableSet.of(USER_AUTHORITY))
             .name(createUserInput.getName())
-            .id(createUserInput.getUserName())
+            .id(createUserInput.getUsername())
             .build();
 
     LoginUser loginUser = graphQLAuthenticator.createUserAuth(createUserInput);
