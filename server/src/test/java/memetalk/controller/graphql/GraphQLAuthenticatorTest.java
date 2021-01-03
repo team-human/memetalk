@@ -1,8 +1,8 @@
 package memetalk.controller.graphql;
 
+import static memetalk.TestUtil.ModelTestUtil.checkUserIsEqual;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -10,11 +10,11 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.google.common.collect.ImmutableSet;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import memetalk.database.DatabaseAdapter;
-import memetalk.database.UserRepository;
 import memetalk.model.CreateUserInput;
 import memetalk.model.LoginUser;
 import memetalk.model.User;
@@ -32,7 +32,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Slf4j
 public class GraphQLAuthenticatorTest {
   private static final String USER_AUTHORITY = "USER";
-  private UserRepository userRepository;
   private JWTVerifier jwtVerifier;
   private PasswordEncoder passwordEncoder;
   private SecurityProperties securityProperties;
@@ -48,16 +47,15 @@ public class GraphQLAuthenticatorTest {
   public void setUp() {
     final String secretKey = "test_123";
     final String issuer = "test issuer";
-    userRepository = mock(UserRepository.class);
+    databaseAdapter = mock(DatabaseAdapter.class);
     passwordEncoder = new BCryptPasswordEncoder(10);
     securityProperties = mock(SecurityProperties.class);
     algorithm = Algorithm.HMAC256(secretKey);
     jwtVerifier = JWT.require(algorithm).withIssuer(issuer).build();
     userService =
         new UserService(
-            userRepository, jwtVerifier, passwordEncoder, securityProperties, algorithm);
+            databaseAdapter, jwtVerifier, passwordEncoder, securityProperties, algorithm);
     authenticationProvider = mock(AuthenticationProvider.class);
-    databaseAdapter = mock(DatabaseAdapter.class);
     graphQLAuthenticator =
         new GraphQLAuthenticator(userService, authenticationProvider, databaseAdapter);
 
@@ -70,13 +68,14 @@ public class GraphQLAuthenticatorTest {
   }
 
   @Test
-  public void testLoginUserAuth() {
+  public void testLoginUserAuth() throws SQLException {
     final String id = "test_id";
     final String password = "pass_word";
     final String name = "sam";
     final User expectedUser =
         User.builder()
             .id(id)
+            .username("username")
             .password(passwordEncoder.encode(password))
             .name(name)
             .roles(ImmutableSet.of(USER_AUTHORITY))
@@ -86,7 +85,7 @@ public class GraphQLAuthenticatorTest {
     when(securityContext.getAuthentication()).thenReturn(authentication);
     SecurityContextHolder.setContext(securityContext);
 
-    when(userRepository.findUserById(id)).thenReturn(Optional.of(expectedUser));
+    when(databaseAdapter.findUserByUsername(id)).thenReturn(Optional.of(expectedUser));
 
     LoginUser loginUser = graphQLAuthenticator.loginUserAuth(id, password);
     assertEquals(expectedUser, loginUser.getUser());
@@ -95,19 +94,19 @@ public class GraphQLAuthenticatorTest {
 
   @Test
   public void testCreateUserAuth() {
-    CreateUserInput createUserInput = new CreateUserInput("test_id", "password", "sam");
+    CreateUserInput createUserInput = new CreateUserInput("username", "password", "sam");
     User expectedUser =
         User.builder()
-            .password(passwordEncoder.encode(createUserInput.getPassword()))
+            .username(createUserInput.getUsername())
+            .password(createUserInput.getPassword())
             .roles(ImmutableSet.of(USER_AUTHORITY))
             .name(createUserInput.getName())
-            .id(createUserInput.getId())
+            .id("123")
             .build();
 
-    when(userRepository.storeUser(any())).thenReturn(expectedUser);
     LoginUser loginUser = graphQLAuthenticator.createUserAuth(createUserInput);
 
-    assertEquals(expectedUser, loginUser.getUser());
+    checkUserIsEqual(expectedUser, loginUser.getUser(), passwordEncoder);
     assertNotNull(loginUser.getToken());
   }
 }

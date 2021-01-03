@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateUserInput {
-  @JsonProperty private String id = "test";
+  @JsonProperty private String username = "test";
   @JsonProperty private String password = "password";
   @JsonProperty private String name = "name";
 }

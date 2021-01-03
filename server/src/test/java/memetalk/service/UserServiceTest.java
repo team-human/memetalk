@@ -1,8 +1,8 @@
 package memetalk.service;
 
+import static memetalk.TestUtil.ModelTestUtil.checkUserIsEqual;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -13,14 +13,13 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import memetalk.controller.graphql.GraphQLAuthenticator;
 import memetalk.database.DatabaseAdapter;
-import memetalk.database.UserRepository;
 import memetalk.model.CreateUserInput;
 import memetalk.model.JwtUserDetails;
 import memetalk.model.LoginUser;
@@ -43,7 +42,6 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 public class UserServiceTest {
   private static final String USER_AUTHORITY = "USER";
   private static final String ADMIN_AUTHORITY = "ADMIN";
-  private UserRepository userRepository;
   private JWTVerifier jwtVerifier;
   private PasswordEncoder passwordEncoder;
   private SecurityProperties securityProperties;
@@ -51,7 +49,6 @@ public class UserServiceTest {
   private UserService userService;
 
   private DatabaseAdapter databaseAdapter;
-  private GraphQLAuthenticator graphQLAuthenticator;
   private Authentication authentication;
   private SecurityContext securityContext;
 
@@ -59,14 +56,14 @@ public class UserServiceTest {
   public void setUp() {
     final String secretKey = "test_123";
     final String issuer = "test issuer";
-    userRepository = mock(UserRepository.class);
+    databaseAdapter = mock(DatabaseAdapter.class);
     passwordEncoder = new BCryptPasswordEncoder(10);
     securityProperties = mock(SecurityProperties.class);
     algorithm = Algorithm.HMAC256(secretKey);
     jwtVerifier = JWT.require(algorithm).withIssuer(issuer).build();
     userService =
         new UserService(
-            userRepository, jwtVerifier, passwordEncoder, securityProperties, algorithm);
+            databaseAdapter, jwtVerifier, passwordEncoder, securityProperties, algorithm);
 
     when(securityProperties.getSecretKey()).thenReturn(secretKey);
     when(securityProperties.getTokenIssuer()).thenReturn(issuer);
@@ -117,6 +114,7 @@ public class UserServiceTest {
     User user =
         User.builder()
             .id("id")
+            .username("username")
             .name("name")
             .password("password")
             .roles(ImmutableSet.of(USER_AUTHORITY))
@@ -125,54 +123,57 @@ public class UserServiceTest {
     String actualToken = userService.getToken(user);
     DecodedJWT decodedJWT = jwtVerifier.verify(actualToken);
 
-    assertEquals(user.getId(), decodedJWT.getSubject());
+    assertEquals(user.getUsername(), decodedJWT.getSubject());
   }
 
   @Test
-  public void testLoadUserByUsername() {
+  public void testLoadUserByUsername() throws SQLException {
     User user =
         User.builder()
             .id("id")
+            .username("username")
             .name("name")
             .password("password")
             .roles(ImmutableSet.of(USER_AUTHORITY))
             .build();
 
-    when(userRepository.findUserById(user.getId())).thenReturn(Optional.of(user));
-    JwtUserDetails jwtUserDetails = userService.loadUserByUsername(user.getId());
+    when(databaseAdapter.findUserByUsername(user.getUsername())).thenReturn(Optional.of(user));
+    JwtUserDetails jwtUserDetails = userService.loadUserByUsername(user.getUsername());
 
-    assertEquals(jwtUserDetails.getUsername(), user.getId());
+    assertEquals(user.getUsername(), jwtUserDetails.getUsername());
   }
 
   @Test
-  public void testLoadUserByToken() {
+  public void testLoadUserByToken() throws SQLException {
     User user =
         User.builder()
             .id("id")
+            .username("username")
             .name("name")
             .password("password")
             .roles(ImmutableSet.of(USER_AUTHORITY))
             .build();
 
     String actualToken = userService.getToken(user);
-    when(userRepository.findUserById(user.getId())).thenReturn(Optional.of(user));
+    when(databaseAdapter.findUserByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
     JwtUserDetails jwtUserDetails = userService.loadUserByToken(actualToken);
-    assertEquals(jwtUserDetails.getUsername(), user.getId());
+    assertEquals(user.getUsername(), jwtUserDetails.getUsername());
   }
 
   @Test
-  public void testGetCurrentUser() {
+  public void testGetCurrentUser() throws SQLException {
     User user =
         User.builder()
             .id("id")
+            .username("username")
             .name("name")
             .password("password")
             .roles(ImmutableSet.of(USER_AUTHORITY))
             .build();
-    when(userRepository.findUserById(user.getId())).thenReturn(Optional.of(user));
+    when(databaseAdapter.findUserByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
-    when(authentication.getName()).thenReturn(user.getId());
+    when(authentication.getName()).thenReturn(user.getUsername());
     when(securityContext.getAuthentication()).thenReturn(authentication);
     SecurityContextHolder.setContext(securityContext);
 
@@ -182,18 +183,18 @@ public class UserServiceTest {
 
   @Test
   public void testCreateUser() {
-    CreateUserInput createUserInput = new CreateUserInput("id", "password", "name");
+    CreateUserInput createUserInput = new CreateUserInput("username", "password", "name");
     User user =
         User.builder()
-            .id(createUserInput.getId())
+            .id("123")
+            .username(createUserInput.getUsername())
             .name(createUserInput.getName())
             .password(createUserInput.getPassword())
             .roles(ImmutableSet.of(USER_AUTHORITY))
             .build();
-    when(userRepository.storeUser(any())).thenReturn(user);
 
     LoginUser loginUser = userService.createUser(createUserInput);
-    assertEquals(user, loginUser.getUser());
+    checkUserIsEqual(user, loginUser.getUser(), passwordEncoder);
     assertTrue(loginUser.getToken() != null);
   }
 }

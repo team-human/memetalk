@@ -146,22 +146,23 @@ public class DataFetchersTest {
 
   @Test
   public void testLogin() throws Exception {
-    final String id = "id";
+    final String username = "id";
     final String password = "password";
     LoginUser expectedLoginUser =
         LoginUser.builder()
             .token("test_token")
             .user(
                 User.builder()
-                    .id(id)
+                    .id("123")
+                    .username("username")
                     .password(password)
                     .name("name")
                     .roles(ImmutableSet.of("USER"))
                     .build())
             .build();
-    when(dataFetchingEnvironment.getArgument("id")).thenReturn(id);
+    when(dataFetchingEnvironment.getArgument("username")).thenReturn(username);
     when(dataFetchingEnvironment.getArgument("password")).thenReturn(password);
-    when(graphQLAuthenticator.loginUserAuth(id, password)).thenReturn(expectedLoginUser);
+    when(graphQLAuthenticator.loginUserAuth(username, password)).thenReturn(expectedLoginUser);
 
     LoginUser actualLoginUser = dataFetchers.loginUser().get(dataFetchingEnvironment);
 
@@ -171,6 +172,7 @@ public class DataFetchersTest {
   @Test
   public void testCreateUser() throws Exception {
     final String id = "id";
+    final String username = "username";
     final String password = "password";
     final String name = "name";
     final LoginUser expectedLoginUser =
@@ -179,12 +181,13 @@ public class DataFetchersTest {
             .user(
                 User.builder()
                     .id(id)
+                    .username(username)
                     .password(password)
                     .name(name)
                     .roles(ImmutableSet.of("USER"))
                     .build())
             .build();
-    final CreateUserInput createUserInput = new CreateUserInput(id, password, name);
+    final CreateUserInput createUserInput = new CreateUserInput(username, password, name);
 
     when(dataFetchingEnvironment.getArgument("userInfo"))
         .thenReturn(objectMapper.convertValue(createUserInput, Map.class));

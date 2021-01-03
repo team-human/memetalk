@@ -1,5 +1,6 @@
 package memetalk.database;
 
+import com.google.common.collect.ImmutableSet;
 import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,14 +8,19 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import javax.xml.bind.DatatypeConverter;
 import memetalk.ConfigReader;
 import memetalk.model.Meme;
+import memetalk.model.User;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * DatabaseAdapterTest tests the functionalities of DatabaseAdapter by injecting a fake in-memory
@@ -26,6 +32,7 @@ public class DatabaseAdapterTest {
 
   private static Connection connection = null;
   private static ConfigReader configReader = null;
+  private DatabaseAdapter databaseAdapter;
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
@@ -41,6 +48,7 @@ public class DatabaseAdapterTest {
   @Before
   public void setUp() throws Exception {
     generateFakeData();
+    databaseAdapter = new DatabaseAdapter(configReader);
   }
 
   private static void connectToFakeDatabase() throws Exception {
@@ -66,9 +74,13 @@ public class DatabaseAdapterTest {
 
   private void generateFakeMemeUserTable(Statement statement) throws Exception {
     statement.execute("DROP TABLE meme_user IF EXISTS;");
-    statement.execute("CREATE TABLE meme_user (id SERIAL PRIMARY KEY, name VARCHAR(64));");
-    statement.execute("INSERT INTO meme_user (name) VALUES ('Harry Potter');");
-    statement.execute("INSERT INTO meme_user (name) VALUES ('Hermione Granger');");
+    statement.execute(
+        "CREATE TABLE meme_user (id SERIAL PRIMARY KEY, username VARCHAR(64), name VARCHAR(64), password VARCHAR(64), roles VARCHAR(128));");
+    // password is hashed, so '$2a...UuU3a' is `1234`, and '$2a...n6.QG' is `abcd`
+    statement.execute(
+        "INSERT INTO meme_user (username, name, password, roles) VALUES ('john', 'Harry Potter', '$2a$10$w4Op9AHpvs.MMc0c.oZAQeYRKxd0qfom8YxRP5bYmE.doyagUuU3a', 'USER');");
+    statement.execute(
+        "INSERT INTO meme_user (username, name, password, roles) VALUES ('marry', 'Hermione Granger', '$2a$10$rXMooigm9.Zwtib6bIMnu.xoMH7gLvyVOa29yyc6Z2kqIejKn6.QG', 'USER');");
   }
 
   private void generateFakeMemeTable(Statement statement) throws Exception {
@@ -93,7 +105,6 @@ public class DatabaseAdapterTest {
 
   @Test
   public void testGetMemesSucceed() throws URISyntaxException, SQLException {
-    DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     List<Meme> memes = databaseAdapter.getMemes();
     Assert.assertEquals(3, memes.size());
     Assert.assertEquals("ABCD", DatatypeConverter.printHexBinary(memes.get(0).getImage()));
@@ -103,7 +114,6 @@ public class DatabaseAdapterTest {
 
   @Test
   public void testAddMemeSucceed() throws URISyntaxException, SQLException {
-    DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     byte[] imageBytes = "fake_image".getBytes();
     Meme newMeme = Meme.builder().image(imageBytes).build();
 
@@ -116,7 +126,6 @@ public class DatabaseAdapterTest {
 
   @Test
   public void testGetMemesByTagSingleResultSucceed() throws URISyntaxException, SQLException {
-    DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     List<Meme> memes = databaseAdapter.getMemesByTag("funny");
     Assert.assertEquals(1, memes.size());
     Assert.assertEquals("1", memes.get(0).getId());
@@ -129,7 +138,6 @@ public class DatabaseAdapterTest {
 
   @Test
   public void testGetMemesByTagMultipleResultSucceed() throws URISyntaxException, SQLException {
-    DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     List<Meme> memes = databaseAdapter.getMemesByTag("humor");
     Assert.assertEquals(2, memes.size());
   }
@@ -156,10 +164,66 @@ public class DatabaseAdapterTest {
 
   @Test
   public void testGetTagsSucceed() throws URISyntaxException, SQLException {
-    DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     List<String> tags = databaseAdapter.getTags();
     Assert.assertEquals(2, tags.size());
     Assert.assertEquals("humor", tags.get(0));
     Assert.assertEquals("funny", tags.get(1));
+  }
+
+  @Test
+  public void testCheckUserNameDoesExist() throws SQLException {
+    Assert.assertTrue(databaseAdapter.checkUserNameExist("john"));
+  }
+
+  @Test
+  public void testCheckUserNameNotExist() throws SQLException {
+    Assert.assertFalse(databaseAdapter.checkUserNameExist("abbccddd"));
+  }
+
+  @Test
+  public void testFindUserByUsernameDoesExit() throws SQLException {
+    User user = databaseAdapter.findUserByUsername("john").get();
+    Assert.assertEquals("Harry Potter", user.getName());
+  }
+
+  @Test
+  public void testFindUserByUsernameNotExit() throws SQLException {
+    Optional<User> user = databaseAdapter.findUserByUsername("adfdfd");
+    Assert.assertFalse(user.isPresent());
+  }
+
+  @Test
+  public void createUser() throws SQLException {
+    final String password = "1234";
+    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+    User user =
+        User.builder()
+            .password(passwordEncoder.encode(password))
+            .roles(ImmutableSet.of("USER"))
+            .username("username")
+            .name("name")
+            .build();
+
+    databaseAdapter.createUser(user);
+  }
+
+  @Test
+  public void testSerializeUserRolesWithTwoRoles() {
+    Set<String> expectedRoles = ImmutableSet.of("USER", "ADMIN");
+    Set<String> actualRoles =
+        DatabaseAdapter.deserializeUserRoles(DatabaseAdapter.serializeUserRoles(expectedRoles));
+
+    Assert.assertEquals(expectedRoles, actualRoles);
+  }
+
+  @Test
+  public void testSerializeUserRolesEmpty() {
+    Set<String> expectedRoles = ImmutableSet.of("USER");
+    Set<String> actualRoles =
+        DatabaseAdapter.deserializeUserRoles(DatabaseAdapter.serializeUserRoles(ImmutableSet.of()));
+    Assert.assertEquals(expectedRoles, actualRoles);
+
+    actualRoles = DatabaseAdapter.deserializeUserRoles("");
+    Assert.assertEquals(expectedRoles, actualRoles);
   }
 }

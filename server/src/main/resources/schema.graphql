@@ -1,5 +1,9 @@
 type User {
+  # a unique identifier, and currently the DB primary key
   id: ID!
+
+  # username is used for login
+  username: String!
   name: String!
 
   # The current role is ADMIN or USER. ADMIN role has a super power to delete
@@ -47,11 +51,11 @@ scalar File
 type Mutation {
   createMeme(file: File!, tags: [String!]): Meme
   createUser(userInfo: CreateUserInput!): LoginUser
-  login(id: String!, password: String!): LoginUser
+  login(username: String!, password: String!): LoginUser
 }
 
 input CreateUserInput {
-  id: String!
+  username: String!
   password: String!
   name: String!
 }
