@@ -10,6 +10,8 @@ import { apolloClient } from './Providers/ApolloClient'
 import { ApolloProvider } from '@apollo/client'
 import { ApplicationProvider} from '@ui-kitten/components';
 import ComposeScreen from './pages/compose';
+import LoginScreen from './pages/login';
+
 
 const TopicStack = createStackNavigator()
 
@@ -41,6 +43,7 @@ function ComposeStackScreen() {
   )
 }
 
+const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator()
 
 export default function App() {
@@ -48,11 +51,15 @@ export default function App() {
     <ApplicationProvider {...eva} theme={eva.light}>
     <ApolloProvider client={apolloClient}>
       <NavigationContainer>
-        <Tab.Navigator>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={LoginScreen} />
+      </Stack.Navigator>
+        {/* <Tab.Navigator>
+          <Tab.Screen name="Login" component={LoginScreen} />
           <Tab.Screen name="Topic" component={TopicStackScreen} />
           <Tab.Screen name="Profile" component={ProfileStackScreen} />
           <Tab.Screen name="Compose" component={ComposeStackScreen}/>
-        </Tab.Navigator>
+        </Tab.Navigator> */}
       </NavigationContainer>
     </ApolloProvider>
     </ApplicationProvider>

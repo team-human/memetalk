@@ -4,10 +4,8 @@ import {
   SafeAreaView,
   StatusBar,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
-  Image,
   ActivityIndicator,
 } from 'react-native'
 import { HashTagList } from '../View/HashTag/HashTagList'

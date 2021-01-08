@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import {
-  Button,
   Image,
   Platform,
   SafeAreaView,
@@ -12,7 +11,6 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Input } from '@ui-kitten/components';
-// import requestMediaLibraryPermissionsAsync from 'expo-image-picker'
 
 export default function ComposeScreen() {
     const [image, setImage] = useState(null || String);
