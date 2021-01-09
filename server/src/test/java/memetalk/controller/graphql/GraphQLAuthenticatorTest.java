@@ -56,8 +56,7 @@ public class GraphQLAuthenticatorTest {
         new UserService(
             databaseAdapter, jwtVerifier, passwordEncoder, securityProperties, algorithm);
     authenticationProvider = mock(AuthenticationProvider.class);
-    graphQLAuthenticator =
-        new GraphQLAuthenticator(userService, authenticationProvider, databaseAdapter);
+    graphQLAuthenticator = new GraphQLAuthenticator(userService, authenticationProvider);
 
     when(securityProperties.getSecretKey()).thenReturn(secretKey);
     when(securityProperties.getTokenIssuer()).thenReturn(issuer);
