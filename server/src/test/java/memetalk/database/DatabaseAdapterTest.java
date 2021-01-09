@@ -76,7 +76,8 @@ public class DatabaseAdapterTest {
     statement.execute("DROP TABLE meme_user IF EXISTS;");
     statement.execute(
         "CREATE TABLE meme_user (id SERIAL PRIMARY KEY, username VARCHAR(64), name VARCHAR(64), password VARCHAR(64), roles VARCHAR(128));");
-    // password is hashed, so '$2a...UuU3a' is `1234`, and '$2a...n6.QG' is `abcd`
+    // password is hashed, so '$2a...UuU3a' is `1234`, and '$2a...n6.QG' is
+    // `abcd`
     statement.execute(
         "INSERT INTO meme_user (username, name, password, roles) VALUES ('john', 'Harry Potter', '$2a$10$w4Op9AHpvs.MMc0c.oZAQeYRKxd0qfom8YxRP5bYmE.doyagUuU3a', 'USER');");
     statement.execute(
@@ -113,15 +114,49 @@ public class DatabaseAdapterTest {
   }
 
   @Test
-  public void testAddMemeSucceed() throws URISyntaxException, SQLException {
+  public void testAddMemeWithoutTagSucceed() throws URISyntaxException, SQLException {
     byte[] imageBytes = "fake_image".getBytes();
     Meme newMeme = Meme.builder().image(imageBytes).build();
+    List<String> tags = List.of();
 
-    databaseAdapter.addMeme(newMeme);
+    databaseAdapter.addMeme(newMeme, tags);
 
     List<Meme> allMemes = databaseAdapter.getMemes();
     Assert.assertEquals(4, allMemes.size());
     Assert.assertTrue(Arrays.equals(imageBytes, allMemes.get(3).getImage()));
+  }
+
+  @Test
+  public void testAddMemeWithTagSucceed() throws URISyntaxException, SQLException {
+    byte[] imageBytes = "fake_image".getBytes();
+    Meme newMeme = Meme.builder().image(imageBytes).build();
+    List<String> tags = List.of("humor", "happy");
+
+    databaseAdapter.addMeme(newMeme, tags);
+
+    List<Meme> allMemes = databaseAdapter.getMemes();
+    Assert.assertEquals(4, allMemes.size());
+
+    Meme retrievedNewMeme = allMemes.get(allMemes.size() - 1);
+    Assert.assertTrue(Arrays.equals(imageBytes, retrievedNewMeme.getImage()));
+    Assert.assertEquals(2, retrievedNewMeme.getTags().size());
+  }
+
+  @Test
+  public void testAddMemeWithTagThenGetMemeWithTagSucceed()
+      throws URISyntaxException, SQLException {
+    byte[] imageBytes = "fake_image".getBytes();
+    Meme newMeme = Meme.builder().image(imageBytes).build();
+    List<String> tags = List.of("unique_tag");
+
+    databaseAdapter.addMeme(newMeme, tags);
+
+    List<Meme> memes = databaseAdapter.getMemesByTag("unique_tag");
+    Assert.assertEquals(1, memes.size());
+    Meme retrievedNewMeme = memes.get(0);
+    Assert.assertTrue(Arrays.equals(imageBytes, retrievedNewMeme.getImage()));
+    Assert.assertEquals(1, retrievedNewMeme.getTags().size());
+    Assert.assertEquals("unique_tag", retrievedNewMeme.getTags().get(0));
   }
 
   @Test
