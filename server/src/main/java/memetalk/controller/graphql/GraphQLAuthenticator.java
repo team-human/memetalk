@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import memetalk.model.CreateUserInput;
 import memetalk.model.LoginUser;
+import memetalk.model.User;
 import memetalk.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -44,5 +45,13 @@ public class GraphQLAuthenticator {
   @PreAuthorize("@userService.isAnonymous()")
   public LoginUser createUserAuth(@NonNull final CreateUserInput userInput) {
     return userService.createUser(userInput);
+  }
+
+  @PreAuthorize("@userService.isAuthenticated()")
+  public User getCurrentUser() {
+    if (userService.getCurrentUser() != null) {
+      return userService.getCurrentUser().getUser();
+    }
+    return null;
   }
 }

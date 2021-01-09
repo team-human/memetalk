@@ -67,17 +67,20 @@ public class DatabaseAdapter {
 
   /**
    * Returns all memes. DEPRECATED: Reasons are (1) it populates incompleted fields of a meme, (2)
-   * it shows unfiltered data and they will be too many.
+   * it shows unfiltered data and they will be too many. However, we are still using this method in
+   * tests.
    */
   public List<Meme> getMemes() throws SQLException {
     List<Meme> memes = new ArrayList<>();
 
     Statement statement = connection.createStatement();
-    ResultSet result = statement.executeQuery("SELECT id, image FROM meme;");
+    ResultSet result = statement.executeQuery("SELECT id, image, user_id FROM meme;");
     while (result.next()) {
+      User author = getUserById(result.getInt("user_id"));
       memes.add(
           Meme.builder()
               .id(Integer.toString(result.getInt("id")))
+              .author(author)
               .image(result.getBytes("image"))
               .build());
     }
@@ -150,8 +153,9 @@ public class DatabaseAdapter {
     // TODO: Populate user id from the input object into the database field.
     PreparedStatement statement =
         connection.prepareStatement(
-            "INSERT INTO meme(image) VALUES (?);", Statement.RETURN_GENERATED_KEYS);
+            "INSERT INTO meme(image, user_id) VALUES (?, ?);", Statement.RETURN_GENERATED_KEYS);
     statement.setBytes(/*image*/ 1, meme.getImage());
+    statement.setInt(/*user_id*/ 2, Integer.parseInt(meme.getAuthor().getId()));
     statement.executeUpdate();
 
     Integer memeId = null;

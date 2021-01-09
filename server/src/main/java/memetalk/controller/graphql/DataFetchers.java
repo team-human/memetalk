@@ -87,7 +87,8 @@ public class DataFetchers {
       final File file = dataFetchingEnvironment.getArgument("file");
       final List<String> tags = dataFetchingEnvironment.getArgument("tags");
       // TODO: Load author id into the meme object below.
-      Meme meme = Meme.builder().tags(tags).image(file.getContent()).build();
+      User user = graphQLAuthenticator.getCurrentUser();
+      Meme meme = Meme.builder().author(user).tags(tags).image(file.getContent()).build();
       databaseAdapter.addMeme(meme, tags);
       // TODO: Consider if we need to return a valid meme here or some response
       // status is enough.
