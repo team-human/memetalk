@@ -1,5 +1,5 @@
 export const EnvironmentConfigs = {
     dev: {
-        graphQLEndPoint: "https://memetalk.herokuapp.com/graphql" 
+        graphQLEndPoint: "http://localhost:8080/graphql" 
     }
 }

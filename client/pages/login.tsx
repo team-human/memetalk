@@ -1,3 +1,4 @@
+import { useApolloClient, useQuery } from '@apollo/client'
 import React, { useEffect, useState } from 'react'
 import {
   View,
@@ -7,10 +8,13 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native'
+import { REGISTER_USER } from '../Query/LoginQuery'
+import { SecureStore } from 'expo';
 
-const logo =  require("../assets/logo.png")
+const logo =  require("../Assets/logo.png")
 
 export default function LoginScreen({ navigation }) {
+    const client = useApolloClient();
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [logoW, setLogow] = useState(0)
@@ -42,10 +46,33 @@ export default function LoginScreen({ navigation }) {
                     placeholderTextColor="#A5A5A5"
                     onChangeText={text => setPassword(text)}/>
                 </View>
-                <TouchableOpacity style={styles.button} onPress={()=>{console.log("clicked!")}}>
+                <TouchableOpacity style={styles.button}>
                     <Text style={styles.loginText}>登入</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button}
+                    onPress={async (e) => {
+                        try {
+                            const { data } = await client.mutate({
+                                mutation: REGISTER_USER,
+                                variables: {                         
+                                    userInfo:
+                                    {
+                                        username: email,
+                                        password: password,
+                                        name:"today"
+                                    } 
+                                },
+                            });
+                            await SecureStore.setItemAsync(
+                                'userinfo',
+                                JSON.stringify(data.createUser)
+                                );
+                            console.log(data.createUser)
+                        } catch (error) {
+                            console.log(error)
+                        }
+                    }}
+                >
                     <Text style={styles.loginText}>註冊</Text>
                 </TouchableOpacity>
                 <TouchableOpacity>

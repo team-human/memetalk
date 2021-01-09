@@ -1,16 +1,15 @@
 import * as React from 'react'
 import * as eva from '@eva-design/eva';
-import { Text, View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import TopicScreen from './pages/topic'
-import ProfileScreen from './pages/profile'
-import { apolloClient } from './Providers/ApolloClient'
+import TopicScreen from './Pages/topic'
+import ProfileScreen from './Pages/profile'
+import { apolloClient } from './Apollo/ApolloClient'
 import { ApolloProvider } from '@apollo/client'
 import { ApplicationProvider} from '@ui-kitten/components';
-import ComposeScreen from './pages/compose';
-import LoginScreen from './pages/login';
+import ComposeScreen from './Pages/compose';
+import LoginScreen from './Pages/login';
 
 
 const TopicStack = createStackNavigator()
