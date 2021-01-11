@@ -49,8 +49,9 @@ public class GraphQLAuthenticator {
 
   @PreAuthorize("@userService.isAuthenticated()")
   public User getCurrentUser() {
-    if (userService.getCurrentUser() != null) {
-      return userService.getCurrentUser().getUser();
+    LoginUser loginUser = userService.getCurrentUser();
+    if (loginUser != null) {
+      return loginUser.getUser();
     }
     return null;
   }
