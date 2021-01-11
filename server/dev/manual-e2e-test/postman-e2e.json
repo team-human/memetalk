@@ -11,7 +11,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "300ec68b-26b7-4be5-8b8d-849f59159d38",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -53,7 +52,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "7e86211e-0373-400a-b73f-71b6e8747a32",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -109,7 +107,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "3f3a744a-ff4b-42d1-8a3f-899e2643cc2e",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -165,7 +162,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "078c00ce-7b3e-478f-abfe-6f14c6b09a42",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -207,5 +203,50 @@
 			"response": []
 		}
 	],
-	"protocolProfileBehavior": {}
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"var settings = {",
+					"  \"url\": \"localhost:8080/graphql\",",
+					"  \"method\": \"POST\",",
+					"  \"timeout\": 0,",
+					"  \"headers\": {",
+					"    \"Content-Type\": \"application/json\"",
+					"  },",
+					"  \"body\": {",
+					"      mode: 'raw',",
+					"      raw: JSON.stringify({",
+					"        query: \"mutation login ($username: String!, $password: String!) {\\n    login (username: $username, password: $password) {\\n        user {\\n            username\\n            name\\n            roles\\n        }\\n        token\\n    }\\n}\",",
+					"        variables: {\"username\":\"marry\",\"password\":\"abcd\"}",
+					"      })",
+					"  }",
+					"};",
+					"",
+					"pm.sendRequest(settings, function (err, response) {",
+					"  const token = response.json().data.login.token;",
+					"  const login_token = \"Bearer \".concat(token);",
+					"  pm.collectionVariables.set('login_token',  login_token);",
+					"});"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "login_token",
+			"value": ""
+		}
+	]
 }
