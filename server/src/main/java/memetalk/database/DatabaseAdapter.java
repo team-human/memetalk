@@ -25,10 +25,9 @@ import memetalk.model.User;
 import org.springframework.stereotype.Repository;
 
 /**
- * DatabaseAdapter keeps a connection with the database and offers methods to
- * read/write the database. Always call `Shutdown()` after you're done using
- * this adapter to safely close the connection with the database. TODO: Add lock
- * on each public method to promise data consistency.
+ * DatabaseAdapter keeps a connection with the database and offers methods to read/write the
+ * database. Always call `Shutdown()` after you're done using this adapter to safely close the
+ * connection with the database. TODO: Add lock on each public method to promise data consistency.
  */
 @Slf4j
 @Repository
@@ -36,8 +35,7 @@ public class DatabaseAdapter {
   private static final String ROLE_DELIMITER = ";";
   private final Connection connection;
 
-  public DatabaseAdapter(ConfigReader configReader)
-      throws URISyntaxException, SQLException {
+  public DatabaseAdapter(ConfigReader configReader) throws URISyntaxException, SQLException {
     String database_url = System.getenv("DATABASE_URL");
     if (database_url != null && database_url != "") {
       log.info("Connecting to database from env url.");
@@ -54,37 +52,37 @@ public class DatabaseAdapter {
 
     String username = dbUri.getUserInfo().split(":")[0];
     String password = dbUri.getUserInfo().split(":")[1];
-    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' +
-                   dbUri.getPort() + dbUri.getPath();
+    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
 
     return DriverManager.getConnection(dbUrl, username, password);
   }
 
-  private static Connection
-  getConnectionFromConfigReader(ConfigReader configReader) throws SQLException {
-    return DriverManager.getConnection(configReader.getConfig("db-url"),
-                                       configReader.getConfig("db-username"),
-                                       configReader.getConfig("db-password"));
+  private static Connection getConnectionFromConfigReader(ConfigReader configReader)
+      throws SQLException {
+    return DriverManager.getConnection(
+        configReader.getConfig("db-url"),
+        configReader.getConfig("db-username"),
+        configReader.getConfig("db-password"));
   }
 
   /**
-   * Returns all memes. DEPRECATED: Reasons are (1) it populates incompleted
-   * fields of a meme, (2) it shows unfiltered data and they will be too many.
-   * However, we are still using this method in tests.
+   * Returns all memes. DEPRECATED: Reasons are (1) it populates incompleted fields of a meme, (2)
+   * it shows unfiltered data and they will be too many. However, we are still using this method in
+   * tests.
    */
   public List<Meme> getMemes() throws SQLException {
     List<Meme> memes = new ArrayList<>();
 
     Statement statement = connection.createStatement();
-    ResultSet result =
-        statement.executeQuery("SELECT id, image, user_id FROM meme;");
+    ResultSet result = statement.executeQuery("SELECT id, image, user_id FROM meme;");
     while (result.next()) {
       User author = getUserById(result.getInt("user_id"));
-      memes.add(Meme.builder()
-                    .id(Integer.toString(result.getInt("id")))
-                    .author(author)
-                    .image(result.getBytes("image"))
-                    .build());
+      memes.add(
+          Meme.builder()
+              .id(Integer.toString(result.getInt("id")))
+              .author(author)
+              .image(result.getBytes("image"))
+              .build());
     }
     result.close();
     statement.close();
@@ -98,8 +96,9 @@ public class DatabaseAdapter {
     List<String> tags = new ArrayList<>();
 
     Statement statement = connection.createStatement();
-    ResultSet result = statement.executeQuery(
-        "SELECT tag, COUNT(*) amount FROM meme_to_tag GROUP BY tag ORDER BY amount DESC;");
+    ResultSet result =
+        statement.executeQuery(
+            "SELECT tag, COUNT(*) amount FROM meme_to_tag GROUP BY tag ORDER BY amount DESC;");
     while (result.next()) {
       tags.add(result.getString("tag"));
     }
@@ -119,17 +118,18 @@ public class DatabaseAdapter {
     List<Meme> memes = new ArrayList<>();
 
     Statement statement = connection.createStatement();
-    ResultSet result = statement.executeQuery(
-        "SELECT id, image, create_time, user_id FROM meme WHERE user_id = " +
-        userId + ";");
+    ResultSet result =
+        statement.executeQuery(
+            "SELECT id, image, create_time, user_id FROM meme WHERE user_id = " + userId + ";");
     while (result.next()) {
       User author = getUserById(result.getInt("user_id"));
-      memes.add(Meme.builder()
-                    .id(Integer.toString(result.getInt("id")))
-                    .author(author)
-                    .image(result.getBytes("image"))
-                    .createTime(result.getString("create_time"))
-                    .build());
+      memes.add(
+          Meme.builder()
+              .id(Integer.toString(result.getInt("id")))
+              .author(author)
+              .image(result.getBytes("image"))
+              .createTime(result.getString("create_time"))
+              .build());
     }
     result.close();
     statement.close();
@@ -143,17 +143,16 @@ public class DatabaseAdapter {
   public void addMeme(Meme meme, List<String> tags) throws SQLException {
     Integer memeId = addMemeWithoutTag(meme);
     if (memeId == null) {
-      throw new SQLExecutionException(
-          "Failed to add a new meme and obtained an ID.");
+      throw new SQLExecutionException("Failed to add a new meme and obtained an ID.");
     }
     linkMemeWithTags(memeId, tags);
   }
 
   private Integer addMemeWithoutTag(Meme meme) throws SQLException {
     // TODO: Populate user id from the input object into the database field.
-    PreparedStatement statement = connection.prepareStatement(
-        "INSERT INTO meme(image, user_id) VALUES (?, ?);",
-        Statement.RETURN_GENERATED_KEYS);
+    PreparedStatement statement =
+        connection.prepareStatement(
+            "INSERT INTO meme(image, user_id) VALUES (?, ?);", Statement.RETURN_GENERATED_KEYS);
     statement.setBytes(/*image*/ 1, meme.getImage());
     statement.setInt(/*user_id*/ 2, Integer.parseInt(meme.getAuthor().getId()));
     statement.executeUpdate();
@@ -161,18 +160,17 @@ public class DatabaseAdapter {
     Integer memeId = null;
     ResultSet generatedKeys = statement.getGeneratedKeys();
     if (generatedKeys.next()) {
-      memeId = generatedKeys.getInt(/*columnIndex=*/1);
+      memeId = generatedKeys.getInt(/*columnIndex=*/ 1);
     }
     generatedKeys.close();
     statement.close();
     return memeId;
   }
 
-  private void linkMemeWithTags(int memeId, List<String> tags)
-      throws SQLException {
+  private void linkMemeWithTags(int memeId, List<String> tags) throws SQLException {
     for (String tag : tags) {
-      PreparedStatement statement = connection.prepareStatement(
-          "INSERT INTO meme_to_tag (meme_id, tag) VALUES (?, ?);");
+      PreparedStatement statement =
+          connection.prepareStatement("INSERT INTO meme_to_tag (meme_id, tag) VALUES (?, ?);");
       statement.setInt(/*meme_id*/ 1, memeId);
       statement.setString(/*tag*/ 2, tag);
       statement.executeUpdate();
@@ -182,8 +180,9 @@ public class DatabaseAdapter {
 
   /** Adds a new user. */
   public void createUser(@NonNull User user) throws SQLException {
-    PreparedStatement statement = connection.prepareStatement(
-        "INSERT INTO meme_user (username, name, password, roles) VALUES (?, ?, ?, ?);");
+    PreparedStatement statement =
+        connection.prepareStatement(
+            "INSERT INTO meme_user (username, name, password, roles) VALUES (?, ?, ?, ?);");
     statement.setString(/*username*/ 1, user.getUsername());
     statement.setString(/*name*/ 2, user.getName());
     statement.setString(/*password*/ 3, user.getPassword());
@@ -194,12 +193,11 @@ public class DatabaseAdapter {
   }
 
   /**
-   * Serialize User roles to a String for DB record, since Array data type in DB
-   * is not easy to use.
+   * Serialize User roles to a String for DB record, since Array data type in DB is not easy to use.
    *
    * @param roles User roles
-   * @return String presentation of the set of roles. If roles is not valid,
-   *     will return default "USER"
+   * @return String presentation of the set of roles. If roles is not valid, will return default
+   *     "USER"
    */
   public static String serializeUserRoles(Set<String> roles) {
     if (roles == null || roles.isEmpty()) {
@@ -213,16 +211,15 @@ public class DatabaseAdapter {
     if (roles == null || roles.isEmpty()) {
       return ImmutableSet.of("USER");
     } else {
-      return Arrays.stream(roles.split(ROLE_DELIMITER))
-          .collect(ImmutableSet.toImmutableSet());
+      return Arrays.stream(roles.split(ROLE_DELIMITER)).collect(ImmutableSet.toImmutableSet());
     }
   }
 
   /** Check Username exist or not. */
-  public boolean checkUserNameExist(@NonNull final String username)
-      throws SQLException {
-    PreparedStatement statement = connection.prepareStatement(
-        "SELECT EXISTS (SELECT id FROM meme_user WHERE username = ?) AS exist;");
+  public boolean checkUserNameExist(@NonNull final String username) throws SQLException {
+    PreparedStatement statement =
+        connection.prepareStatement(
+            "SELECT EXISTS (SELECT id FROM meme_user WHERE username = ?) AS exist;");
     statement.setString(1, username);
     ResultSet result = statement.executeQuery();
 
@@ -238,23 +235,23 @@ public class DatabaseAdapter {
   }
 
   /** Return User based on username. */
-  public Optional<User> findUserByUsername(@NonNull final String username)
-      throws SQLException {
-    PreparedStatement statement = connection.prepareStatement(
-        "SELECT * FROM meme_user WHERE username = ?;");
+  public Optional<User> findUserByUsername(@NonNull final String username) throws SQLException {
+    PreparedStatement statement =
+        connection.prepareStatement("SELECT * FROM meme_user WHERE username = ?;");
     statement.setString(1, username);
     ResultSet result = statement.executeQuery();
 
     Optional<User> user = Optional.empty();
     if (result.next()) {
-      user = Optional.of(
-          User.builder()
-              .id(Integer.toString(result.getInt("id")))
-              .username(username)
-              .password(result.getString("password"))
-              .name(result.getString("name"))
-              .roles(deserializeUserRoles(result.getString("roles")))
-              .build());
+      user =
+          Optional.of(
+              User.builder()
+                  .id(Integer.toString(result.getInt("id")))
+                  .username(username)
+                  .password(result.getString("password"))
+                  .name(result.getString("name"))
+                  .roles(deserializeUserRoles(result.getString("roles")))
+                  .build());
     }
 
     // one username should have one record in DB
@@ -270,13 +267,15 @@ public class DatabaseAdapter {
     return user;
   }
 
-  public void shutdown() throws Exception { connection.close(); }
+  public void shutdown() throws Exception {
+    connection.close();
+  }
 
   private List<String> getMemeIdsByTag(String tag) throws SQLException {
     List<String> meme_ids = new ArrayList<>();
 
-    PreparedStatement statement = connection.prepareStatement(
-        "SELECT meme_id FROM meme_to_tag WHERE tag = ?;");
+    PreparedStatement statement =
+        connection.prepareStatement("SELECT meme_id FROM meme_to_tag WHERE tag = ?;");
     statement.setString(1, tag);
     ResultSet result = statement.executeQuery();
     while (result.next()) {
@@ -292,17 +291,20 @@ public class DatabaseAdapter {
     List<Meme> memes = new ArrayList<>();
 
     Statement statement = connection.createStatement();
-    ResultSet result = statement.executeQuery(
-        "SELECT id, image, create_time, user_id FROM meme WHERE id IN (" +
-        String.join(",", meme_ids) + ");");
+    ResultSet result =
+        statement.executeQuery(
+            "SELECT id, image, create_time, user_id FROM meme WHERE id IN ("
+                + String.join(",", meme_ids)
+                + ");");
     while (result.next()) {
       User author = getUserById(result.getInt("user_id"));
-      memes.add(Meme.builder()
-                    .id(Integer.toString(result.getInt("id")))
-                    .author(author)
-                    .image(result.getBytes("image"))
-                    .createTime(result.getString("create_time"))
-                    .build());
+      memes.add(
+          Meme.builder()
+              .id(Integer.toString(result.getInt("id")))
+              .author(author)
+              .image(result.getBytes("image"))
+              .createTime(result.getString("create_time"))
+              .build());
     }
     result.close();
     statement.close();
@@ -321,9 +323,11 @@ public class DatabaseAdapter {
     }
 
     Statement statement = connection.createStatement();
-    ResultSet result = statement.executeQuery(
-        "SELECT meme_id, tag FROM meme_to_tag WHERE meme_id IN (" +
-        String.join(",", meme_ids) + ");");
+    ResultSet result =
+        statement.executeQuery(
+            "SELECT meme_id, tag FROM meme_to_tag WHERE meme_id IN ("
+                + String.join(",", meme_ids)
+                + ");");
     while (result.next()) {
       String memeId = Integer.toString(result.getInt("meme_id"));
       String tag = result.getString("tag");
@@ -344,18 +348,19 @@ public class DatabaseAdapter {
   }
 
   private User getUserById(int id) throws SQLException {
-    PreparedStatement statement = connection.prepareStatement(
-        "SELECT id, username, name FROM meme_user WHERE id = ?;");
+    PreparedStatement statement =
+        connection.prepareStatement("SELECT id, username, name FROM meme_user WHERE id = ?;");
     statement.setInt(1, id);
     ResultSet result = statement.executeQuery();
 
     User user = null;
     if (result.next()) {
-      user = User.builder()
-                 .id(Integer.toString(result.getInt("id")))
-                 .username(result.getString("username"))
-                 .name(result.getString("name"))
-                 .build();
+      user =
+          User.builder()
+              .id(Integer.toString(result.getInt("id")))
+              .username(result.getString("username"))
+              .name(result.getString("name"))
+              .build();
     }
 
     // If we didn't find 'exact one' user with the given id, we log error and
