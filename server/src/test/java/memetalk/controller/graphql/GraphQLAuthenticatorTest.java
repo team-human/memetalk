@@ -56,8 +56,7 @@ public class GraphQLAuthenticatorTest {
         new UserService(
             databaseAdapter, jwtVerifier, passwordEncoder, securityProperties, algorithm);
     authenticationProvider = mock(AuthenticationProvider.class);
-    graphQLAuthenticator =
-        new GraphQLAuthenticator(userService, authenticationProvider, databaseAdapter);
+    graphQLAuthenticator = new GraphQLAuthenticator(userService, authenticationProvider);
 
     when(securityProperties.getSecretKey()).thenReturn(secretKey);
     when(securityProperties.getTokenIssuer()).thenReturn(issuer);
@@ -108,5 +107,30 @@ public class GraphQLAuthenticatorTest {
 
     checkUserIsEqual(expectedUser, loginUser.getUser(), passwordEncoder);
     assertNotNull(loginUser.getToken());
+  }
+
+  @Test
+  public void testGetCurrentUser() throws SQLException {
+    final String id = "test_id";
+    final String password = "pass_word";
+    final String name = "sam";
+    final User expectedUser =
+        User.builder()
+            .id(id)
+            .username("username")
+            .password(passwordEncoder.encode(password))
+            .name(name)
+            .roles(ImmutableSet.of(USER_AUTHORITY))
+            .build();
+
+    when(authentication.getName()).thenReturn(id);
+    when(securityContext.getAuthentication()).thenReturn(authentication);
+    SecurityContextHolder.setContext(securityContext);
+
+    when(databaseAdapter.findUserByUsername(id)).thenReturn(Optional.of(expectedUser));
+
+    graphQLAuthenticator.loginUserAuth(id, password);
+    User user = graphQLAuthenticator.getCurrentUser();
+    assertEquals(expectedUser, user);
   }
 }

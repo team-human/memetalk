@@ -86,8 +86,10 @@ public class DataFetchers {
     return dataFetchingEnvironment -> {
       final File file = dataFetchingEnvironment.getArgument("file");
       final List<String> tags = dataFetchingEnvironment.getArgument("tags");
-      Meme meme = Meme.builder().tags(tags).image(file.getContent()).build();
-      graphQLAuthenticator.createMemeAuth(meme);
+      // TODO: Load author id into the meme object below.
+      User user = graphQLAuthenticator.getCurrentUser();
+      Meme meme = Meme.builder().author(user).tags(tags).image(file.getContent()).build();
+      databaseAdapter.addMeme(meme, tags);
       // TODO: Consider if we need to return a valid meme here or some response
       // status is enough.
       return meme;

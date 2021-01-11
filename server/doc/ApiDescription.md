@@ -20,11 +20,11 @@ After a user create a new account, he can get the Jwt token for authentication b
 curl --location --request POST 'localhost:8080/graphql' \
 --header 'Content-Type: application/json' \
 --header 'Cookie: JSESSIONID=B616E228ECC9627CCFB570E77BBAA7CC' \
---data-raw '{"query":"mutation login ($id: String!, $password: String!) {\n login (id: $id, password: $password) {\n user {\n id\n name\n roles\n }\n token\n }\n}","variables":{"id":"userId1","password":"123"}}'
+--data-raw '{"query":"mutation login ($username: String!, $password: String!) {\n login (username: $username, password: $password) {\n user {\n username\n name\n roles\n }\n token\n }\n}","variables":{"username":"john","password":"1234"}}'
 ```
 The response is
 ``` 
-{"data":{"login":{"user":{"id":"userId1","name":"John","roles":["ADMIN"]},"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VySWQxIiwiaXNzIjoibWVtZXRhbGsiLCJleHAiOjE2MDkxMzk0NDgsImlhdCI6MTYwNjU0NzQ0OH0.KhhPbCer3ixu9e43lLqDRrbv7Ql77CuirxrvdJJrcdQ"}}}
+{"data":{"login":{"user":{"id":"1","name":"Harry Potter","roles":["USER"]},"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2huIiwiaXNzIjoibWVtZXRhbGsiLCJleHAiOjE2MTI4MjA4NDIsImlhdCI6MTYxMDIyODg0Mn0.lsomE6NJOXBZZyYSRyFNdDlJuGf1KuLxzWQnx3LDiBI"}}}
 ```
 Please reserve this token. 
 

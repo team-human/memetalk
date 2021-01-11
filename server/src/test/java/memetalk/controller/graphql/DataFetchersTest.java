@@ -46,8 +46,7 @@ public class DataFetchersTest {
     staticFileManager = mock(StaticFileManager.class);
     userService = mock(UserService.class);
     authenticationProvider = mock(AuthenticationProvider.class);
-    graphQLAuthenticator =
-        new GraphQLAuthenticator(userService, authenticationProvider, databaseAdapter);
+    graphQLAuthenticator = new GraphQLAuthenticator(userService, authenticationProvider);
     dataFetchers =
         new DataFetchers(
             databaseAdapter, staticFileManager,
