@@ -66,19 +66,27 @@ public class DatabaseAdapter {
 
   /**
    * Returns all memes. DEPRECATED: Reasons are (1) it populates incompleted fields of a meme, (2)
-   * it shows unfiltered data and they will be too many.
+   * it shows unfiltered data and they will be too many. However, we are still using this method in
+   * tests.
    */
   public List<Meme> getMemes() throws SQLException {
     List<Meme> memes = new ArrayList<>();
 
     Statement statement = connection.createStatement();
-    ResultSet result = statement.executeQuery("SELECT image FROM meme;");
+    ResultSet result = statement.executeQuery("SELECT id, image, user_id FROM meme;");
     while (result.next()) {
-      memes.add(Meme.builder().image(result.getBytes("image")).build());
+      User author = getUserById(result.getInt("user_id"));
+      memes.add(
+          Meme.builder()
+              .id(Integer.toString(result.getInt("id")))
+              .author(author)
+              .image(result.getBytes("image"))
+              .build());
     }
     result.close();
     statement.close();
 
+    fillTagsIntoMeme(memes);
     return memes;
   }
 
@@ -131,12 +139,42 @@ public class DatabaseAdapter {
   }
 
   /** Adds a new meme with an attached image. */
-  public void addMeme(Meme meme) throws SQLException {
+  public void addMeme(Meme meme, List<String> tags) throws SQLException {
+    Integer memeId = addMemeWithoutTag(meme);
+    if (memeId == null) {
+      throw new SQLExecutionException("Failed to add a new meme and obtained an ID.");
+    }
+    linkMemeWithTags(memeId, tags);
+  }
+
+  private Integer addMemeWithoutTag(Meme meme) throws SQLException {
+    // TODO: Populate user id from the input object into the database field.
     PreparedStatement statement =
-        connection.prepareStatement("INSERT INTO meme(image) VALUES (?);");
+        connection.prepareStatement(
+            "INSERT INTO meme(image, user_id) VALUES (?, ?);", Statement.RETURN_GENERATED_KEYS);
     statement.setBytes(/*image*/ 1, meme.getImage());
+    statement.setInt(/*user_id*/ 2, Integer.parseInt(meme.getAuthor().getId()));
     statement.executeUpdate();
+
+    Integer memeId = null;
+    ResultSet generatedKeys = statement.getGeneratedKeys();
+    if (generatedKeys.next()) {
+      memeId = generatedKeys.getInt(/*columnIndex=*/ 1);
+    }
+    generatedKeys.close();
     statement.close();
+    return memeId;
+  }
+
+  private void linkMemeWithTags(int memeId, List<String> tags) throws SQLException {
+    for (String tag : tags) {
+      PreparedStatement statement =
+          connection.prepareStatement("INSERT INTO meme_to_tag (meme_id, tag) VALUES (?, ?);");
+      statement.setInt(/*meme_id*/ 1, memeId);
+      statement.setString(/*tag*/ 2, tag);
+      statement.executeUpdate();
+      statement.close();
+    }
   }
 
   /** Adds a new user. */
@@ -291,9 +329,9 @@ public class DatabaseAdapter {
                 + String.join(",", meme_ids)
                 + ");");
     while (result.next()) {
-      String meme_id = Integer.toString(result.getInt("meme_id"));
+      String memeId = Integer.toString(result.getInt("meme_id"));
       String tag = result.getString("tag");
-      meme_id_to_tag.computeIfAbsent(meme_id, k -> new ArrayList<>()).add(tag);
+      meme_id_to_tag.computeIfAbsent(memeId, k -> new ArrayList<>()).add(tag);
     }
     result.close();
     statement.close();

@@ -1,13 +1,11 @@
 package memetalk.controller.graphql;
 
-import java.sql.SQLException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import memetalk.database.DatabaseAdapter;
 import memetalk.model.CreateUserInput;
 import memetalk.model.LoginUser;
-import memetalk.model.Meme;
+import memetalk.model.User;
 import memetalk.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -29,7 +27,6 @@ import org.springframework.stereotype.Component;
 public class GraphQLAuthenticator {
   @NonNull private final UserService userService;
   @NonNull private final AuthenticationProvider authenticationProvider;
-  @NonNull private final DatabaseAdapter databaseAdapter;
 
   @PreAuthorize("@userService.isAnonymous()")
   public LoginUser loginUserAuth(@NonNull final String username, @NonNull final String password) {
@@ -50,9 +47,12 @@ public class GraphQLAuthenticator {
     return userService.createUser(userInput);
   }
 
-  // Not blocking the current frontEnd integration, but the annotation is ready to be used
-  // @PreAuthorize("@userService.isAuthenticated()")
-  public void createMemeAuth(@NonNull final Meme meme) throws SQLException {
-    databaseAdapter.addMeme(meme);
+  @PreAuthorize("@userService.isAuthenticated()")
+  public User getCurrentUser() {
+    LoginUser loginUser = userService.getCurrentUser();
+    if (loginUser != null) {
+      return loginUser.getUser();
+    }
+    return null;
   }
 }
