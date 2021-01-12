@@ -67,7 +67,7 @@ public class UserService implements UserDetailsService {
         .stream()
         .flatMap(Collection::stream)
         .map(GrantedAuthority::getAuthority)
-        .anyMatch(Roles.ADMIN_AUTHORITY::equals);
+        .anyMatch(Roles.ADMIN::equals);
   }
 
   // Used in security annotation @PreAuthorize("@userService.isAuthenticated()")
@@ -160,7 +160,7 @@ public class UserService implements UserDetailsService {
       final User user =
           User.builder()
               .password(passwordEncoder.encode(input.getPassword()))
-              .roles(ImmutableSet.of(Roles.USER_AUTHORITY))
+              .roles(ImmutableSet.of(Roles.USER))
               .username(input.getUsername())
               .name(input.getName())
               .build();

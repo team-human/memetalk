@@ -200,7 +200,7 @@ public class DatabaseAdapter {
    */
   public static String serializeUserRoles(Set<String> roles) {
     if (roles == null || roles.isEmpty()) {
-      return Roles.USER_AUTHORITY;
+      return Roles.USER;
     }
 
     return String.join(Roles.ROLE_DELIMITER, roles);
@@ -208,7 +208,7 @@ public class DatabaseAdapter {
 
   public static Set<String> deserializeUserRoles(String roles) {
     if (roles == null || roles.isEmpty()) {
-      return ImmutableSet.of(Roles.USER_AUTHORITY);
+      return ImmutableSet.of(Roles.USER);
     } else {
       return Arrays.stream(roles.split(Roles.ROLE_DELIMITER))
           .collect(ImmutableSet.toImmutableSet());
