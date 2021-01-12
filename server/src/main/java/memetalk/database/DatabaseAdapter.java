@@ -32,7 +32,6 @@ import org.springframework.stereotype.Repository;
 @Slf4j
 @Repository
 public class DatabaseAdapter {
-  private static final String ROLE_DELIMITER = ";";
   private final Connection connection;
 
   public DatabaseAdapter(ConfigReader configReader) throws URISyntaxException, SQLException {
@@ -197,21 +196,22 @@ public class DatabaseAdapter {
    *
    * @param roles User roles
    * @return String presentation of the set of roles. If roles is not valid, will return default
-   *     "USER"
+   *     Roles.USER_AUTHORITY
    */
   public static String serializeUserRoles(Set<String> roles) {
     if (roles == null || roles.isEmpty()) {
-      return "USER";
+      return Roles.USER;
     }
 
-    return String.join(ROLE_DELIMITER, roles);
+    return String.join(Roles.ROLE_DELIMITER, roles);
   }
 
   public static Set<String> deserializeUserRoles(String roles) {
     if (roles == null || roles.isEmpty()) {
-      return ImmutableSet.of("USER");
+      return ImmutableSet.of(Roles.USER);
     } else {
-      return Arrays.stream(roles.split(ROLE_DELIMITER)).collect(ImmutableSet.toImmutableSet());
+      return Arrays.stream(roles.split(Roles.ROLE_DELIMITER))
+          .collect(ImmutableSet.toImmutableSet());
     }
   }
 

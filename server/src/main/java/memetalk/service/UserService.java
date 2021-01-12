@@ -21,6 +21,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import memetalk.database.DatabaseAdapter;
+import memetalk.database.Roles;
 import memetalk.exception.BadTokenException;
 import memetalk.exception.SQLExecutionException;
 import memetalk.exception.UserExistsException;
@@ -53,8 +54,6 @@ import org.springframework.util.CollectionUtils;
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
-  private static final String USER_AUTHORITY = "USER";
-  private static final String ADMIN_AUTHORITY = "ADMIN";
   private final DatabaseAdapter databaseAdapter;
   private final JWTVerifier jwtVerifier;
   private final PasswordEncoder passwordEncoder;
@@ -68,7 +67,7 @@ public class UserService implements UserDetailsService {
         .stream()
         .flatMap(Collection::stream)
         .map(GrantedAuthority::getAuthority)
-        .anyMatch(ADMIN_AUTHORITY::equals);
+        .anyMatch(Roles.ADMIN::equals);
   }
 
   // Used in security annotation @PreAuthorize("@userService.isAuthenticated()")
@@ -161,7 +160,7 @@ public class UserService implements UserDetailsService {
       final User user =
           User.builder()
               .password(passwordEncoder.encode(input.getPassword()))
-              .roles(ImmutableSet.of(USER_AUTHORITY))
+              .roles(ImmutableSet.of(Roles.USER))
               .username(input.getUsername())
               .name(input.getName())
               .build();

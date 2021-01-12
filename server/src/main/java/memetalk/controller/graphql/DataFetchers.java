@@ -1,6 +1,5 @@
 package memetalk.controller.graphql;
 
-import static memetalk.data.FakeDataGenerator.generateFakeMemes;
 import static memetalk.data.FakeDataGenerator.generateFakeTags;
 import static memetalk.data.FakeDataGenerator.generateFakeUsers;
 
@@ -36,7 +35,6 @@ public class DataFetchers {
 
   public static List<User> users = generateFakeUsers();
   public static List<String> tags = generateFakeTags();
-  public static List<Meme> memes = generateFakeMemes();
 
   // TODO: Replace fake data.
   public DataFetcher<User> getCurrentUserDataFetcher() {
