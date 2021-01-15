@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SecureStore } from 'expo';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export const setStorageItem = (key: string, value: string) => {
   if (Platform.OS === 'web') {

@@ -1461,6 +1461,14 @@
     lodash "^4.17.15"
     write-file-atomic "^2.3.0"
 
+"@expo/metro-config@^0.1.49":
+  version "0.1.49"
+  resolved "https://registry.yarnpkg.com/@expo/metro-config/-/metro-config-0.1.49.tgz#650af6b71554de4ae020406c1e1a3b6c5a3fb837"
+  integrity sha512-koaWdl4h7krJBBS5M/PdM67hD2ivVf8vJ6vbGgMnPNTlgRQXNKmYtAMg71/ajXJ6Z+dY7A56i7ccuTRc1Bz5dA==
+  dependencies:
+    "@expo/config" "3.3.23"
+    metro-react-native-babel-transformer "^0.58.0"
+
 "@expo/plist@0.0.11":
   version "0.0.11"
   resolved "https://registry.yarnpkg.com/@expo/plist/-/plist-0.0.11.tgz#5d7900dc31df57d45a3524c061dde34aacc8dabf"
@@ -2490,6 +2498,13 @@
   version "1.13.2"
   resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.13.2.tgz#649f78527f16cd5a87071a888219ef7a35ef5c79"
   integrity sha512-isTDvUApRJPVWFxV15yrQSOGqarX7cIedq/y4N5yWSnotf68D9qvDEv1I7rCXhkBDi0u4OJt6GA9dksUT0D3wg==
+  dependencies:
+    deep-assign "^3.0.0"
+
+"@react-native-community/async-storage@^1.12.1":
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/@react-native-community/async-storage/-/async-storage-1.12.1.tgz#25f821b4f6b13abe005ad67e47c6f1cee9f27b24"
+  integrity sha512-70WGaH3PKYASi4BThuEEKMkyAgE9k7VytBqmgPRx3MzJx9/MkspwqJGmn3QLCgHLIFUgF1pit2mWICbRJ3T3lg==
   dependencies:
     deep-assign "^3.0.0"
 
