@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { useEffect } from 'react'
+import { LoginUser } from '../Generated/graphqlType'
 import { getStorageItem } from '../Helper/Storage'
 
 type Action = { type: 'RESTORE_TOKEN' | 'SIGN_IN' | 'SIGN_OUT'; token?: string | null }
@@ -48,21 +49,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const authContext = React.useMemo(
         () => ({
-            signIn: async (data: any) => {
+            signIn: async (data: LoginUser) => {
                 // In a production app, we need to send some data (usually username, password) to server and get a token
                 // We will also need to handle errors if sign in failed
                 // After getting token, we need to persist the token using `AsyncStorage`
-                // In the example, we'll use a dummy token
-
                 dispatch({ type: 'SIGN_IN', token: data?.token ?? null });
             },
             signOut: () => dispatch({ type: 'SIGN_OUT' }),
-            signUp: async (data: any) => {
+            signUp: async (data: LoginUser) => {
                 // In a production app, we need to send user data to server and get a token
                 // We will also need to handle errors if sign up failed
                 // After getting token, we need to persist the token using `AsyncStorage`
-                // In the example, we'll use a dummy token
-
                 dispatch({ type: 'SIGN_IN', token: data?.token ?? null });
             },
         }),
@@ -72,21 +69,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     useEffect(() => {
         // Fetch the token from storage then navigate to our appropriate place
         const bootstrapAsync = async () => {
-            let userToken
+            let userToken: LoginUser
             console.log("auth provider")
             try {
-                userToken = await getStorageItem('userToken')
-                console.log(userToken)
+                userToken = await getStorageItem('userToken') as LoginUser
+
+                // After restoring token, we may need to validate it in production apps
+                // This will switch to the App screen or Auth screen and this loading
+                // screen will be unmounted and thrown away.
+                dispatch({ type: 'RESTORE_TOKEN', token: userToken?.token ?? null })
             } catch (e) {
                 // Restoring token failed
                 console.log(e)
             }
-
-            // After restoring token, we may need to validate it in production apps
-
-            // This will switch to the App screen or Auth screen and this loading
-            // screen will be unmounted and thrown away.
-            dispatch({ type: 'RESTORE_TOKEN', token: userToken?.token ?? null })
         }
 
         bootstrapAsync()

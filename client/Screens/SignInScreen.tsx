@@ -1,4 +1,4 @@
-import { ApolloError, useApolloClient, useQuery } from '@apollo/client'
+import { ApolloError, useApolloClient } from '@apollo/client'
 import React, { useEffect, useState } from 'react'
 import {
     View,
@@ -9,11 +9,11 @@ import {
     Image,
     Modal,
 } from 'react-native'
-import { SIGNIN_USER, SIGNUP_USER } from '../Query/UserQuery'
-import { SecureStore } from 'expo';
+import { SIGNIN_USER } from '../Query/UserQuery'
 import { createStackNavigator } from '@react-navigation/stack';
 import { setStorageItem } from '../Helper/Storage';
-import { AuthContext, AuthDispatchContext } from '../Provider/AuthProvider';
+import { AuthContext } from '../Provider/AuthProvider';
+import { LoginMutationResult } from '../Generated/graphqlType';
 const logo = require("../Assets/logo.png")
 
 export const SignInScreen = ({ navigation }) => {
@@ -82,15 +82,14 @@ export const SignInScreen = ({ navigation }) => {
                                     username: email,
                                     password: password,
                                 },
-                            });
+                            }) as LoginMutationResult;
                             console.log(data)
                             await setStorageItem(
                                 'userinfo',
-                                JSON.stringify(data.createUser)
+                                JSON.stringify(data?.login ?? null)
                             );
                             setModalMsg("登入成功")
                             setIsModalVisible(true)
-                            console.log(data.login)
                             signIn({ email, password, token: data?.login?.token ?? null })
                             navigation.navigate("Home")
                         } catch (error: unknown) {

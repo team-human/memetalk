@@ -1,4 +1,4 @@
-import { ApolloError, useApolloClient, useQuery } from '@apollo/client'
+import { ApolloError, useApolloClient } from '@apollo/client'
 import React, { useEffect, useState } from 'react'
 import {
     View,
@@ -13,6 +13,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { setStorageItem } from '../Helper/Storage';
 import { Modal } from 'react-native';
 import { AuthContext } from '../Provider/AuthProvider';
+import { CreateUserMutationResult } from '../Generated/graphqlType';
 const logo = require("../Assets/logo.png")
 
 export const SignUpScreen = ({ navigation }) => {
@@ -95,15 +96,14 @@ export const SignUpScreen = ({ navigation }) => {
                                         name: name
                                     }
                                 },
-                            });
+                            }) as CreateUserMutationResult;
                             await setStorageItem(
                                 'userinfo',
-                                JSON.stringify(data.createUser)
+                                JSON.stringify(data?.createUser ?? null)
                             );
                             signIn({ email, password, token: data?.createUser?.token ?? null })
                             setModalMsg("註冊成功")
                             setIsModalVisible(true)
-                            console.log(data.createUser)
                         } catch (error: unknown) {
                             setModalMsg((error as ApolloError)?.message ?? JSON.stringify(error))
                             setIsModalVisible(true)
