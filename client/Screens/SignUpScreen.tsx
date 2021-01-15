@@ -36,27 +36,25 @@ export const SignUpScreen = ({ navigation }) => {
     const Stack = createStackNavigator();
     return (
         <View style={styles.centeredView}>
-            {
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={true}
-                >
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <Text style={styles.modalText}>Hello World!</Text>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isModalVisible}
+            >
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>Hello World!</Text>
 
-                            <TouchableHighlight
-                                style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
-                                onPress={() => {
-                                    setIsModalVisible(v => !v);
-                                }}>
-                                <Text style={styles.textStyle}>Hide Modal</Text>
-                            </TouchableHighlight>
-                        </View>
+                        <TouchableHighlight
+                            style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+                            onPress={() => {
+                                setIsModalVisible(v => !v);
+                            }}>
+                            <Text style={styles.textStyle}>Hide Modal</Text>
+                        </TouchableHighlight>
                     </View>
-                </Modal>
-            }
+                </View>
+            </Modal>
             <Image source={logo} style={{ width: logoW, height: logoH }} />
             <View style={styles.inputControl}>
                 <View style={styles.inputView} >
