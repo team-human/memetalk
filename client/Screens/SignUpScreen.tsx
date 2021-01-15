@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
     Image,
 } from 'react-native'
-import { REGISTER_USER } from '../Query/LoginQuery'
+import { SIGNUP_USER } from '../Query/UserQuery'
 import { createStackNavigator } from '@react-navigation/stack';
 import { setStorageItem } from '../Helper/Storage';
 import { Modal } from 'react-native';
@@ -34,7 +34,7 @@ export const SignUpScreen = ({ navigation }) => {
 
     const Stack = createStackNavigator();
     return (
-        <View style={styles.centeredView}>
+        <View style={styles.container}>
             <Modal
                 transparent={true}
                 animationType="fade"
@@ -85,7 +85,7 @@ export const SignUpScreen = ({ navigation }) => {
                     onPress={async (e) => {
                         try {
                             const { data } = await client.mutate({
-                                mutation: REGISTER_USER,
+                                mutation: SIGNUP_USER,
                                 variables: {
                                     userInfo:
                                     {
@@ -194,13 +194,8 @@ const styles = StyleSheet.create({
         padding: 10,
         elevation: 2,
     },
-    textStyle: {
-        color: 'white',
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
     modalText: {
         marginBottom: 15,
         textAlign: 'center',
-    },
+    }
 });

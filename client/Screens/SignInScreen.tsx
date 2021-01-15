@@ -1,4 +1,4 @@
-import { useApolloClient, useQuery } from '@apollo/client'
+import { ApolloError, useApolloClient, useQuery } from '@apollo/client'
 import React, { useEffect, useState } from 'react'
 import {
     View,
@@ -7,10 +7,12 @@ import {
     TextInput,
     TouchableOpacity,
     Image,
+    Modal,
 } from 'react-native'
-import { REGISTER_USER } from '../Query/LoginQuery'
+import { SIGNIN_USER, SIGNUP_USER } from '../Query/UserQuery'
 import { SecureStore } from 'expo';
 import { createStackNavigator } from '@react-navigation/stack';
+import { setStorageItem } from '../Helper/Storage';
 const logo = require("../Assets/logo.png")
 
 export const SignInScreen = ({ navigation }) => {
@@ -19,6 +21,8 @@ export const SignInScreen = ({ navigation }) => {
     const [password, setPassword] = useState("")
     const [logoW, setLogow] = useState(0)
     const [logoH, setLogoh] = useState(0)
+    const [modalMsg, setModalMsg] = useState("test")
+    const [isModalVisible, setIsModalVisible] = useState(false)
 
     useEffect(() => {
         Image.getSize(
@@ -30,6 +34,25 @@ export const SignInScreen = ({ navigation }) => {
     const Stack = createStackNavigator();
     return (
         <View style={styles.container}>
+            <Modal
+                transparent={true}
+                animationType="fade"
+                visible={isModalVisible}
+                style={styles.modal}
+            >
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>{modalMsg}</Text>
+                        <TouchableOpacity
+                            style={styles.openButton}
+                            onPress={() => {
+                                setIsModalVisible(false);
+                            }}>
+                            <Text>關閉</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
             <Image source={logo} style={{ width: logoW, height: logoH }} />
             <View style={styles.inputControl}>
                 <View style={styles.inputView} >
@@ -50,17 +73,29 @@ export const SignInScreen = ({ navigation }) => {
 
                 <TouchableOpacity style={styles.button}
                     onPress={async (e) => {
-                        const { data } = await client.mutate({
-                            mutation: REGISTER_USER,
-                            variables: {
-                                userInfo:
-                                {
+                        try {
+                            const { data } = await client.mutate({
+                                mutation: SIGNIN_USER,
+                                variables: {
                                     username: email,
                                     password: password,
-                                    name: name
-                                }
-                            },
-                        });
+                                },
+                            });
+                            console.log(data)
+                            await setStorageItem(
+                                'userinfo',
+                                JSON.stringify(data.createUser)
+                            );
+                            setModalMsg("登入成功")
+                            setIsModalVisible(true)
+                            console.log(data.login)
+                            navigation.navigate("Home")
+                        } catch (error: unknown) {
+                            setModalMsg((error as ApolloError)?.message ?? JSON.stringify(error))
+                            setIsModalVisible(true)
+                            console.log(error)
+                        }
+
                     }}
                 >
                     <Text style={styles.loginText}>登入</Text>
@@ -119,5 +154,50 @@ const styles = StyleSheet.create({
     },
     loginText: {
         color: 'white'
+    },
+    centeredView: {
+        width: "100%",
+        height: "100%",
+        backgroundColor: 'white',
+        margin: 0,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modal: {
+        width: "100%",
+        height: "100%",
+        backgroundColor: 'white',
+        margin: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalView: {
+        width: "100%",
+        height: "100%",
+        justifyContent: 'center',
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    openButton: {
+        backgroundColor: '#2296F3',
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
     }
 });

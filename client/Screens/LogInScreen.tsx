@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
     Image,
 } from 'react-native'
-import { REGISTER_USER } from '../Query/LoginQuery'
+import { SIGNUP_USER } from '../Query/UserQuery'
 import { SecureStore } from 'expo';
 import { createStackNavigator } from '@react-navigation/stack';
 import { HomeScreen } from './HomeScreen';
