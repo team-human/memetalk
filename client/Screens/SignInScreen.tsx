@@ -48,7 +48,21 @@ export const SignInScreen = ({ navigation }) => {
                         onChangeText={text => setPassword(text)} />
                 </View>
 
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button}
+                    onPress={async (e) => {
+                        const { data } = await client.mutate({
+                            mutation: REGISTER_USER,
+                            variables: {
+                                userInfo:
+                                {
+                                    username: email,
+                                    password: password,
+                                    name: name
+                                }
+                            },
+                        });
+                    }}
+                >
                     <Text style={styles.loginText}>登入</Text>
                 </TouchableOpacity>
 

@@ -1,4 +1,4 @@
-import { useApolloClient, useQuery } from '@apollo/client'
+import { ApolloError, useApolloClient, useQuery } from '@apollo/client'
 import React, { useEffect, useState } from 'react'
 import {
     View,
@@ -7,13 +7,11 @@ import {
     TextInput,
     TouchableOpacity,
     Image,
-    Button,
-    Modal,
-    TouchableHighlight,
 } from 'react-native'
 import { REGISTER_USER } from '../Query/LoginQuery'
 import { createStackNavigator } from '@react-navigation/stack';
 import { setStorageItem } from '../Helper/Storage';
+import { Modal } from 'react-native';
 const logo = require("../Assets/logo.png")
 
 export const SignUpScreen = ({ navigation }) => {
@@ -23,7 +21,8 @@ export const SignUpScreen = ({ navigation }) => {
     const [name, setName] = useState("")
     const [logoW, setLogow] = useState(0)
     const [logoH, setLogoh] = useState(0)
-    const [isModalVisible, setIsModalVisible] = useState(true)
+    const [modalMsg, setModalMsg] = useState("test")
+    const [isModalVisible, setIsModalVisible] = useState(false)
 
 
     useEffect(() => {
@@ -37,21 +36,21 @@ export const SignUpScreen = ({ navigation }) => {
     return (
         <View style={styles.centeredView}>
             <Modal
-                animationType="slide"
                 transparent={true}
+                animationType="fade"
                 visible={isModalVisible}
+                style={styles.modal}
             >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <Text style={styles.modalText}>Hello World!</Text>
-
-                        <TouchableHighlight
-                            style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+                        <Text style={styles.modalText}>{modalMsg}</Text>
+                        <TouchableOpacity
+                            style={styles.openButton}
                             onPress={() => {
-                                setIsModalVisible(v => !v);
+                                setIsModalVisible(false);
                             }}>
-                            <Text style={styles.textStyle}>Hide Modal</Text>
-                        </TouchableHighlight>
+                            <Text>關閉</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
@@ -100,10 +99,12 @@ export const SignUpScreen = ({ navigation }) => {
                                 'userinfo',
                                 JSON.stringify(data.createUser)
                             );
+                            setModalMsg("註冊成功")
                             setIsModalVisible(true)
                             console.log(data.createUser)
-                        } catch (error) {
-                            setIsModalVisible(false)
+                        } catch (error: unknown) {
+                            setModalMsg((error as ApolloError)?.message ?? JSON.stringify(error))
+                            setIsModalVisible(true)
                             console.log(error)
                         }
                     }}
@@ -155,10 +156,21 @@ const styles = StyleSheet.create({
         color: 'white'
     },
     centeredView: {
+        width: "100%",
+        height: "100%",
+        backgroundColor: 'white',
+        margin: 0,
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 22,
+    },
+    modal: {
+        width: "100%",
+        height: "100%",
+        backgroundColor: 'white',
+        margin: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     modalView: {
         justifyContent: 'center',
@@ -177,7 +189,7 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     openButton: {
-        backgroundColor: '#F194FF',
+        backgroundColor: '#2296F3',
         borderRadius: 20,
         padding: 10,
         elevation: 2,
