@@ -13,6 +13,7 @@ import { SIGNIN_USER, SIGNUP_USER } from '../Query/UserQuery'
 import { SecureStore } from 'expo';
 import { createStackNavigator } from '@react-navigation/stack';
 import { setStorageItem } from '../Helper/Storage';
+import { AuthContext, AuthDispatchContext } from '../Provider/AuthProvider';
 const logo = require("../Assets/logo.png")
 
 export const SignInScreen = ({ navigation }) => {
@@ -23,6 +24,7 @@ export const SignInScreen = ({ navigation }) => {
     const [logoH, setLogoh] = useState(0)
     const [modalMsg, setModalMsg] = useState("test")
     const [isModalVisible, setIsModalVisible] = useState(false)
+    const { signIn } = React.useContext(AuthContext);
 
     useEffect(() => {
         Image.getSize(
@@ -89,6 +91,7 @@ export const SignInScreen = ({ navigation }) => {
                             setModalMsg("登入成功")
                             setIsModalVisible(true)
                             console.log(data.login)
+                            signIn({ email, password, token: data?.login?.token ?? null })
                             navigation.navigate("Home")
                         } catch (error: unknown) {
                             setModalMsg((error as ApolloError)?.message ?? JSON.stringify(error))
@@ -112,7 +115,7 @@ export const SignInScreen = ({ navigation }) => {
                     <Text style={styles.forgot}>Forgot your password?</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </View >
     );
 }
 

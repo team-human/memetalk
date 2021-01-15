@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 // After getting token, we need to persist the token using `AsyncStorage`
                 // In the example, we'll use a dummy token
 
-                dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+                dispatch({ type: 'SIGN_IN', token: data?.token ?? null });
             },
             signOut: () => dispatch({ type: 'SIGN_OUT' }),
             signUp: async (data: any) => {
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 // After getting token, we need to persist the token using `AsyncStorage`
                 // In the example, we'll use a dummy token
 
-                dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+                dispatch({ type: 'SIGN_IN', token: data?.token ?? null });
             },
         }),
         []
@@ -73,18 +73,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         // Fetch the token from storage then navigate to our appropriate place
         const bootstrapAsync = async () => {
             let userToken
-
+            console.log("auth provider")
             try {
                 userToken = await getStorageItem('userToken')
+                console.log(userToken)
             } catch (e) {
                 // Restoring token failed
+                console.log(e)
             }
 
             // After restoring token, we may need to validate it in production apps
 
             // This will switch to the App screen or Auth screen and this loading
             // screen will be unmounted and thrown away.
-            dispatch({ type: 'RESTORE_TOKEN', token: userToken })
+            dispatch({ type: 'RESTORE_TOKEN', token: userToken?.token ?? null })
         }
 
         bootstrapAsync()

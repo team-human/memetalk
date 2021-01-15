@@ -12,6 +12,7 @@ import { SIGNUP_USER } from '../Query/UserQuery'
 import { createStackNavigator } from '@react-navigation/stack';
 import { setStorageItem } from '../Helper/Storage';
 import { Modal } from 'react-native';
+import { AuthContext } from '../Provider/AuthProvider';
 const logo = require("../Assets/logo.png")
 
 export const SignUpScreen = ({ navigation }) => {
@@ -24,7 +25,7 @@ export const SignUpScreen = ({ navigation }) => {
     const [modalMsg, setModalMsg] = useState("test")
     const [isModalVisible, setIsModalVisible] = useState(false)
 
-
+    const { signIn } = React.useContext(AuthContext);
     useEffect(() => {
         Image.getSize(
             logo,
@@ -99,6 +100,7 @@ export const SignUpScreen = ({ navigation }) => {
                                 'userinfo',
                                 JSON.stringify(data.createUser)
                             );
+                            signIn({ email, password, token: data?.createUser?.token ?? null })
                             setModalMsg("註冊成功")
                             setIsModalVisible(true)
                             console.log(data.createUser)
@@ -173,6 +175,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalView: {
+        width: "100%",
+        height: "100%",
         justifyContent: 'center',
         margin: 20,
         backgroundColor: 'white',
