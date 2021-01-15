@@ -1,44 +1,50 @@
 import * as React from 'react'
 import { useEffect } from 'react'
 import { getStorageItem } from '../Helper/Storage'
+
 type Action = { type: 'RESTORE_TOKEN' | 'SIGN_IN' | 'SIGN_OUT'; token?: string | null }
 type Dispatch = (action: Action) => void
 type State = { isLoading: boolean; isSignout: boolean; userToken?: string | null }
 type AuthProviderProps = { children: React.ReactNode }
 
 export const AuthStateContext = React.createContext({} as State)
-const authReducer = (prevState: State, action: Action): State => {
-    switch (action.type) {
-        case 'RESTORE_TOKEN':
-            return {
-                ...prevState,
-                userToken: action.token,
-                isLoading: false,
-            }
-        case 'SIGN_IN':
-            return {
-                ...prevState,
-                isSignout: false,
-                userToken: action.token,
-            }
-        case 'SIGN_OUT':
-            return {
-                ...prevState,
-                isSignout: true,
-                userToken: null,
-            }
-        default: {
-            throw new Error(`Unhandled action type: ${action.type}`)
-        }
-    }
-}
+export const AuthDispatchContext = React.createContext({} as Dispatch)
+export const AuthContext = React.createContext({})
+
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-    const [state, dispatch] = React.useReducer(authReducer, {
-        isLoading: true,
-        isSignout: false,
-        userToken: null,
-    })
+    const [state, dispatch] = React.useReducer(
+        (prevState: State, action: Action) => {
+            switch (action.type) {
+                case 'RESTORE_TOKEN':
+                    return {
+                        ...prevState,
+                        userToken: action.token,
+                        isLoading: false,
+                    };
+                case 'SIGN_IN':
+                    return {
+                        ...prevState,
+                        isSignout: false,
+                        userToken: action.token,
+                    };
+                case 'SIGN_OUT':
+                    return {
+                        ...prevState,
+                        isSignout: true,
+                        userToken: null,
+                    };
+                default: {
+                    throw new Error(`Unhandled action type: ${action.type}`)
+                }
+            }
+        },
+        {
+            isLoading: true,
+            isSignout: false,
+            userToken: null,
+        }
+    );
 
     const authContext = React.useMemo(
         () => ({
@@ -86,9 +92,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     return (
         <AuthStateContext.Provider value={state}>
-            {/* <CountDispatchContext.Provider value={dispatch}> */}
-            {children}
-            {/* </CountDispatchContext.Provider> */}
+            <AuthDispatchContext.Provider value={dispatch}>
+                <AuthContext.Provider value={authContext}>
+                    {children}
+                </AuthContext.Provider>
+            </AuthDispatchContext.Provider>
         </AuthStateContext.Provider>
     )
 }
