@@ -31,7 +31,7 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"console.log(pm.collectionVariables.get(\"login_token\"));"
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -231,6 +231,15 @@
 							"    const tags = pm.response.json().data.createMeme.tags;",
 							"    pm.expect(tags).to.deep.equal([\"software-test-tag\", \"humor-test-tag\"]);",
 							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
 							""
 						],
 						"type": "text/javascript"
