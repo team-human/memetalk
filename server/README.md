@@ -83,7 +83,7 @@ The server runs at `http://localhost:5000`.
 
 ```bash
 # Move the to root folder of the project first.
-$ cd .. && git subtree push --prefix server heroku master
+$ cd .. && git push heroku `git subtree split --prefix server master`:master --force
 ```
 
 The server runs at `https://memetalk.herokuapp.com/`.

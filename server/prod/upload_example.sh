@@ -1,0 +1,14 @@
+#!/bin/bash
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: ./upload_example.sh <JWT_TOKEN>"
+  exit 1
+fi
+
+# DEV_DIR points to the folder that contains this script.
+DEV_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+curl https://metu-api.herokuapp.com/graphql \
+  -F operations='{ "query": "mutation ($file: File!, $tags: [String!]) { createMeme(file: $file, tags: $tags) { tags } }", "variables": { "file": null, "tags": ["software", "humor"] } }' \
+  -F map='{ "0": ["variables.file"] }' \
+  -F file=@$DEV_DIR/meme.png \
+  -H "Authorization: Bearer $1"
