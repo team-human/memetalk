@@ -290,6 +290,10 @@ public class DatabaseAdapter {
   private List<Meme> getMemesByIds(List<String> meme_ids) throws SQLException {
     List<Meme> memes = new ArrayList<>();
 
+    if (meme_ids.size() == 0) {
+      return memes;
+    }
+
     Statement statement = connection.createStatement();
     ResultSet result =
         statement.executeQuery(
