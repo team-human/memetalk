@@ -16,8 +16,22 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"pm.test(\"Body is correct\", function () {",
-							"    pm.response.to.have.body('{\"data\":{\"popularTags\":[\"humor\",\"software\",\"life\"]}}');",
+							"    const tags = pm.response.json().data.popularTags;",
+							"    const expected_tags = [\"humor\",\"software\",\"life\"]; ",
+							"    var count_tags = 0;",
+							"    _.each(expected_tags, (expected_tag) => {",
+							"        pm.expect(tags).to.include(expected_tag);",
+							"    })",
 							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.collectionVariables.get(\"login_token\"));"
 						],
 						"type": "text/javascript"
 					}
@@ -188,6 +202,72 @@
 						"query": "mutation login ($username: String!, $password: String!) {\n    login (username: $username, password: $password) {\n        user {\n            username\n            name\n            roles\n        }\n        token\n    }\n}",
 						"variables": "{\n  \"username\": \"marry\",\n  \"password\": \"abcd\"\n}"
 					}
+				},
+				"url": {
+					"raw": "localhost:8080/graphql",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mutation createMeme",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Body is correct\", function () {",
+							"    const meme = pm.response.json().data.createMeme;",
+							"    var include_number = 0;",
+							"    _.each(meme.tags, (item) => {",
+							"        console.log(item);",
+							"    })",
+							"    // pm.expect([\"software-test-tag\", \"humor-test-tag\", \"software\", \"humor\"]).to.include(meme.tags);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{login_token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "operations",
+							"value": "{ \"query\": \"mutation ($file: File!, $tags: [String!]) { createMeme(file: $file, tags: $tags) { tags } }\", \"variables\": { \"file\": null, \"tags\": [\"software-test-tag\", \"humor-test-tag\"] } }",
+							"type": "text"
+						},
+						{
+							"key": "map",
+							"value": "{ \"0\": [\"variables.file\"] }",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/Users/sam/repo/memetalk/server/dev/meme1.png"
+						}
+					]
 				},
 				"url": {
 					"raw": "localhost:8080/graphql",
