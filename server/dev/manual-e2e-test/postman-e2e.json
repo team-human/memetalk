@@ -228,12 +228,8 @@
 							"});",
 							"",
 							"pm.test(\"Body is correct\", function () {",
-							"    const meme = pm.response.json().data.createMeme;",
-							"    var include_number = 0;",
-							"    _.each(meme.tags, (item) => {",
-							"        console.log(item);",
-							"    })",
-							"    // pm.expect([\"software-test-tag\", \"humor-test-tag\", \"software\", \"humor\"]).to.include(meme.tags);",
+							"    const tags = pm.response.json().data.createMeme.tags;",
+							"    pm.expect(tags).to.deep.equal([\"software-test-tag\", \"humor-test-tag\"]);",
 							"});",
 							""
 						],
@@ -265,7 +261,7 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/Users/sam/repo/memetalk/server/dev/meme1.png"
+							"src": "meme1.png"
 						}
 					]
 				},
