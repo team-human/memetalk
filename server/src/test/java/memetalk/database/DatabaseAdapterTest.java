@@ -200,6 +200,12 @@ public class DatabaseAdapterTest {
   }
 
   @Test
+  public void testGetMEmesByTagNotMatched() throws URISyntaxException, SQLException {
+    List<Meme> memes = databaseAdapter.getMemesByTag("rare_tag");
+    Assert.assertEquals(0, memes.size());
+  }
+
+  @Test
   public void testGetMemesByUserIdSingleResultSucceed() throws URISyntaxException, SQLException {
     DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     List<Meme> memes = databaseAdapter.getMemesByUserId("2");
@@ -217,6 +223,12 @@ public class DatabaseAdapterTest {
     DatabaseAdapter databaseAdapter = new DatabaseAdapter(configReader);
     List<Meme> memes = databaseAdapter.getMemesByUserId("1");
     Assert.assertEquals(2, memes.size());
+  }
+
+  @Test
+  public void testGetMEmesByUserIdNotMatched() throws URISyntaxException, SQLException {
+    List<Meme> memes = databaseAdapter.getMemesByUserId("1000");
+    Assert.assertEquals(0, memes.size());
   }
 
   @Test
