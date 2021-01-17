@@ -81,6 +81,8 @@ The server runs at `http://localhost:5000`.
 
 ### Deploy
 
+Run the following command on your local machine:
+
 ```bash
 # Move the to root folder of the project first.
 $ cd .. && git push heroku `git subtree split --prefix server master`:master --force

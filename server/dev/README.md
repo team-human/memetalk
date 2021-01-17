@@ -2,12 +2,6 @@
 
 This folder contains tools to help local development.
 
-## Initial Database
-
-```bash
-$ ./init_db.sh
-```
-
 ## Postgres DB Debugging
 
 Connect to PostgreSQL Database
