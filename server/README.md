@@ -84,7 +84,7 @@ The server runs at `http://localhost:5000`.
 Run the following command on your local machine:
 
 ```bash
-# Move the to root folder of the project first.
+# Move to the root folder of the project first (`memetalk`, not `memetalk/server`).
 $ cd .. && git push heroku `git subtree split --prefix server master`:master --force
 ```
 
