@@ -76,7 +76,6 @@ export const SignUpScreen = ({ navigation }) => {
 
                 <View style={styles.inputView} >
                     <TextInput
-                        secureTextEntry
                         style={styles.inputText}
                         placeholder="Name"
                         placeholderTextColor="#A5A5A5"
