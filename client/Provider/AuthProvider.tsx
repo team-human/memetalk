@@ -70,7 +70,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         // Fetch the token from storage then navigate to our appropriate place
         const bootstrapAsync = async () => {
             let userToken: LoginUser
-            console.log("auth provider")
             try {
                 userToken = await getStorageItem('userToken') as LoginUser
 
@@ -80,7 +79,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 dispatch({ type: 'RESTORE_TOKEN', token: userToken?.token ?? null })
             } catch (e) {
                 // Restoring token failed
-                console.log(e)
             }
         }
 
