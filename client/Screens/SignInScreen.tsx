@@ -14,7 +14,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { setStorageItem } from '../Helper/Storage';
 import { AuthContext } from '../Provider/AuthProvider';
 import { LoginMutationResult } from '../Generated/graphqlType';
-const logo = require("../Assets/logo.png")
+const logo = require("../assets/logo.png")
 
 export const SignInScreen = ({ navigation }) => {
     const client = useApolloClient();
@@ -138,8 +138,7 @@ const styles = StyleSheet.create({
     inputText: {
         height: 50,
         borderWidth: 0,
-        borderBottomWidth: 1,
-        outlineWidth: 0
+        borderBottomWidth: 1
     },
     forgot: {
         color: "#A5A5A5"
