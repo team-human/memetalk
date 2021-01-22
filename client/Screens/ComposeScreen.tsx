@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import {
-  Button,
   Image,
   Platform,
   SafeAreaView,
@@ -12,36 +11,35 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Input } from '@ui-kitten/components';
-// import requestMediaLibraryPermissionsAsync from 'expo-image-picker'
 
-export default function ComposeScreen() {
-    const [image, setImage] = useState(null || String);
+export const ComposeScreen = () => {
+  const [image, setImage] = useState(null || String);
 
-    useEffect(() => {
-        (async () => {
-        if (Platform.OS !== 'web') {
-            const { status } = await ImagePicker.requestCameraPermissionsAsync();
-            if (status !== 'granted') {
-            alert('Sorry, we need camera roll permissions to make this work!');
-            }
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
         }
-        })();
-    }, []);
-
-    const pickImage = async () => {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-  
-      console.log(result);
-  
-      if (!result.cancelled) {
-        setImage(result?.uri);
       }
-    };
+    })();
+  }, []);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImage(result?.uri);
+    }
+  };
 
   return (
     <>
@@ -56,10 +54,10 @@ export default function ComposeScreen() {
           </View>
         </View>
         {
-          image ? 
+          image ?
             <View style={styles.imageDetail}>
               <View style={styles.clearBtnLayout} >
-                <TouchableOpacity style={styles.clearBtn} onPress={() => {setImage('')}} >
+                <TouchableOpacity style={styles.clearBtn} onPress={() => { setImage('') }} >
                   <Text style={styles.clearBtnText}> X </Text>
                 </TouchableOpacity>
               </View>
@@ -67,15 +65,15 @@ export default function ComposeScreen() {
                 <Input placeholder='輸入標籤' />
                 <Text style={styles.tag}>#職場 #霸凌 #狗 #貓奴</Text>
               </View>
-              <Image source={{ uri: image }} style={ styles.previewImage} />
+              <Image source={{ uri: image }} style={styles.previewImage} />
               <View style={styles.uploadBtnLayout} >
-                <TouchableOpacity style={styles.uploadBtn} onPress={() => {}} >
+                <TouchableOpacity style={styles.uploadBtn} onPress={() => { }} >
                   <Text style={styles.buttonText}> 送出 </Text>
                 </TouchableOpacity>
               </View>
-            
+
             </View>
-           : null
+            : null
         }
       </SafeAreaView>
     </>
@@ -125,7 +123,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   previewImage: {
-    width: 300, 
+    width: 300,
     height: 300,
     marginRight: 'auto',
     marginLeft: 'auto',

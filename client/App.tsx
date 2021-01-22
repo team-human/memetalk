@@ -1,61 +1,19 @@
 import * as React from 'react'
 import * as eva from '@eva-design/eva';
-import { Text, View } from 'react-native'
-import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import TopicScreen from './pages/topic'
-import ProfileScreen from './pages/profile'
-import { apolloClient } from './Providers/ApolloClient'
+import { apolloClient } from './Apollo/ApolloClient'
 import { ApolloProvider } from '@apollo/client'
-import { ApplicationProvider} from '@ui-kitten/components';
-import ComposeScreen from './pages/compose';
-
-const TopicStack = createStackNavigator()
-
-function TopicStackScreen() {
-  return (
-    <TopicStack.Navigator>
-      <TopicStack.Screen name="Topic" component={TopicScreen} />
-    </TopicStack.Navigator>
-  )
-}
-
-const ProfileStack = createStackNavigator()
-
-function ProfileStackScreen() {
-  return (
-    <ProfileStack.Navigator>
-      <ProfileStack.Screen name="Profile" component={ProfileScreen} />
-    </ProfileStack.Navigator>
-  )
-}
-
-const ComposeStack = createStackNavigator()
-
-function ComposeStackScreen() {
-  return (
-    <ComposeStack.Navigator>
-      <ComposeStack.Screen name="Compose" component={ComposeScreen}/>
-    </ComposeStack.Navigator>
-  )
-}
-
-const Tab = createBottomTabNavigator()
+import { ApplicationProvider } from '@ui-kitten/components';
+import { AppScreen } from './Screens/AppScreen';
+import { AuthProvider } from './Provider/AuthProvider';
 
 export default function App() {
   return (
     <ApplicationProvider {...eva} theme={eva.light}>
-    <ApolloProvider client={apolloClient}>
-      <NavigationContainer>
-        <Tab.Navigator>
-          <Tab.Screen name="Topic" component={TopicStackScreen} />
-          <Tab.Screen name="Profile" component={ProfileStackScreen} />
-          <Tab.Screen name="Compose" component={ComposeStackScreen}/>
-        </Tab.Navigator>
-      </NavigationContainer>
-    </ApolloProvider>
+      <ApolloProvider client={apolloClient}>
+        <AuthProvider>
+          <AppScreen />
+        </AuthProvider>
+      </ApolloProvider>
     </ApplicationProvider>
-
   )
 }

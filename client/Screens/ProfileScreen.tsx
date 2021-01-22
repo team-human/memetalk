@@ -14,7 +14,7 @@ import { tagColorList } from '../Constants/Color'
 import { GET_CURRENT_USER, GET_MEMES_BY_AUTHORID } from '../Query/TopicsQuery'
 import { Profile } from '../View/Profile/Profile'
 
-export default function ProfileScreen({ navigation }) {
+export const ProfileScreen = ({ navigation }) => {
   const [selectedId, setSelectedId] = useState(null)
   const { loading: currentUserIsLoading, data: currentUserData } = useQuery(
     GET_CURRENT_USER
@@ -32,13 +32,13 @@ export default function ProfileScreen({ navigation }) {
   const memeLIst = authMemeIsLoading
     ? []
     : authMemeData
-    ? authMemeData.memesByAuthorId.map((meme: any) => {
+      ? authMemeData.memesByAuthorId.map((meme: any) => {
         return {
           id: meme.id,
           tags: meme.tags,
         }
       })
-    : []
+      : []
 
   const renderItem = ({ item }) => {
     const bgColor =
@@ -59,24 +59,24 @@ export default function ProfileScreen({ navigation }) {
           <ActivityIndicator size="large" />
         </View>
       ) : (
-        <Profile {...currentUserData?.currentUser} />
-      )}
+          <Profile {...currentUserData?.currentUser} />
+        )}
       {authMemeIsLoading ? (
         <View style={[loadingStyles.container, loadingStyles.horizontal]}>
           <ActivityIndicator size="large" />
         </View>
       ) : (
-        <SafeAreaView style={styles.container}>
-          <FlatGrid
-            itemDimension={100}
-            data={memeLIst}
-            style={styles.gridView}
-            fixed
-            spacing={16}
-            renderItem={renderItem}
-          />
-        </SafeAreaView>
-      )}
+          <SafeAreaView style={styles.container}>
+            <FlatGrid
+              itemDimension={100}
+              data={memeLIst}
+              style={styles.gridView}
+              fixed
+              spacing={16}
+              renderItem={renderItem}
+            />
+          </SafeAreaView>
+        )}
     </>
   )
 }

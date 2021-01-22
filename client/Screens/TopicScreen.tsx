@@ -4,10 +4,8 @@ import {
   SafeAreaView,
   StatusBar,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
-  Image,
   ActivityIndicator,
 } from 'react-native'
 import { HashTagList } from '../View/HashTag/HashTagList'
@@ -26,28 +24,28 @@ const Item = ({ item, onPress }: {
   item: Meme,
   onPress: (value?: any) => void,
 }) => (
-    <TouchableOpacity onPress={onPress} style={[styles.item, styles.background]}>
-      <View style={styles.memeHeaderInfo}>
-        <User id={item?.author?.id} name={item?.author?.name} />
-        <MemeInfo creationTime={item?.createTime ?? ""} />
-      </View>
-      <View>
-        <MemeImage imageUrl={item?.url} />
-      </View>
-      <View>
-        <HashTagList
-          hashtagList={item?.tags?.map(tag => { return { id: tag, text: tag } }) ?? []}
-          showPoundSign={false}
-        />
-      </View>
-      <View style={styles.feedbackButton}>
-        <FeedbackButton initialCount={item?.counter?.likeCount ?? 0} feedbackType={FeedbackTypeEnums.Like} />
-        <FeedbackButton initialCount={item?.counter?.dislikeCount ?? 0} feedbackType={FeedbackTypeEnums.Dislike} />
-      </View>
-    </TouchableOpacity>
-  )
+  <TouchableOpacity onPress={onPress} style={[styles.item, styles.background]}>
+    <View style={styles.memeHeaderInfo}>
+      <User id={item?.author?.id} name={item?.author?.name} />
+      <MemeInfo creationTime={item?.createTime ?? ""} />
+    </View>
+    <View>
+      <MemeImage imageUrl={item?.url} />
+    </View>
+    <View>
+      <HashTagList
+        hashtagList={item?.tags?.map(tag => { return { id: tag, text: tag } }) ?? []}
+        showPoundSign={false}
+      />
+    </View>
+    <View style={styles.feedbackButton}>
+      <FeedbackButton initialCount={item?.counter?.likeCount ?? 0} feedbackType={FeedbackTypeEnums.Like} />
+      <FeedbackButton initialCount={item?.counter?.dislikeCount ?? 0} feedbackType={FeedbackTypeEnums.Dislike} />
+    </View>
+  </TouchableOpacity>
+)
 
-export default function TopicScreen({ navigation }) {
+export const TopicScreen = ({ navigation }) => {
   const [selectedId, setSelectedId] = useState(null)
   const [selectedTag, setSelectedTag] = useState('')
 
