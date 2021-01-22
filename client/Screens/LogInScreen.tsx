@@ -2,7 +2,7 @@ import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack';
 import { SignUpScreen } from './SignUpScreen';
 import { SignInScreen } from './SignInScreen';
-const logo = require("../Assets/logo.png")
+const logo = require("../assets/logo.png")
 
 export const LogInScreen = ({ navigation }) => {
     const Stack = createStackNavigator();
