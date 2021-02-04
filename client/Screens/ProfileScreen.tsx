@@ -70,7 +70,7 @@ export const ProfileScreen = ({ navigation }) => {
             <FlatGrid
               itemDimension={100}
               data={memeLIst}
-              style={styles.gridView}
+              style={StyleSheet.flatten(styles.gridView)}
               fixed
               spacing={16}
               renderItem={renderItem}
