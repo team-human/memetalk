@@ -16,7 +16,7 @@ export const FeedbackButton = ({
 
 
   useEffect(() => {
-    setCount(initialCount)
+    setCount(initialCount || 0)
   }, [initialCount])
 
   return (
