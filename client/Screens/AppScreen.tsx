@@ -12,7 +12,7 @@ export const AppScreen = () => {
 
     return (
         <NavigationContainer>
-            <Stack.Navigator>
+            <Stack.Navigator headerMode="none">
                 {authStateContext.isLoading ? (
                     // We haven't finished checking for the token yet
                     <Stack.Screen name="Splash" component={SplashScreen} />
