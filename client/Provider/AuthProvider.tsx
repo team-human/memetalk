@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     useEffect(() => {
         // use this controller to fix async warning
-        const abortController = new AbortController();
+        const abortController = new window.AbortController();
 
         // Fetch the token from storage then navigate to our appropriate place
         const bootstrapAsync = async () => {
