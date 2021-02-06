@@ -11,9 +11,13 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Input } from '@ui-kitten/components';
+import { AuthStateContext } from "../Provider/AuthProvider";
+import { EnvironmentConfigs } from '../Configs/EnvironmentConfigs';
 
 export const ComposeScreen = () => {
-  const [image, setImage] = useState(null || String);
+  const [image, setImage] = useState('');
+  const [tagsString, setTagsString] = useState('');
+  const authStateContext = React.useContext(AuthStateContext);
 
   useEffect(() => {
     (async () => {
@@ -28,18 +32,57 @@ export const ComposeScreen = () => {
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
 
-    console.log(result);
+    // console.log(result);
 
     if (!result.cancelled) {
       setImage(result?.uri);
     }
   };
+
+  function DataURIToBlob(dataURI: string) {
+    const splitDataURI = dataURI.split(',')
+    const byteString = splitDataURI[0].indexOf('base64') >= 0 ? atob(splitDataURI[1]) : decodeURI(splitDataURI[1])
+    const mimeString = splitDataURI[0].split(':')[1].split(';')[0]
+
+    const ia = new Uint8Array(byteString.length)
+    for (let i = 0; i < byteString.length; i++)
+        ia[i] = byteString.charCodeAt(i)
+
+    return new Blob([ia], { type: mimeString })
+  }
+
+  const submitImage = () => {
+    const tags = tagsString.replace(' ', '').split('#').filter( el => el !== '');
+
+    const file = DataURIToBlob(image);
+    const form = new FormData();
+    form.append("operations", `{ \"query\": \"mutation ($file: File!, $tags: [String!]) { createMeme(file: $file, tags: $tags) { tags } }\", \"variables\": { \"file\": null, \"tags\": ${JSON.stringify(tags)} } }`);
+    form.append("map", "{ \"0\": [\"variables.file\"] }");
+    form.append("file", file, 'meme.png');
+    fetch(`${EnvironmentConfigs.dev.graphQLEndPoint}`, {
+      method: 'POST',
+      body: form,
+      headers: {
+        Authorization: `Bearer ${authStateContext.userToken}`
+      }
+    })
+    .then(res => res.json())
+    .then(res => {
+      // upload finished and init all state
+      setImage('');
+      setTagsString('');
+    })
+    .catch( err => {
+      // upload failed
+    })
+    
+  }
 
   return (
     <>
@@ -62,12 +105,12 @@ export const ComposeScreen = () => {
                 </TouchableOpacity>
               </View>
               <View style={styles.inputLayout} >
-                <Input placeholder='輸入標籤' />
+                <Input placeholder='輸入標籤' onChangeText={(text: string) => {setTagsString(text)}}/>
                 <Text style={styles.tag}>#職場 #霸凌 #狗 #貓奴</Text>
               </View>
               <Image source={{ uri: image }} style={styles.previewImage} />
               <View style={styles.uploadBtnLayout} >
-                <TouchableOpacity style={styles.uploadBtn} onPress={() => { }} >
+                <TouchableOpacity style={styles.uploadBtn} onPress={submitImage} >
                   <Text style={styles.buttonText}> 送出 </Text>
                 </TouchableOpacity>
               </View>
