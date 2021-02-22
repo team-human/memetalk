@@ -67,6 +67,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     );
 
     useEffect(() => {
+
         // Fetch the token from storage then navigate to our appropriate place
         const bootstrapAsync = async () => {
             let userToken: LoginUser
@@ -83,6 +84,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
 
         bootstrapAsync()
+
+        return () => {
+        };
     }, [])
 
     return (
